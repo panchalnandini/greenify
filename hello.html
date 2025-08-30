@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Studies Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-container {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            min-height: 100vh;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-btn {
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-2px);
+            border-color: #4CAF50;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+        
+        .option-btn.selected {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50 0%, #2196F3 100%);
+            height: 8px;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .leaderboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .leaderboard-entry {
+            transition: all 0.3s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            transform: translateX(5px);
+            background: #f7fafc !important;
+        }
+        
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .leaf-bg {
+            background-image: url('https://placehold.co/600x400/4CAF50/white?text=🌿');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="quiz-container min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full mx-auto">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="text-center">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                <div class="w-24 h-24 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-leaf text-white text-4xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Environmental Studies Quiz</h1>
+                <p class="text-gray-600 text-lg mb-8">Test your knowledge about our planet, sustainability, and environmental conservation!</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center p-4 bg-green-50 rounded-xl">
+                        <i class="fas fa-seedling text-green-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-green-800">25 Questions</h3>
+                        <p class="text-sm text-green-600">Environmental topics</p>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-xl">
+                        <i class="fas fa-trophy text-blue-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-blue-800">Instant Feedback</h3>
+                        <p class="text-sm text-blue-600">Learn as you go</p>
+                    </div>
+                    <div class="text-center p-4 bg-teal-50 rounded-xl">
+                        <i class="fas fa-recycle text-teal-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-teal-800">Track Progress</h3>
+                        <p class="text-sm text-teal-600">See your eco-score</p>
+                    </div>
+                </div>
+                
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold py-4 px-8 rounded-full text-lg hover:from-green-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+                    Start Quiz Now
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                
+                <div class="mt-8">
+                    <button onclick="showLeaderboard()" class="text-green-600 hover:text-green-800 font-medium">
+                        <i class="fas fa-trophy mr-2"></i>View Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="question-card p-8 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-sm font-semibold text-gray-600">
+                        Question <span id="current-question">1</span>/<span id="total-questions">25</span>
+                    </div>
+                    <div class="text-sm font-semibold text-green-600">
+                        Score: <span id="score">0</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar mb-6">
+                    <div id="progress-fill" class="progress-fill" style="width: 4%;"></div>
+                </div>
+                
+                <h2 id="question-text" class="text-2xl font-semibold text-gray-800 mb-6 leading-tight"></h2>
+                
+                <div id="options-container" class="space-y-3"></div>
+                
+                <div class="flex justify-between mt-8">
+                    <button id="prev-btn" onclick="previousQuestion()" class="bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Previous
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="bg-green-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-green-700 transition-colors">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <div class="result-card p-8 text-center">
+                <div class="w-32 h-32 bg-white/20 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-trophy text-yellow-300 text-5xl"></i>
+                </div>
+                
+                <h2 class="text-3xl font-bold mb-4">Quiz Completed!</h2>
+                <p class="text-xl mb-2">Your environmental knowledge score:</p>
+                <div class="text-6xl font-bold text-yellow-300 mb-6" id="final-score">0</div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-white/10 p-4 rounded-xl">
+                        <p class="text-sm opacity-80">Correct Answers</p>
+                        <p class="text-2xl font-bold" id="correct-answers">0</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl">
+                        <p class="text-sm opacity-80">Total Questions</p>
+                        <p class="text-2xl font-bold" id="total-questions-result">25</p>
+                    </div>
+                </div>
+                
+                <div id="name-input-section" class="mb-6">
+                    <p class="text-white mb-2">Enter your name for the eco-leaderboard:</p>
+                    <input type="text" id="player-name" placeholder="Your Name" maxlength="20" class="px-4 py-2 rounded-lg text-center font-semibold">
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="saveScoreAndShowLeaderboard()" class="bg-green-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-green-600 transition-colors">
+                        <i class="fas fa-trophy mr-2"></i>Save Score
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-white text-green-600 font-semibold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                    <button onclick="showLeaderboard()" class="bg-blue-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-list mr-2"></i>Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="hidden">
+            <div class="leaderboard-card p-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-trophy text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Eco-Leaderboard</h2>
+                    <p class="text-gray-600">Top environmental champions</p>
+                </div>
+                
+                <div id="leaderboard-list" class="space-y-3 mb-8">
+                    <!-- Leaderboard entries will be populated here -->
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="backToWelcome()" class="bg-green-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">
+                        <i class="fas fa-home mr-2"></i>Back to Home
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Play Again
+                    </button>
+                    <button onclick="clearLeaderboard()" class="bg-red-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-red-700 transition-colors">
+                        <i class="fas fa-trash mr-2"></i>Clear Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // Climate Change Questions
+            {
+                question: "What is the primary greenhouse gas responsible for global warming?",
+                options: ["Methane", "Carbon Dioxide", "Nitrous Oxide", "Water Vapor"],
+                correct: 1
+            },
+            {
+                question: "Which human activity contributes most to climate change?",
+                options: ["Deforestation", "Agriculture", "Burning fossil fuels", "Industrial processes"],
+                correct: 2
+            },
+            {
+                question: "What is the main goal of the Paris Agreement?",
+                options: ["Limit global warming to 1.5°C above pre-industrial levels", "Eliminate all greenhouse gases by 2050", "Plant 1 trillion trees worldwide", "Convert all energy to solar power"],
+                correct: 0
+            },
+            
+            // Renewable Energy Questions
+            {
+                question: "Which renewable energy source is currently the most widely used globally?",
+                options: ["Solar power", "Wind power", "Hydropower", "Geothermal energy"],
+                correct: 2
+            },
+            {
+                question: "What is the main advantage of solar energy?",
+                options: ["It's available everywhere", "It produces no greenhouse gases", "It's the cheapest energy source", "It works 24/7"],
+                correct: 1
+            },
+            
+            // Conservation Questions
+            {
+                question: "What percentage of Earth's water is freshwater available for human use?",
+                options: ["2.5%", "10%", "25%", "50%"],
+                correct: 0
+            },
+            {
+                question: "Which ecosystem is most effective at storing carbon?",
+                options: ["Tropical rainforests", "Coral reefs", "Mangrove forests", "Grasslands"],
+                correct: 2
+            },
+            
+            // Pollution Questions
+            {
+                question: "What is the Great Pacific Garbage Patch primarily composed of?",
+                options: ["Plastic waste", "Chemical waste", "Metal scraps", "Organic matter"],
+                correct: 0
+            },
+            {
+                question: "Which air pollutant is primarily responsible for acid rain?",
+                options: ["Carbon monoxide", "Sulfur dioxide", "Nitrogen oxides", "Particulate matter"],
+                correct: 1
+            },
+            
+            // Biodiversity Questions
+            {
+                question: "What is the estimated percentage of species that have gone extinct due to human activity?",
+                options: ["5-10%", "15-20%", "25-30%", "Over 50%"],
+                correct: 1
+            },
+            {
+                question: "Which animal is considered a keystone species in many ecosystems?",
+                options: ["Elephant", "Wolf", "Bee", "Shark"],
+                correct: 2
+            },
+            
+            // Sustainability Questions
+            {
+                question: "What does the '3 Rs' of sustainability stand for?",
+                options: ["Reduce, Reuse, Recycle", "Renew, Recover, Restore", "Respond, React, Recover", "Review, Reduce, Reclaim"],
+                correct: 0
+            },
+            {
+                question: "What is the main principle of a circular economy?",
+                options: ["Eliminating waste through continuous reuse of materials", "Using only renewable resources", "Producing everything locally", "Consuming less overall"],
+                correct: 0
+            },
+            
+            // Ecosystems Questions
+            {
+                question: "Which biome has the highest biodiversity?",
+                options: ["Tropical rainforest", "Coral reef", "Temperate forest", "Savanna"],
+                correct: 0
+            },
+            {
+                question: "What is the process where plants release water vapor into the atmosphere called?",
+                options: ["Evaporation", "Transpiration", "Condensation", "Precipitation"],
+                correct: 1
+            },
+            
+            // Environmental Policies
+            {
+                question: "Which international treaty aims to protect the ozone layer?",
+                options: ["Kyoto Protocol", "Montreal Protocol", "Paris Agreement", "Copenhagen Accord"],
+                correct: 1
+            },
+            {
+                question: "What does EPA stand for in environmental context?",
+                options: ["Environmental Protection Agency", "Eco-Preservation Authority", "Earth Protection Assembly", "Environmental Policy Administration"],
+                correct: 0
+            },
+            
+            // Natural Resources
+            {
+                question: "Which natural resource is considered non-renewable?",
+                options: ["Wind", "Sunlight", "Fossil fuels", "Geothermal heat"],
+                correct: 2
+            },
+            {
+                question: "What is the main cause of soil erosion?",
+                options: ["Deforestation", "Overgrazing", "Improper farming practices", "All of the above"],
+                correct: 3
+            },
+            
+            // Waste Management
+            {
+                question: "How long does it take for a plastic bottle to decompose naturally?",
+                options: ["10-20 years", "50-100 years", "200-500 years", "1000+ years"],
+                correct: 2
+            },
+            {
+                question: "What is the most effective way to reduce waste?",
+                options: ["Recycling", "Composting", "Source reduction", "Incineration"],
+                correct: 2
+            },
+            
+            // Water Conservation
+            {
+                question: "What is the largest use of freshwater worldwide?",
+                options: ["Industrial use", "Domestic use", "Agricultural irrigation", "Energy production"],
+                correct: 2
+            },
+            {
+                question: "Which method is most effective for water conservation in agriculture?",
+                options: ["Flood irrigation", "Sprinkler systems", "Drip irrigation", "Rainwater harvesting"],
+                correct: 2
+            },
+            
+            // Additional Environmental Topics
+            {
+                question: "What is the main cause of coral bleaching?",
+                options: ["Pollution", "Overfishing", "Rising sea temperatures", "Ocean acidification"],
+                correct: 2
+            },
+            {
+                question: "Which gas is primarily responsible for the hole in the ozone layer?",
+                options: ["Carbon dioxide", "Methane", "Chlorofluorocarbons (CFCs)", "Nitrous oxide"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOptions = Array(quizData.length).fill(null);
+        let userAnswers = Array(quizData.length).fill(null);
+
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            
+            document.getElementById('total-questions').textContent = quizData.length;
+            score = 0;
+            selectedOptions = Array(quizData.length).fill(null);
+            userAnswers = Array(quizData.length).fill(null);
+            currentQuestion = 0;
+            document.getElementById('score').textContent = '0';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 rounded-lg font-medium text-gray-700 hover:bg-green-50 ${
+                    selectedOptions[currentQuestion] === index ? 'selected bg-green-100 border-green-300' : 'bg-white'
+                }`;
+                button.innerHTML = `
+                    <span class="flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3 font-semibold ${
+                            selectedOptions[currentQuestion] === index ? 'bg-green-600 text-white' : 'text-gray-600'
+                        }">${String.fromCharCode(65 + index)}</span>
+                        ${option}
+                    </span>
+                `;
+                button.onclick = () => selectOption(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function selectOption(index) {
+            selectedOptions[currentQuestion] = index;
+            userAnswers[currentQuestion] = index;
+            
+            // Update score immediately when an option is selected
+            if (index === quizData[currentQuestion].correct) {
+                // Only add score if this question wasn't already answered correctly
+                if (userAnswers[currentQuestion] !== quizData[currentQuestion].correct) {
+                    score++;
+                    document.getElementById('score').textContent = score;
+                }
+            } else {
+                // If changing from correct to incorrect answer, decrement score
+                if (userAnswers[currentQuestion] === quizData[currentQuestion].correct) {
+                    score--;
+                    document.getElementById('score').textContent = score;
+                }
+            }
+            
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('prev-btn').classList.toggle('opacity-50', currentQuestion === 0);
+            document.getElementById('prev-btn').classList.toggle('cursor-not-allowed', currentQuestion === 0);
+            
+            const nextText = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next';
+            document.getElementById('next-btn').innerHTML = `${nextText} <i class="fas fa-arrow-right ml-2"></i>`;
+        }
+
+        function showResults() {
+            // Calculate final score based on all correct answers
+            let finalScore = 0;
+            for (let i = 0; i < quizData.length; i++) {
+                if (userAnswers[i] === quizData[i].correct) {
+                    finalScore++;
+                }
+            }
+            score = finalScore;
+            
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('correct-answers').textContent = score;
+            document.getElementById('total-questions-result').textContent = quizData.length;
+            
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const container = document.querySelector('.quiz-container');
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.background = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0'][Math.floor(Math.random() * 5)];
+                container.appendChild(confetti);
+            }
+        }
+
+        function saveScoreAndShowLeaderboard() {
+            const playerName = document.getElementById('player-name').value.trim() || 'Eco-Warrior';
+            saveScoreToLeaderboard(playerName, score);
+            showLeaderboard();
+        }
+
+        function saveScoreToLeaderboard(name, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('environmentalQuizLeaderboard')) || [];
+            
+            // Add new score
+            leaderboard.push({
+                name: name,
+                score: score,
+                date: new Date().toLocaleDateString()
+            });
+            
+            // Sort by score descending
+            leaderboard.sort((a, b) => b.score - a.score);
+            
+            // Keep only top 10 scores
+            leaderboard = leaderboard.slice(0, 10);
+            
+            // Save back to localStorage
+            localStorage.setItem('environmentalQuizLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function showLeaderboard() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('leaderboard-screen').classList.remove('hidden');
+            
+            const leaderboard = JSON.parse(localStorage.getItem('environmentalQuizLeaderboard')) || [];
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '';
+            
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                        <p>No scores yet! Be the first environmental champion!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            leaderboard.forEach((entry, index) => {
+                const rankColors = [
+                    'bg-yellow-400', // 1st
+                    'bg-gray-300',   // 2nd
+                    'bg-orange-400', // 3rd
+                    'bg-green-200',   // 4th-10th
+                ];
+                
+                const rankColor = index < 3 ? rankColors[index] : rankColors[3];
+                
+                const entryElement = document.createElement('div');
+                entryElement.className = 'leaderboard-entry flex items-center justify-between p-4 rounded-lg bg-gray-50';
+                entryElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="rank-badge ${rankColor} mr-4">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">${entry.name}</div>
+                            <div class="text-sm text-gray-500">${entry.date}</div>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-bold text-green-600">${entry.score}/${quizData.length}</div>
+                `;
+                leaderboardList.appendChild(entryElement);
+            });
+        }
+
+        function clearLeaderboard() {
+            if (confirm('Are you sure you want to clear the leaderboard? This action cannot be undone.')) {
+                localStorage.removeItem('environmentalQuizLeaderboard');
+                showLeaderboard();
+            }
+        }
+
+        function backToWelcome() {
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('score').textContent = '0';
+            document.getElementById('total-questions').textContent = quizData.length;
+            
+            // Clear any existing confetti
+            document.querySelectorAll('.confetti').forEach(el => el.remove());
+        });
+    </script>
+</body>
+</html>

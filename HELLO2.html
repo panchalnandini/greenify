@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz with Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-btn {
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-2px);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option-btn.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            height: 8px;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .leaderboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .leaderboard-entry {
+            transition: all 0.3s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            transform: translateX(5px);
+            background: #f7fafc !important;
+        }
+        
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+<body class="quiz-container min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full mx-auto">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="text-center">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                <div class="w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-brain text-white text-4xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Knowledge Challenge</h1>
+                <p class="text-gray-600 text-lg mb-8">Test your knowledge with this comprehensive quiz featuring 25 diverse questions!</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center p-4 bg-blue-50 rounded-xl">
+                        <i class="fas fa-clock text-blue-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-blue-800">25 Questions</h3>
+                        <p class="text-sm text-blue-600">Multiple categories</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-xl">
+                        <i class="fas fa-trophy text-green-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-green-800">Instant Feedback</h3>
+                        <p class="text-sm text-green-600">Learn as you go</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-xl">
+                        <i class="fas fa-chart-line text-purple-500 text-2xl mb-2"></i>
+                        <h3 class="font-semibold text-purple-800">Track Progress</h3>
+                        <p class="text-sm text-purple-600">See your score</p>
+                    </div>
+                </div>
+                
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-4 px-8 rounded-full text-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+                    Start Quiz Now
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                
+                <div class="mt-8">
+                    <button onclick="showLeaderboard()" class="text-blue-600 hover:text-blue-800 font-medium">
+                        <i class="fas fa-trophy mr-2"></i>View Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="question-card p-8 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-sm font-semibold text-gray-600">
+                        Question <span id="current-question">1</span>/<span id="total-questions">25</span>
+                    </div>
+                    <div class="text-sm font-semibold text-blue-600">
+                        Score: <span id="score">0</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar mb-6">
+                    <div id="progress-fill" class="progress-fill" style="width: 4%;"></div>
+                </div>
+                
+                <h2 id="question-text" class="text-2xl font-semibold text-gray-800 mb-6 leading-tight"></h2>
+                
+                <div id="options-container" class="space-y-3"></div>
+                
+                <div class="flex justify-between mt-8">
+                    <button id="prev-btn" onclick="previousQuestion()" class="bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Previous
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <div class="result-card p-8 text-center">
+                <div class="w-32 h-32 bg-white/20 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <i class="fas fa-trophy text-yellow-300 text-5xl"></i>
+                </div>
+                
+                <h2 class="text-3xl font-bold mb-4">Quiz Completed!</h2>
+                <p class="text-xl mb-2">Your final score:</p>
+                <div class="text-6xl font-bold text-yellow-300 mb-6" id="final-score">0</div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-white/10 p-4 rounded-xl">
+                        <p class="text-sm opacity-80">Correct Answers</p>
+                        <p class="text-2xl font-bold" id="correct-answers">0</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl">
+                        <p class="text-sm opacity-80">Total Questions</p>
+                        <p class="text-2xl font-bold" id="total-questions-result">25</p>
+                    </div>
+                </div>
+                
+                <div id="name-input-section" class="mb-6">
+                    <p class="text-white mb-2">Enter your name for the leaderboard:</p>
+                    <input type="text" id="player-name" placeholder="Your Name" maxlength="20" class="px-4 py-2 rounded-lg text-center font-semibold">
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="saveScoreAndShowLeaderboard()" class="bg-green-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-green-600 transition-colors">
+                        <i class="fas fa-trophy mr-2"></i>Save Score
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-white text-purple-600 font-semibold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                    <button onclick="showLeaderboard()" class="bg-blue-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-list mr-2"></i>Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="hidden">
+            <div class="leaderboard-card p-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-trophy text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Leaderboard</h2>
+                    <p class="text-gray-600">Top scores from all players</p>
+                </div>
+                
+                <div id="leaderboard-list" class="space-y-3 mb-8">
+                    <!-- Leaderboard entries will be populated here -->
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="backToWelcome()" class="bg-purple-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-purple-700 transition-colors">
+                        <i class="fas fa-home mr-2"></i>Back to Home
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Play Again
+                    </button>
+                    <button onclick="clearLeaderboard()" class="bg-red-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-red-700 transition-colors">
+                        <i class="fas fa-trash mr-2"></i>Clear Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Paris", "London", "Berlin", "Madrid"],
+                correct: 0
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                correct: 1
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+                correct: 3
+            },
+            {
+                question: "Who painted the Mona Lisa?",
+                options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"],
+                correct: 2
+            },
+            {
+                question: "What is the chemical symbol for gold?",
+                options: ["Go", "Gd", "Au", "Ag"],
+                correct: 2
+            },
+            {
+                question: "Which language has the most native speakers?",
+                options: ["English", "Spanish", "Hindi", "Mandarin Chinese"],
+                correct: 3
+            },
+            {
+                question: "What is the tallest mountain in the world?",
+                options: ["K2", "Mount Kilimanjaro", "Mount Everest", "Matterhorn"],
+                correct: 2
+            },
+            {
+                question: "Which element has the atomic number 1?",
+                options: ["Oxygen", "Carbon", "Hydrogen", "Helium"],
+                correct: 2
+            },
+            {
+                question: "What year did the World Wide Web become publicly available?",
+                options: ["1989", "1991", "1993", "1995"],
+                correct: 2
+            },
+            {
+                question: "Which animal is known as the 'King of the Jungle'?",
+                options: ["Tiger", "Gorilla", "Elephant", "Lion"],
+                correct: 3
+            },
+            // Additional Science Questions
+            {
+                question: "What is the smallest unit of life?",
+                options: ["Atom", "Cell", "Molecule", "Organ"],
+                correct: 1
+            },
+            {
+                question: "Which gas do plants absorb from the atmosphere?",
+                options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+                correct: 2
+            },
+            {
+                question: "What is the speed of light in vacuum?",
+                options: ["299,792 km/s", "150,000 km/s", "450,000 km/s", "1,000,000 km/s"],
+                correct: 0
+            },
+            {
+                question: "Which scientist developed the theory of relativity?",
+                options: ["Isaac Newton", "Albert Einstein", "Stephen Hawking", "Niels Bohr"],
+                correct: 1
+            },
+            // History Questions
+            {
+                question: "In which year did World War II end?",
+                options: ["1943", "1945", "1947", "1950"],
+                correct: 1
+            },
+            {
+                question: "Who was the first President of the United States?",
+                options: ["Thomas Jefferson", "George Washington", "Abraham Lincoln", "John Adams"],
+                correct: 1
+            },
+            {
+                question: "Which ancient civilization built the pyramids?",
+                options: ["Romans", "Greeks", "Egyptians", "Mayans"],
+                correct: 2
+            },
+            // Geography Questions
+            {
+                question: "Which is the largest country by area?",
+                options: ["Canada", "China", "United States", "Russia"],
+                correct: 3
+            },
+            {
+                question: "What is the longest river in the world?",
+                options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
+                correct: 1
+            },
+            // Entertainment Questions
+            {
+                question: "Who directed the movie 'Titanic'?",
+                options: ["Steven Spielberg", "James Cameron", "Christopher Nolan", "George Lucas"],
+                correct: 1
+            },
+            {
+                question: "Which band performed 'Bohemian Rhapsody'?",
+                options: ["The Beatles", "Queen", "Led Zeppelin", "Pink Floyd"],
+                correct: 1
+            },
+            // Technology Questions
+            {
+                question: "What does CPU stand for?",
+                options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Core Processing Unit"],
+                correct: 0
+            },
+            {
+                question: "Which company created the iPhone?",
+                options: ["Samsung", "Google", "Apple", "Microsoft"],
+                correct: 2
+            },
+            // Sports Questions
+            {
+                question: "How many players are on a soccer team during a match?",
+                options: ["9", "10", "11", "12"],
+                correct: 2
+            },
+            {
+                question: "Which country won the FIFA World Cup in 2018?",
+                options: ["Germany", "Brazil", "France", "Argentina"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOptions = Array(quizData.length).fill(null);
+        let userAnswers = Array(quizData.length).fill(null);
+
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            
+            document.getElementById('total-questions').textContent = quizData.length;
+            score = 0;
+            selectedOptions = Array(quizData.length).fill(null);
+            userAnswers = Array(quizData.length).fill(null);
+            currentQuestion = 0;
+            document.getElementById('score').textContent = '0';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 rounded-lg font-medium text-gray-700 hover:bg-blue-50 ${
+                    selectedOptions[currentQuestion] === index ? 'selected bg-blue-100 border-blue-300' : 'bg-white'
+                }`;
+                button.innerHTML = `
+                    <span class="flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3 font-semibold ${
+                            selectedOptions[currentQuestion] === index ? 'bg-blue-600 text-white' : 'text-gray-600'
+                        }">${String.fromCharCode(65 + index)}</span>
+                        ${option}
+                    </span>
+                `;
+                button.onclick = () => selectOption(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function selectOption(index) {
+            selectedOptions[currentQuestion] = index;
+            userAnswers[currentQuestion] = index;
+            
+            // Update score immediately when an option is selected
+            if (index === quizData[currentQuestion].correct) {
+                // Only add score if this question wasn't already answered correctly
+                if (userAnswers[currentQuestion] !== quizData[currentQuestion].correct) {
+                    score++;
+                    document.getElementById('score').textContent = score;
+                }
+            } else {
+                // If changing from correct to incorrect answer, decrement score
+                if (userAnswers[currentQuestion] === quizData[currentQuestion].correct) {
+                    score--;
+                    document.getElementById('score').textContent = score;
+                }
+            }
+            
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('prev-btn').classList.toggle('opacity-50', currentQuestion === 0);
+            document.getElementById('prev-btn').classList.toggle('cursor-not-allowed', currentQuestion === 0);
+            
+            const nextText = currentQuestion === quizData.length - 1 ? 'Finish' : 'Next';
+            document.getElementById('next-btn').innerHTML = `${nextText} <i class="fas fa-arrow-right ml-2"></i>`;
+        }
+
+        function showResults() {
+            // Calculate final score based on all correct answers
+            let finalScore = 0;
+            for (let i = 0; i < quizData.length; i++) {
+                if (userAnswers[i] === quizData[i].correct) {
+                    finalScore++;
+                }
+            }
+            score = finalScore;
+            
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('correct-answers').textContent = score;
+            document.getElementById('total-questions-result').textContent = quizData.length;
+            
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const container = document.querySelector('.quiz-container');
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.background = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'][Math.floor(Math.random() * 5)];
+                container.appendChild(confetti);
+            }
+        }
+
+        function saveScoreAndShowLeaderboard() {
+            const playerName = document.getElementById('player-name').value.trim() || 'Anonymous';
+            saveScoreToLeaderboard(playerName, score);
+            showLeaderboard();
+        }
+
+        function saveScoreToLeaderboard(name, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+            
+            // Add new score
+            leaderboard.push({
+                name: name,
+                score: score,
+                date: new Date().toLocaleDateString()
+            });
+            
+            // Sort by score descending
+            leaderboard.sort((a, b) => b.score - a.score);
+            
+            // Keep only top 10 scores
+            leaderboard = leaderboard.slice(0, 10);
+            
+            // Save back to localStorage
+            localStorage.setItem('quizLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function showLeaderboard() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('leaderboard-screen').classList.remove('hidden');
+            
+            const leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '';
+            
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                        <p>No scores yet! Be the first to play!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            leaderboard.forEach((entry, index) => {
+                const rankColors = [
+                    'bg-yellow-400', // 1st
+                    'bg-gray-300',   // 2nd
+                    'bg-orange-400', // 3rd
+                    'bg-blue-200',   // 4th-10th
+                ];
+                
+                const rankColor = index < 3 ? rankColors[index] : rankColors[3];
+                
+                const entryElement = document.createElement('div');
+                entryElement.className = 'leaderboard-entry flex items-center justify-between p-4 rounded-lg bg-gray-50';
+                entryElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="rank-badge ${rankColor} mr-4">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">${entry.name}</div>
+                            <div class="text-sm text-gray-500">${entry.date}</div>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-bold text-blue-600">${entry.score}/${quizData.length}</div>
+                `;
+                leaderboardList.appendChild(entryElement);
+            });
+        }
+
+        function clearLeaderboard() {
+            if (confirm('Are you sure you want to clear the leaderboard? This action cannot be undone.')) {
+                localStorage.removeItem('quizLeaderboard');
+                showLeaderboard();
+            }
+        }
+
+        function backToWelcome() {
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('score').textContent = '0';
+            document.getElementById('total-questions').textContent = quizData.length;
+            
+            // Clear any existing confetti
+            document.querySelectorAll('.confetti').forEach(el => el.remove());
+        });
+    </script>
+</body>
+</html>
+
