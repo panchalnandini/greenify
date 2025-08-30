@@ -1,0 +1,123 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f9fafb;
+  margin: 0;
+  padding: 20px;
+}
+
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+
+.pointlevelstreak {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card-box {
+  background: #fff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Activities List */
+.activities-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.activity-item {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Header with title and points */
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-title {
+  font-size: 18px;
+  margin: 0;
+}
+
+.points {
+  font-size: 14px;
+  color: #f39c12;
+  font-weight: bold;
+}
+
+
+.activity-description {
+  font-size: 14px;
+  color: #555;
+  margin: 10px 0 15px;
+}
+
+
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.beginner { background: #2ecc71; }
+.challenge { background: #9b59b6; }
+.intermediate { background: #f1c40f; color: #333; }
+.outdoor { background: #3498db; }
+
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+
+.start-button {
+  background: #000;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.start-button:hover {
+  background: #333;
+}
