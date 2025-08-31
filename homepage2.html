@@ -1,48 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
-    <link
-      as="style"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Spline+Sans%3Awght%40400%3B500%3B700"
-      onload="this.rel='stylesheet'"
-      rel="stylesheet"
-    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="environment.css" />
-    <title>Stitch Design</title>
-    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <style type="text/tailwindcss">
-      :root {
-        --primary-color: #ea2a33;
-      }
-      body {
-        font-family: "Spline Sans", sans-serif;
-      }
-      .material-symbols-outlined {
-        font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
-      }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
-      }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
-      }
-    </style>
   </head>
   <body class="bg-gray-900 text-white">
+    <!-- Menu Button -->
+    <button
+      class="menu-toggle fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded"
+    >
+      ☰
+    </button>
+
     <div class="relative flex size-full min-h-screen group/design-root">
+      <!-- Sidebar -->
       <aside
-        class="sticky top-0 h-screen bg-gray-800/80 backdrop-blur-sm border-r border-gray-700 w-64 flex flex-col"
+        id="sidebar"
+        class="sidebar fixed top-0 left-0 h-screen bg-gray-800/90 backdrop-blur-sm border-r border-gray-700 w-64 flex flex-col -translate-x-full transition-transform duration-300 pl-12"
       >
         <div class="p-4 flex items-center gap-2">
           <span
@@ -51,467 +31,305 @@
           >
           <h1 class="text-xl font-bold">Gamify</h1>
         </div>
-        <nav class="flex-grow p-4">
+        <nav class="flex-1 py-2">
           <a
-            class="flex items-center gap-3 text-lg font-medium text-[var(--primary-color)] mb-4"
             href="#"
+            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            >Dashboard</a
           >
-            <span class="material-symbols-outlined">timeline</span>
-            <span>Activities</span>
-          </a>
           <a
-            class="flex items-center gap-3 text-lg text-gray-400 hover:text-white mb-4"
-            href="HELLO2.html"
-          >
-            <span class="material-symbols-outlined">help</span>
-            <span>Quiz</span>
-          </a>
-          <a
-            class="flex items-center gap-3 text-lg text-gray-400 hover:text-white mb-4"
-            href=""
-          >
-            <span class="material-symbols-outlined">stadia_controller</span>
-            <span>Games</span>
-          </a>
-          <a
-            class="flex items-center gap-3 text-lg text-gray-400 hover:text-white"
             href="#"
+            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            >Activities</a
           >
-            <span class="material-symbols-outlined">groups</span>
-            <span>Community</span>
-          </a>
+          <a
+            href="#"
+            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            >Leaderboard</a
+          >
+          <a
+            href="#"
+            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            >Profile</a
+          >
         </nav>
       </aside>
-      <div class="flex-grow">
-        <header class="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm">
-          <div class="flex items-center p-4 justify-between">
-            <h1 class="text-2xl font-bold">Activities</h1>
-            <div class="relative" x-data="{ open: false }">
-              <button
-                @click="open = !open"
-                class="flex items-center gap-2 focus:outline-none"
+
+      <!-- Main Content -->
+      <div
+        id="main"
+        class="flex-grow ml-0 pl-16 transition-all duration-300 p-8"
+      >
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+          <h1 class="text-3xl font-bold">Activities</h1>
+          <div class="relative">
+            <!-- Dropdown Button -->
+            <button
+              id="dropdownBtn"
+              class="flex items-center gap-2 bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-700"
+            >
+              <img
+                src="https://i.pravatar.cc/40"
+                alt="User"
+                class="w-8 h-8 rounded-full"
+              />
+              <span>Jane Doe</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div
+              id="dropdownMenu"
+              class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-lg shadow-lg hidden"
+            >
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Profile</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700"
+                >Dashboard</a
               >
-                <img
-                  alt="Profile picture"
-                  class="w-10 h-10 rounded-full"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD43mhJh4io0WxLm6K48pmvkHyqNsfZiUIMFgmanVQcO0We3QQkwnuKbZhIHS7u7kXzInI-fh1d2DSnt-9BlGbuQNHMEq2-gIPUCYgAZ7k2fJPySTtWivhs_shmxUPJ07fZz1I3aijqBozHc2CmcziYo0S0gv4sjWU9Vbn6fw3sLBqeRaB91aoZrA247TggVs5fjZGJksiRoa61To4IfhCvVKqbv60ZOaHkBuTTDiL_Tkg_p8DAgit37CKj5ruhNu1iyBPuhguq5D2b"
-                />
-                <span class="font-semibold">Jane Doe</span>
-                <span class="material-symbols-outlined">expand_more</span>
-              </button>
-              <div
-                @click.away="open = false"
-                class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20"
-                style="display: none"
-                x-show="open"
-                x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                x-transition:leave-start="transform opacity-100 scale-100"
-              >
-                <a
-                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  href="#"
-                  >Edit Profile</a
-                >
-                <a
-                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  href="#"
-                  >Leaderboard</a
-                >
-                <a
-                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  href="#"
-                  >Badges</a
-                >
-                <a
-                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  href="#"
-                  >Help &amp; Support</a
-                >
-                <div class="border-t border-gray-700"></div>
-                <a
-                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  href="#"
-                  >Logout</a
-                >
-              </div>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Badges</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Logout</a>
             </div>
           </div>
         </header>
-        <!-- from here activities starts  -->
-         
-    <h2 class="title">🌍 Environmental Activities</h2>
-    <p class="subtitle">Earn points while learning to protect our planet</p>
 
-    <div class="pointlevelstreak">
-      <div class="card-box">⭐ Total Points: <span>250</span></div>
-      <div class="card-box">🎯 Level: <span>Beginner</span></div>
-      <div class="card-box">🔥 Streak: <span>5 Days</span></div>
-    </div>
+        <!-- Hero Section -->
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold mb-2">
+            🌍 Environmental Activities
+          </h2>
+          <p class="text-gray-400 mb-4">
+            Earn points while learning to protect our planet
+          </p>
+          <div class="flex gap-4">
+            <span
+              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              >⭐ Total Points: 250</span
+            >
+            <span
+              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              >🎯 Level: Beginner</span
+            >
+            <span
+              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              >🔥 Streak: 5 Days</span
+            >
+          </div>
+        </section>
 
-    <div class="activities-list">
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">♻️ Recycling Challenge</h4>
-          <span class="points">+50</span>
-        </div>
-        <p class="activity-description">
-          Sort and recycle household items correctly.
-        </p>
-        <div class="tags">
-          <span class="tag beginner">beginner</span>
-          <span class="tag challenge">challenge</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 15 min</span>
-          <span>👥 1200</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
+        <!-- Activities Grid -->
+        <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Activity Card -->
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                ♻️ Recycling Challenge <span class="text-orange-500">+50</span>
+              </h3>
+              <p class="mb-4">Sort and recycle household items correctly.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+                  >beginner</span
+                >
+                <span
+                  class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full"
+                  >challenge</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 15 min</span>
+                <span>👥 1200</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
 
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">🌳 Tree Planting</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Plant a tree in your community or garden.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
+          <!-- More Activity Cards -->
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                🌳 Tree Planting <span class="text-orange-500">+75</span>
+              </h3>
+              <p class="mb-4">Plant a tree in your community or garden.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full"
+                  >intermediate</span
+                >
+                <span
+                  class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full"
+                  >outdoor</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 20 min</span>
+                <span>👥 500</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
 
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">💡 Energy Saving</h4>
-          <span class="points">+40</span>
-        </div>
-        <p class="activity-description">
-          Implement energy-saving practices at home.
-        </p>
-        <div class="tags">
-          <span class="tag beginner">beginner</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 10 min</span>
-          <span>👥 800</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">3 Water-Jar</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">Power Of Emotions</p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">Indoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Find the item</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Find the item in your home which is harming the environment the most.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">Indoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Use Cycle instead of Any Vehical</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">Use Cycle instead of Any Vehical</p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Bottle Bank</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Collect and recycle at least 5 plastic bottles. Upload photo proof.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Plant Buddy</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          take care of a plant for a week and share its growth journey.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Waste Audit</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Track how much plastic you use in one day.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Mini Garden Project</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Start a balcony garden or plant a tree (with before/after pics).
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Eco Innovation</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Create something from waste (DIY upcycling project).
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Eco Pledge</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Make a small pledge (e.g., “I will switch off lights when leaving a
-          room”).
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Sorting Game</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Drag-and-drop waste into the correct bin (recyclable, compost,
-          landfill).
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Donation Drive 🚗</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Organize a local donation drive for clothes or books.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">Seed Bombing And Play Holi</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Make seed bombs using clay, compost, and seeds. Throw them in
-          neglected areas to grow plants.And play holi without colors(With
-          Water).
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <!-- <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">🌳 Tree Planting</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Plant a tree in your community or garden.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>
-
-      <div class="activity-item">
-        <div class="activity-header">
-          <h4 class="activity-title">🌳 Tree Planting</h4>
-          <span class="points">+75</span>
-        </div>
-        <p class="activity-description">
-          Plant a tree in your community or garden.
-        </p>
-        <div class="tags">
-          <span class="tag intermediate">intermediate</span>
-          <span class="tag outdoor">outdoor</span>
-        </div>
-        <div class="meta">
-          <span>⏱ 20 min</span>
-          <span>👥 500</span>
-        </div>
-        <button class="start-button">Start Activity</button>
-      </div>  -->
-    </div>
-  
-
-        </main>
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                💡 Energy Saving <span class="text-orange-500">+40</span>
+              </h3>
+              <p class="mb-4">Implement energy-saving practices at home.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+                  >beginner</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 10 min</span>
+                <span>👥 800</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                💡 Energy Saving <span class="text-orange-500">+40</span>
+              </h3>
+              <p class="mb-4">Implement energy-saving practices at home.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+                  >beginner</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 10 min</span>
+                <span>👥 800</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                💡 Energy Saving <span class="text-orange-500">+40</span>
+              </h3>
+              <p class="mb-4">Implement energy-saving practices at home.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+                  >beginner</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 10 min</span>
+                <span>👥 800</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
+          <div
+            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                💡 Energy Saving <span class="text-orange-500">+40</span>
+              </h3>
+              <p class="mb-4">Implement energy-saving practices at home.</p>
+              <div class="flex gap-2 mb-2">
+                <span
+                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+                  >beginner</span
+                >
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>⏱ 10 min</span>
+                <span>👥 800</span>
+              </div>
+            </div>
+            <button
+              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
+            >
+              Start Activity
+            </button>
+          </div>
+        </section>
       </div>
     </div>
-    <script
-      defer=""
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-    ></script>
-<script>
-  // Sidebar toggle
-  const menuBtn = document.querySelector('.menu-btn');
-  const sidebar = document.querySelector('.sidebar');
-  const main = document.querySelector('.main');
 
-  menuBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    main.classList.toggle('shift');
-  });
+    <!-- Sidebar Toggle Script -->
+    <script>
+      const menuBtn = document.querySelector(".menu-toggle");
+      const sidebar = document.getElementById("sidebar");
+      const main = document.getElementById("main");
 
-  // Profile dropdown
-  const profile = document.querySelector('.profile');
-  profile.addEventListener('click', () => {
-    profile.classList.toggle('active');
-  });
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle("-translate-x-full");
+        main.classList.toggle("ml-64");
+      });
 
-  // Close dropdown if click outside
-  document.addEventListener('click', (e) => {
-    if (!profile.contains(e.target)) {
-      profile.classList.remove('active');
-    }
-  });
-</script>
+      // Auto-close when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !sidebar.contains(e.target) &&
+          !menuBtn.contains(e.target) &&
+          !sidebar.classList.contains("-translate-x-full")
+        ) {
+          sidebar.classList.add("-translate-x-full");
+          main.classList.remove("ml-64");
+        }
+      });
+    </script>
 
+    <!-- Dropdown Script -->
+    <script>
+      const dropdownBtn = document.getElementById("dropdownBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
 
+      // Toggle dropdown
+      dropdownBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle("hidden");
+      });
 
+      // Close when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !dropdownBtn.contains(e.target) &&
+          !dropdownMenu.contains(e.target)
+        ) {
+          dropdownMenu.classList.add("hidden");
+        }
+      });
+    </script>
   </body>
 </html>
-
-
