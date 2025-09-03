@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Greenyfy</title>
+    <title>Gamify</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -29,7 +29,7 @@
             class="material-symbols-outlined text-[var(--primary-color)] text-3xl"
             >hub</span
           >
-          <h1 class="text-xl font-bold">Greenify</h1>
+          <h1 class="text-xl font-bold">Gamify</h1>
         </div>
         <nav class="flex-1 py-2">
           <a
@@ -247,21 +247,17 @@
       // Handle menu clicks
       menuItems.forEach((item) => {
         item.addEventListener("click", (e) => {
-          e.preventDefault();
           const page = item.getAttribute("data-page");
 
-          // Change page title
-          pageTitle.textContent = item.textContent;
-
-          // Populate center box only for Activities
+          // Only stop navigation for Activities
           if (page === "activities") {
+            e.preventDefault();
+            pageTitle.textContent = item.textContent;
             renderActivities();
-          } else {
-            centerBox.innerHTML = `<div class="flex items-center justify-center text-gray-400">This page will load here</div>`;
           }
+          // Games & Dashboard will just follow their href normally
         });
       });
     </script>
   </body>
 </html>
-
