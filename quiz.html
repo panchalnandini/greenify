@@ -1,0 +1,362 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Environment — 10 Quizzes × 10 MCQs (100 Qs)</title>
+<style>
+  :root{
+    --bg:#0f1724;--card:#0b1220;--muted:#93a3b8;--accent:#16a34a;--accent2:#059669;--outline:rgba(255,255,255,.06)
+  }
+  *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial}
+  body{margin:0;background:linear-gradient(180deg,#0a1328 0%,#0b1a2b 60%);color:#e7eef6}
+  .wrap{max-width:1000px;margin:28px auto;padding:20px}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  h1{font-size:20px;margin:0}
+  p.lead{margin:4px 0 0;color:var(--muted)}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  select,button{
+    background:rgba(255,255,255,.03);border:1px solid var(--outline);color:inherit;border-radius:10px;padding:9px 12px;cursor:pointer
+  }
+  button.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;box-shadow:0 8px 22px rgba(16,185,129,.12)}
+  button.ghost{background:transparent}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+        border:1px solid var(--outline);border-radius:14px;padding:16px}
+  .question{font-weight:600;margin-bottom:8px}
+  .options{display:grid;gap:8px;margin:10px 0}
+  label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;
+            background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+  .explain{display:none;margin-top:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);
+           padding:10px;border-radius:8px}
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:var(--muted)}
+  .score{font-weight:700;color:var(--accent)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .bar{height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden}
+  .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .pill{padding:4px 8px;border-radius:999px;border:1px solid var(--outline);font-size:12px;color:var(--muted)}
+  .qnav{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .qbtn{padding:6px 8px;border-radius:8px;background:transparent;border:1px solid var(--outline);cursor:pointer}
+  .qbtn.active{background:rgba(255,255,255,.04)}
+  .muted{color:var(--muted);font-size:13px}
+  .review{display:none}
+  .hidden{display:none}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <h1>Environment — 10 Quizzes × 10 MCQs</h1>
+      <p class="lead">All 100 questions converted to multiple choice. Pick a quiz and go! (No animations.)</p>
+    </div>
+  </header>
+
+  <div class="controls">
+    <select id="quizSelect" aria-label="Select quiz">
+      <option value="0">Quiz 1 (Q1–Q10)</option>
+      <option value="1">Quiz 2 (Q11–Q20)</option>
+      <option value="2">Quiz 3 (Q21–Q30)</option>
+      <option value="3">Quiz 4 (Q31–Q40)</option>
+      <option value="4">Quiz 5 (Q41–Q50)</option>
+      <option value="5">Quiz 6 (Q51–Q60)</option>
+      <option value="6">Quiz 7 (Q61–Q70)</option>
+      <option value="7">Quiz 8 (Q71–Q80)</option>
+      <option value="8">Quiz 9 (Q81–Q90)</option>
+      <option value="9">Quiz 10 (Q91–Q100)</option>
+    </select>
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn" class="primary">Next</button>
+    <button id="checkBtn">Check</button>
+    <button id="finishBtn" class="ghost">Finish Quiz</button>
+    <span class="pill" id="statusPill">Q1/10</span>
+    <div style="margin-left:auto;min-width:200px">
+      <div class="bar" aria-label="Progress"><span id="prog" style="width:0%"></span></div>
+    </div>
+  </div>
+
+  <div id="card" class="card" role="group" aria-labelledby="qtitle"></div>
+
+  <div class="qnav" id="qnav"></div>
+
+  <div class="meta">
+    <div>Selected quiz: <strong id="quizName">Quiz 1</strong></div>
+    <div>Score: <span class="score" id="score">0/0</span></div>
+  </div>
+
+  <div id="review" class="review card" aria-live="polite" style="margin-top:14px"></div>
+
+  <p class="muted" style="margin-top:14px">
+    Tip: You can save this page as a single file (<em>File → Save Page As</em>) and use it offline.
+    Source adapted & compiled from your uploaded set. :contentReference[oaicite:1]{index=1}
+  </p>
+</div>
+
+<script>
+/* =========================
+   DATA — 100 MCQs (10×10)
+   =========================
+   Notes:
+   - For Q1–30, wording is from your original MCQs.
+   - For Q31–100, your short/case/essay items were transformed into clear MCQs.
+   - Each item: { id, q, choices[4], ans, exp }
+*/
+const ALL = [
+/* ---------- Quiz 1 : Q1–Q10 ---------- */
+[
+{id:1,q:"Which of the following is an ecocentric worldview?",choices:["Belief in unlimited resource use","Nature-centered approach","Humans as resource managers","Technology will solve all problems"],ans:1,exp:"Ecocentrism is nature-centered."},
+{id:2,q:"Which is an example of an open system?",choices:["The Earth","The universe","A forest ecosystem","A sealed bottle"],ans:2,exp:"A forest exchanges matter & energy with surroundings."},
+{id:3,q:"Which historical event raised awareness of pesticide dangers?",choices:["Chernobyl","Rachel Carson's Silent Spring","Green Revolution","Montreal Protocol"],ans:1,exp:"Silent Spring (1962) catalyzed environmental awareness."},
+{id:4,q:"Which biome has the highest net primary productivity?",choices:["Desert","Tundra","Tropical rainforest","Savanna"],ans:2,exp:"Tropical rainforests have very high NPP."},
+{id:5,q:"Which of the following is a primary pollutant?",choices:["Ozone in the stratosphere","Carbon monoxide from cars","Sulfates formed from SO₂","Nitrates in lakes"],ans:1,exp:"CO is emitted directly (primary)."},
+{id:6,q:"Carrying capacity refers to:",choices:["Max species in a community","Maximum population the environment can sustain","Maximum biodiversity of an ecosystem","Largest predator population"],ans:1,exp:"It's the sustainable population size."},
+{id:7,q:"Which gas is most responsible for ozone depletion?",choices:["CO₂","CFCs","CH₄","N₂O"],ans:1,exp:"CFCs catalyze O₃ destruction in the stratosphere."},
+{id:8,q:"What does the Simpson Diversity Index measure?",choices:["Productivity","Species diversity","Population density","Nutrient cycling"],ans:1,exp:"It captures richness and evenness."},
+{id:9,q:"The Montreal Protocol (1987) targeted reduction of:",choices:["Greenhouse gases","Nuclear testing","CFCs/ODS","DDT"],ans:2,exp:"It phased out ozone-depleting substances."},
+{id:10,q:"Which is an example of a negative feedback loop?",choices:["Melting ice reduces albedo → more warming","Increased CO₂ → stronger greenhouse effect","Predator–prey population regulation","Methane release from permafrost"],ans:2,exp:"Predator–prey dynamics can stabilize populations."},
+],
+/* ---------- Quiz 2 : Q11–Q20 ---------- */
+[
+{id:11,q:"Eutrophication is primarily caused by:",choices:["Excess nutrients entering water","Overfishing","Oil spills","Improved sewage treatment"],ans:0,exp:"N & P inputs drive algal blooms."},
+{id:12,q:"Which process removes CO₂ from the atmosphere?",choices:["Respiration","Combustion","Photosynthesis","Denitrification"],ans:2,exp:"Photosynthesis fixes CO₂ into biomass."},
+{id:13,q:"Photochemical smog is linked to high concentrations of:",choices:["SO₂ and particulates","Ozone and NOₓ","CH₄ and CO₂","CFCs and halons"],ans:1,exp:"Sunlight + NOₓ + VOCs → O₃ smog."},
+{id:14,q:"An example of point-source pollution is:",choices:["Agricultural runoff","Factory pipe discharge into a river","Urban air pollution","Beach plastics"],ans:1,exp:"A single, identifiable source."},
+{id:15,q:"Which is a renewable energy source?",choices:["Coal","Oil","Solar","Natural gas"],ans:2,exp:"Solar energy is renewable."},
+{id:16,q:"Biodiversity includes all EXCEPT:",choices:["Species diversity","Genetic diversity","Habitat diversity","Monoculture production"],ans:3,exp:"Monoculture reduces biodiversity."},
+{id:17,q:"Which measure best describes water stress?",choices:["Per-capita freshwater availability","Annual rainfall total","Number of dams","River length"],ans:0,exp:"Availability per person is key."},
+{id:18,q:"Acid deposition mainly results from emissions of:",choices:["CO₂ and CH₄","SO₂ and NOₓ","O₃ and VOCs","N₂ and O₂"],ans:1,exp:"They form sulfuric/nitric acids."},
+{id:19,q:"Which conservation tool preserves genetic material ex situ?",choices:["Protected area","Seed bank","Ecotourism","Sustainable harvesting"],ans:1,exp:"Seed banks store genetic diversity off-site."},
+{id:20,q:"Desertification is most strongly associated with:",choices:["Overgrazing and deforestation","Volcanic activity","Glacial retreat","Rising sea level"],ans:0,exp:"Land mismanagement plus drought."},
+],
+/* ---------- Quiz 3 : Q21–Q30 ---------- */
+[
+{id:21,q:"Net primary productivity (NPP) =",choices:["GPP + respiration","GPP − respiration","Respiration − GPP","Detritus production"],ans:1,exp:"NPP = GPP − R."},
+{id:22,q:"Which of the following is a non-biodegradable pollutant?",choices:["Paper","Glass","Food waste","Grass clippings"],ans:1,exp:"Glass does not biodegrade."},
+{id:23,q:"Which action is an example of mitigation against climate change?",choices:["Building seawalls","Reducing CO₂ emissions","Relocating communities","Emergency response planning"],ans:1,exp:"Mitigation cuts emissions."},
+{id:24,q:"An intrinsic value of nature is:",choices:["Tourism revenue","Ecosystem services value","Spiritual importance of a forest","Timber price"],ans:2,exp:"Intrinsic = non-economic value."},
+{id:25,q:"Which index measures ecological footprint?",choices:["Simpson index","Human Development Index","Global Footprint Network EF","Biodiversity Intactness Index"],ans:2,exp:"Global Footprint Network provides EF."},
+{id:26,q:"A characteristic of sustainable development is:",choices:["Short-term profit maximization","Meeting present needs without compromising future generations","Unlimited extraction","Ignoring social equity"],ans:1,exp:"Brundtland definition."},
+{id:27,q:"Which practice best reduces soil erosion?",choices:["Clear-cutting","Contour ploughing","Overgrazing","Monocropping"],ans:1,exp:"Contours slow runoff."},
+{id:28,q:"An effect of deforestation on the carbon cycle is:",choices:["More carbon sequestration","More atmospheric CO₂","Less soil exposure","Stabilized climate"],ans:1,exp:"Less storage, more CO₂."},
+{id:29,q:"Which is an example of adaptive management?",choices:["Ignore monitoring","Adjust strategy based on data","Use one fixed plan forever","Ban local participation"],ans:1,exp:"Adapt iteratively from feedback."},
+{id:30,q:"Water harvesting is primarily used to:",choices:["Increase groundwater recharge","Raise sea levels","Pollute rivers","Destroy wetlands"],ans:0,exp:"Captures water to enhance local supply."},
+],
+/* ---------- Quiz 4 : Q31–Q40 (converted short → MCQ) ---------- */
+[
+{id:31,q:"An environmental value system (EVS) is best defined as:",choices:["A list of laws","A worldview shaping environmental perceptions & actions","A lab method","A species list"],ans:1,exp:"Worldview influencing decisions."},
+{id:32,q:"Anthropocentrism vs technocentrism — correct pair:",choices:["Humans at centre; tech is irrelevant","Humans at centre; tech-led solutions emphasised","Nature intrinsic; no tech","Only economics matters"],ans:1,exp:"Anthropocentric focus + tech emphasis."},
+{id:33,q:"Historical catalysts of the environmental movement include:",choices:["Only Montreal (1987)","Only industrial revolution","Silent Spring (1962) and Chernobyl (1986)","Bretton Woods (1944)"],ans:2,exp:"Both events raised awareness."},
+{id:34,q:"In environmental science, models:",choices:["Replace data","Are perfect","Simplify systems to test scenarios, limited by assumptions","Have no uncertainty"],ans:2,exp:"Useful but assumption-bound."},
+{id:35,q:"Forest ecosystem inputs/outputs — correct set:",choices:["Inputs: oxygen, biomass | Outputs: sunlight, water","Inputs: sunlight, water, nutrients | Outputs: oxygen, biomass, CO₂","Inputs: plastics only | Outputs: methane only","Inputs = Outputs"],ans:1,exp:"Classic inputs/outputs."},
+{id:36,q:"Difference between GPP and NPP:",choices:["GPP excludes respiration","NPP = GPP − respiration","NPP includes detritus + respiration","They are identical"],ans:1,exp:"Definition."},
+{id:37,q:"Ecological footprint (EF) measures:",choices:["Happiness","Area needed to support consumption and absorb waste","GDP","Protected land only"],ans:1,exp:"Land/water demand indicator."},
+{id:38,q:"Biodiversity is important because:",choices:["Only for aesthetics","It provides ecosystem services & resilience","It reduces resilience","It prevents evolution"],ans:1,exp:"Services + stability."},
+{id:39,q:"A major threat to biodiversity is:",choices:["Habitat loss and invasive species","Clouds","Plate tectonics","Earth’s rotation"],ans:0,exp:"Primary drivers."},
+{id:40,q:"Carrying capacity means:",choices:["Max # species possible","Max population an environment can sustain long-term","Max ecosystem area","Max predator biomass"],ans:1,exp:"Long-term sustainable population."},
+],
+/* ---------- Quiz 5 : Q41–Q50 ---------- */
+[
+{id:41,q:"Soil erosion is:",choices:["Creation of topsoil","Removal of topsoil (e.g., by water/wind) often due to deforestation/overgrazing","Volcanic deposition","Soil fertilization"],ans:1,exp:"Definition + human cause."},
+{id:42,q:"Two key sources of fresh water are:",choices:["Ocean & clouds","Rivers/lakes and groundwater (aquifers)","Hot springs only","Deserts"],ans:1,exp:"Surface and groundwater."},
+{id:43,q:"Point-source pollution example:",choices:["Diffuse farm runoff","Sewage outfall pipe","Vehicle emissions across a city","Littering beaches"],ans:1,exp:"Single discharge point."},
+{id:44,q:"Eutrophication is:",choices:["Nutrient enrichment leading to algal blooms & oxygen depletion","Ocean salinity increase","Freshwater freezing","Ozone formation"],ans:0,exp:"Classic definition."},
+{id:45,q:"Why are invasive species problematic?",choices:["They always raise diversity","They outcompete natives, alter habitats, spread disease","They fix ozone","They reduce resilience to zero only"],ans:1,exp:"Multiple mechanisms."},
+{id:46,q:"Photochemical smog forms when:",choices:["SO₂ + dust at night","NOₓ and VOCs react in sunlight producing ozone/secondary pollutants","Only CO₂ accumulates","Rain reacts with H₂"],ans:1,exp:"Sun-driven chemistry."},
+{id:47,q:"An effect of acid deposition is:",choices:["Soil nutrient leaching and lake acidification","Greener leaves","Higher pH of rain","Ozone layer repair"],ans:0,exp:"Leaching & acid lakes."},
+{id:48,q:"Major human causes of climate change:",choices:["Deforestation and fossil fuel burning (CO₂), methane from agriculture","Plate drift","Solar eclipses","Tides"],ans:0,exp:"Key drivers."},
+{id:49,q:"A renewable resource is one that:",choices:["Never changes","Can be replenished on human timescales","Only increases in price","Is mined"],ans:1,exp:"E.g., solar, wind."},
+{id:50,q:"Sustainable farming example:",choices:["Monocropping with heavy tillage","Agroforestry / crop rotation / IPM","Burning crop residues always","Over-irrigation"],ans:1,exp:"Sustainable methods."},
+],
+/* ---------- Quiz 6 : Q51–Q60 ---------- */
+[
+{id:51,q:"Biomagnification is:",choices:["Toxins diluted up food chains","Increase of toxin concentration at higher trophic levels","Only in producers","Same as bioaccumulation in one organism"],ans:1,exp:"Concentration rises up the chain."},
+{id:52,q:"The precautionary principle states that:",choices:["Act only with full proof","If suspected risk exists, take precaution even without full certainty","Ignore unknowns","Wait for consensus"],ans:1,exp:"Preventive action under uncertainty."},
+{id:53,q:"An advantage of protected areas is:",choices:["Guaranteed extinction","Habitat protection & biodiversity conservation","Increased poaching by design","No ecosystem services"],ans:1,exp:"Core purpose."},
+{id:54,q:"Sustainable development (Brundtland) means:",choices:["Max current profits","Meeting present needs without compromising future generations","Only protect forests","Stop development"],ans:1,exp:"Classic definition."},
+{id:55,q:"An environmental indicator is:",choices:["Any opinion","A measurable variable of environmental state (e.g., CO₂ level)","A logo","A hashtag"],ans:1,exp:"Quantifiable metric."},
+{id:56,q:"A socio-economic factor in decisions is:",choices:["Magnetism","Cultural values/economics/politics","Earth’s tilt","Star color"],ans:1,exp:"Society & economy matter."},
+{id:57,q:"Which is an ecosystem service?",choices:["Pollination / water purification / flood regulation","Space travel","Indoor plumbing","Texting"],ans:0,exp:"Services nature provides."},
+{id:58,q:"A method to measure water quality:",choices:["Check color only","Measure DO/BOD, pH, nutrients, turbidity, bioindicators","Smell test only","Throw dye"],ans:1,exp:"Standard metrics."},
+{id:59,q:"Sustainable yield in fisheries is:",choices:["Taking all fish quickly","Catch that maintains stock productivity (e.g., MSY)","Ignoring recruitment","Only bycatch"],ans:1,exp:"Yield without stock decline."},
+{id:60,q:"Urbanization often causes:",choices:["More forests","Habitat fragmentation & runoff/pollution; heat-island effect","Fewer roads","Colder cities"],ans:1,exp:"Common impacts."},
+],
+/* ---------- Quiz 7 : Q61–Q70 ---------- */
+[
+{id:61,q:"Bioaccumulation is:",choices:["Build-up of a substance inside an organism over time","Increase across trophic levels","Immediate excretion","Only for nutrients"],ans:0,exp:"Within a single organism."},
+{id:62,q:"Monitoring in adaptive management is important because it:",choices:["Replaces action","Provides data to adjust strategies","Eliminates uncertainty","Stops participation"],ans:1,exp:"Feedback loop."},
+{id:63,q:"A cultural ecosystem service is:",choices:["Recreation/heritage/spiritual value","Nutrient cycling","Primary production","Decomposition"],ans:0,exp:"Non-material benefits."},
+{id:64,q:"Sampling plant richness in grassland — best method:",choices:["Convenience sampling","Random quadrats counting species","Only one large transect always","Ask a friend"],ans:1,exp:"Quadrats are standard."},
+{id:65,q:"Wetlands reduce floods by:",choices:["Creating waves","Storing and slowly releasing water","Heating air","Blocking rivers entirely"],ans:1,exp:"Natural sponges."},
+{id:66,q:"A key driver of deforestation is:",choices:["Starlight","Agricultural expansion/logging/infrastructure","Earth rotation","Polar vortex"],ans:1,exp:"Land-use change."},
+{id:67,q:"An ecological niche is:",choices:["A species’ role/resources/interactions in its environment","A burrow only","A shelter","A random spot"],ans:0,exp:"Full role & requirements."},
+{id:68,q:"To reduce agricultural water pollution:",choices:["Fertilize more often","Use buffer strips & optimize fertilizer timing; constructed wetlands","Remove riparian plants","Drain wetlands"],ans:1,exp:"Prevention at source."},
+{id:69,q:"Coral reefs are vulnerable because:",choices:["Prefer cold water","Warming & acidification cause bleaching and poor calcification","They eat plastics","They live on land"],ans:1,exp:"Thermal/chemical stressors."},
+{id:70,q:"A method to restore degraded soil:",choices:["Remove all vegetation","Add organic matter, revegetate, contour/terrace","Over-till","Salt the field"],ans:1,exp:"Rebuild structure & cover."},
+],
+/* ---------- Quiz 8 : Q71–Q80 (converted case → MCQ) ---------- */
+[
+{id:71,q:"Predator–prey cycles show:",choices:["Predators peak before prey","Prey numbers follow predators","Predators lag behind prey changes","No relationship"],ans:2,exp:"Predators respond with a time lag."},
+{id:72,q:"Carbon cycle storages & flows — correct pick:",choices:["Storage: atmosphere/biomass; Flows: photosynthesis/respiration","Storage: mantle/outer core; Flows: erosion/tsunami","Storage: clouds only; Flows: lightning","Storage: plastics; Flows: recycling"],ans:0,exp:"Key storages & processes."},
+{id:73,q:"Deserts near 30° latitude occur mainly due to:",choices:["Rising moist air","Descending dry air from Hadley cells","Ocean currents only","High mountains"],ans:1,exp:"Subtropical highs suppress rain."},
+{id:74,q:"Why are per-capita CO₂ emissions often higher in MEDCs?",choices:["Lower energy use","More industry/transport & consumption","Fewer cars","More forests"],ans:1,exp:"Higher energy intensity lifestyles."},
+{id:75,q:"Maximum Sustainable Yield (MSY) is:",choices:["Largest take forever without reducing stock below self-replenishment","Catch until collapse","Zero catch","Only recreational catch"],ans:0,exp:"Definition of MSY."},
+{id:76,q:"Main cause of ozone layer thinning:",choices:["Water vapour","CFCs/ODS releasing Cl/Br radicals","CO₂","Dust"],ans:1,exp:"Catalytic destruction of O₃."},
+{id:77,q:"Bhopal disaster impacts included:",choices:["Only positive economic growth","Toxic contamination and major loss of life/health effects","Forest expansion","Ozone repair"],ans:1,exp:"Severe environmental & social harm."},
+{id:78,q:"To reduce agricultural water demand:",choices:["Flood irrigation","Drip irrigation & crop switching; reuse treated water","Over-watering at noon","Ban mulching"],ans:1,exp:"Efficiency + demand management."},
+{id:79,q:"If organic waste dominates domestic waste, manage it by:",choices:["Landfilling all","Open burning","Composting/anaerobic digestion","Dumping at sea"],ans:2,exp:"Turn organics into resource."},
+{id:80,q:"Soil horizons A/B/C are:",choices:["A: bedrock; B: topsoil; C: humus","A: topsoil; B: subsoil accumulation; C: parent material","A: lava; B: ash; C: magma","A: clay only; B: sand only; C: silt only"],ans:1,exp:"Standard profile."},
+],
+/* ---------- Quiz 9 : Q81–Q90 ---------- */
+[
+{id:81,q:"After fertilizer input, lake DO declines mainly because:",choices:["Fish breathe too much","Decomposers consume oxygen after algal blooms","Oxygen leaks into space","Rocks absorb oxygen"],ans:1,exp:"Eutrophication → hypoxia."},
+{id:82,q:"Species–area curves show larger areas have more species because:",choices:["Fewer habitats","Higher extinction rates","More habitats & lower extinction risk","No ecological reason"],ans:2,exp:"Area–diversity relationship."},
+{id:83,q:"Trophic efficiency equals:",choices:["Energy lower/upper ×100%","Energy at higher ÷ energy at lower ×100%","Always 100%","Energy lost to space"],ans:1,exp:"Typically ~10%."},
+{id:84,q:"Falling groundwater levels may be due to:",choices:["Extra recharge","Excessive abstraction & reduced recharge/drought","Volcanic eruptions","Tides"],ans:1,exp:"Over-pumping & less recharge."},
+{id:85,q:"Buffer zones around protected areas:",choices:["Increase edge effects","Reduce human impacts near core and allow transition uses","Have no role","Promote poaching"],ans:1,exp:"Cushion for the core."},
+{id:86,q:"Ecocentric vs technocentric — balanced view:",choices:["Only tech works","Ecocentric values nature; technocentric values innovation — both have trade-offs","Neither matters","Economy only"],ans:1,exp:"Weigh pros/cons contextually."},
+{id:87,q:"International agreements can solve global issues when:",choices:["There is monitoring/enforcement & cooperation","They are secret","They ignore science","They lack funding and data"],ans:0,exp:"Design & compliance matter."},
+{id:88,q:"Managing eutrophication is most effective when prioritizing:",choices:["Treatment only (aeration)","Prevention (reduce nutrient inputs) with targeted treatment when needed","Do nothing","Add fish"],ans:1,exp:"Source control is key."},
+{id:89,q:"Renewables can reduce climate change but challenges include:",choices:["Intermittency/storage/infrastructure limits","They emit more CO₂ than coal","They stop wind","None"],ans:0,exp:"System integration issues."},
+{id:90,q:"Population growth affects resources primarily by:",choices:["Lowering demand","Increasing demand for food/water/energy; land conversion; waste","Cooling climate","Stopping pollution"],ans:1,exp:"More people × consumption."},
+],
+/* ---------- Quiz 10 : Q91–Q100 ---------- */
+[
+{id:91,q:"Human impacts on C and N cycles include:",choices:["Less CO₂ and less reactive N","More CO₂ (fossil fuels/land use) and more reactive N (fertilizers) causing eutrophication & N₂O","Only photosynthesis increase","No change"],ans:1,exp:"Amplified cycles & effects."},
+{id:92,q:"Economic growth & sustainability:",choices:["Always perfectly aligned","Can fund protection but often raises resource use unless decoupled","Mutually exclusive always","Irrelevant"],ans:1,exp:"Need absolute/relative decoupling."},
+{id:93,q:"Indigenous knowledge in conservation:",choices:["Always conflicts with science","Often supports sustainable use & stewardship; integration with rights participation helps","Is illegal","Only folklore"],ans:1,exp:"Co-management benefits."},
+{id:94,q:"Food production can affect soils by:",choices:["Improving them through erosion","Degrading via erosion/salinization; or protecting with rotations/cover crops","Having no effect","Only adding sand"],ans:1,exp:"Depends on practices."},
+{id:95,q:"Protected areas conserve biodiversity best when:",choices:["Unfunded & isolated","Well-managed, connected, with community support & enforcement","No rangers","Hunting required"],ans:1,exp:"Design/management matters."},
+{id:96,q:"Global water security is challenged by:",choices:["Even distribution & surplus","Uneven distribution, over-abstraction, pollution, climate change & geopolitics","Only ocean salinity","Meteor showers"],ans:1,exp:"Multiple stressors."},
+{id:97,q:"Waste strategies reduce footprints when:",choices:["Landfilling increases methane capture only","Reduce–Reuse–Recycle & circular economy are adopted system-wide","Everything is burned","All waste exported"],ans:1,exp:"Prevention + circularity."},
+{id:98,q:"Climate change impacts on aquatic ecosystems include:",choices:["Ocean cooling","Warming/acidification; altered oxygen/circulation; coral bleaching","No effect","Only freshwater changes"],ans:1,exp:"Well-documented impacts."},
+{id:99,q:"Measuring sustainability:",choices:["Use one perfect index","Use multiple indicators (EF, HDI, SDGs), each with limits","Ignore data","GDP only"],ans:1,exp:"Triangulate metrics."},
+{id:100,q:"Different EVS influence climate attitudes such that:",choices:["All identical","Anthropocentric focus on human impacts/adaptation; ecocentric on intrinsic protection; technocentric on tech fixes","Only religion matters","Only politics"],ans:1,exp:"Values shape policy preferences."},
+],
+];
+
+/* ============
+   APP LOGIC
+   ============ */
+const quizSelect = document.getElementById('quizSelect');
+const card = document.getElementById('card');
+const statusPill = document.getElementById('statusPill');
+const progEl = document.getElementById('prog');
+const qnav = document.getElementById('qnav');
+const scoreEl = document.getElementById('score');
+const quizName = document.getElementById('quizName');
+const review = document.getElementById('review');
+
+let qi = 0;      // current quiz index
+let i = 0;       // current question index within quiz
+let user = {};   // user answers { "<quiz>-<id>": selectedIndex }
+let score = {};  // per-quiz score { quiz: {correct, total} }
+
+function key(qz,id){ return qz+"-"+id; }
+function setProgress(){ progEl.style.width = ( (i)/10 * 100 ) + "%"; }
+function setStatus(){ statusPill.textContent = `Q${i+1}/10`; }
+function setScore(){
+  const s = score[qi] || {correct:0,total:10};
+  scoreEl.textContent = `${s.correct}/${s.total}`;
+}
+function renderNav(){
+  qnav.innerHTML = "";
+  for(let k=0;k<10;k++){
+    const b = document.createElement('button');
+    b.className = "qbtn" + (k===i ? " active":"");
+    b.textContent = k+1;
+    b.onclick = ()=>{ i=k; render(); };
+    qnav.appendChild(b);
+  }
+}
+function render(){
+  review.classList.add('hidden');
+  const q = ALL[qi][i];
+  quizName.textContent = `Quiz ${qi+1}`;
+  setProgress(); setStatus(); setScore(); renderNav();
+  const selected = user[key(qi,q.id)];
+  const opts = q.choices.map((c,ci)=>`
+    <label class="opt">
+      <input type="radio" name="opt" value="${ci}" ${selected===ci?"checked":""}/>
+      <span><strong>${String.fromCharCode(65+ci)}.</strong> ${escapeHtml(c)}</span>
+    </label>`).join("");
+  card.innerHTML = `
+    <div class="question" id="qtitle">Q${q.id}. ${escapeHtml(q.q)}</div>
+    <div class="options" id="opts">${opts}</div>
+    <div class="explain" id="exp"></div>
+  `;
+  // attach handlers
+  card.querySelectorAll('input[type=radio]').forEach(r=>{
+    r.addEventListener('change', (e)=>{
+      const pick = Number(e.target.value);
+      user[key(qi,q.id)] = pick;
+    });
+  });
+}
+function check(){
+  const q = ALL[qi][i];
+  const pick = user[key(qi,q.id)];
+  const exp = document.getElementById('exp');
+  if(pick===undefined){ alert("Pick an option first 🙂"); return; }
+  const correct = pick===q.ans;
+  exp.style.display="block";
+  exp.innerHTML = `${correct?"✅ Correct":"❌ Incorrect"} — Answer: <strong>${String.fromCharCode(65+q.ans)}</strong>. ${escapeHtml(q.exp||"")}`;
+  // update score only first time checked
+  score[qi] = score[qi] || {correct:0,total:10,checked:{}};
+  if(!score[qi].checked[q.id]){
+    if(correct) score[qi].correct++;
+    score[qi].checked[q.id]=true;
+    setScore();
+  }
+}
+function finishQuiz(){
+  // show review
+  const set = ALL[qi];
+  let correct = 0;
+  const rows = set.map((q,idx)=>{
+    const pick = user[key(qi,q.id)];
+    const ok = pick===q.ans;
+    if(ok) correct++;
+    return `<tr>
+      <td>${idx+1}</td>
+      <td>${escapeHtml(q.q)}</td>
+      <td>${pick!==undefined? String.fromCharCode(65+pick):"—"}</td>
+      <td>${String.fromCharCode(65+q.ans)}</td>
+    </tr>`;
+  }).join("");
+  review.innerHTML = `
+    <h3 style="margin:0 0 8px">Review — Quiz ${qi+1}</h3>
+    <div class="grid">
+      <div class="card"><strong>Your score:</strong> ${correct}/10</div>
+      <div class="card"><strong>Tip:</strong> Click any question number above to revisit it.</div>
+    </div>
+    <div class="card" style="margin-top:10px;overflow:auto">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr><th style="text-align:left;padding:6px;border-bottom:1px solid var(--outline)">#</th>
+                   <th style="text-align:left;padding:6px;border-bottom:1px solid var(--outline)">Question</th>
+                   <th style="text-align:left;padding:6px;border-bottom:1px solid var(--outline)">Your</th>
+                   <th style="text-align:left;padding:6px;border-bottom:1px solid var(--outline)">Correct</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+  review.classList.remove('hidden');
+}
+function escapeHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+// controls
+document.getElementById('prevBtn').onclick = ()=>{ i=Math.max(0,i-1); render(); };
+document.getElementById('nextBtn').onclick = ()=>{ i=Math.min(9,i+1); render(); };
+document.getElementById('checkBtn').onclick = check;
+document.getElementById('finishBtn').onclick = finishQuiz;
+quizSelect.onchange = ()=>{
+  qi = Number(quizSelect.value); i = 0; render();
+};
+
+// init
+render();
+</script>
+</body>
+</html>
