@@ -1,175 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoQuest - Environmental Education Gamified</title>
-    <link rel="stylesheet" href="home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greenify - Environmental Studies for Students</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9fdf9;
+      color: #333;
+    }
+    header {
+      background: #228B22;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header img {
+      height: 40px;
+    }
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px;
+      background: #eafaf1;
+    }
+    .hero-text {
+      max-width: 50%;
+    }
+    .hero h1 {
+      font-size: 2.5em;
+      color: #004d26;
+    }
+    .hero button {
+      background: #228B22;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      border-radius: 5px;
+    }
+    .features {
+      padding: 40px;
+      text-align: center;
+    }
+    .features h2 {
+      color: #004d26;
+    }
+    .features .icons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 40px;
+    }
+    .icons div {
+      text-align: center;
+    }
+    footer {
+      background: #228B22;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="navbar">
-            <!-- <img src="logo.jpeg" alt="Logo" class="logo-img"> -->
-            <!-- <a href="#" class="logo">Greenify</a> -->
-            <div class="nav-links">
-                 <a href="#"><i class="fas fa-house-user" style="color: #25b664;"></i></a>
-                 <a href="signup.html">Sign up</a>
-                 <a href="signin.html">Log in </a>
-                 <a href="hello.html">Help & Support</a>
-                 <a href="HELLO2.html">About</a>
-                 <a href="#"><i class="fa-solid fa-circle-user"></i></a>
-            </div>
-        </div>
-    </header>
+  <header>
+    <img src="greenify-logo.png" alt="Greenify Logo">
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Programs</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
 
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Level Up Your Environmental Knowledge!</h1>
-            <p>Embark on an exciting journey to save our planet through fun challenges, interactive learning, and real-world impact.</p>
-            <a href="homepage2.html" class="eco-adventure">Start Your Eco Adventure</a>
-        </section>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Environmental Studies for Students</h1>
+      <p>Learn how to protect the environment and make the world a greener place.</p>
+      <button>Learn More</button>
+    </div>
+    <div class="hero-image">
+      <!-- Add illustration here (students with plants) -->
+      <img src="students-illustration.png" alt="Students learning nature" width="400">
+    </div>
+  </section>
 
-        <!-- Gamification Progress -->
-        <section class="game-section">
-            <h2 class="section-title">Your Eco Journey</h2>
-            
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Level 3 Explorer</span>
-                    <span>Level 4</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-            </div>
+  <section class="features">
+    <h2>Learn How to Greenify The World</h2>
+    <p>Explore sustainability, recycling, and eco-friendly practices.</p>
+    <div class="icons">
+      <div>
+        ♻<br>Recycling
+      </div>
+      <div>
+        🌱<br>Leaf
+      </div>
+      <div>
+        ⚡<br>Energy
+      </div>
+    </div>
+  </section>
 
-            <!-- Badges Display -->
-            <h3 class="badges-title">Your Achievements</h3>
-            <div class="badges-grid">
-                <div class="badge">
-                    <div class="badge-icon">♻️</div>
-                    <h4>Recycling Master</h4>
-                    <p>Earned</p>
-                </div>
-                <div class="badge">
-                    <div class="badge-icon">💧</div>
-                    <h4>Water Saver</h4>
-                    <p>Earned</p>
-                </div>
-                <div class="badge">
-                    <div class="badge-icon">🌞</div>
-                    <h4>Energy Hero</h4>
-                    <p>Earned</p>
-                </div>
-                <div class="badge locked">
-                    <div class="badge-icon">🌳</div>
-                    <h4>Tree Planter</h4>
-                    <p>Locked</p>
-                </div>
-                <div class="badge locked">
-                    <div class="badge-icon">🚲</div>
-                    <h4>Eco Commuter</h4>
-                    <p>Locked</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Interactive Challenges -->
-        <section class="gamification-section">
-            <h2 class="section-title">Weekly Challenges</h2>
-            <div class="challenges-grid">
-                <div class="challenge-card">
-                    <div class="challenge-icon">🚰</div>
-                    <h3>Water Conservation</h3>
-                    <p>Reduce your water usage by 20% this week</p>
-                    <div class="challenge-progress">
-                        <div class="challenge-progress-fill"></div>
-                    </div>
-                    <p>150/200 points</p>
-                </div>
-                <div class="challenge-card">
-                    <div class="challenge-icon">⚡</div>
-                    <h3>Energy Saving</h3>
-                    <p>Turn off unused electronics for 5 days</p>
-                    <div class="challenge-progress">
-                        <div class="challenge-progress-fill"></div>
-                    </div>
-                    <p>80/100 points</p>
-                </div>
-                <div class="challenge-card">
-                    <div class="challenge-icon">🗑️</div>
-                    <h3>Waste Reduction</h3>
-                    <p>Properly sort your recycling for 7 days</p>
-                    <div class="challenge-progress">
-                        <div class="challenge-progress-fill"></div>
-                    </div>
-                    <p>45/70 points</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Environmental Facts -->
-        <section class="facts-section">
-            <h2 class="section-title facts-title">Did You Know?</h2>
-            <div class="facts-grid">
-                <div class="fact-card">
-                    <div class="fact-number">91%</div>
-                    <p>of plastic waste isn't recycled and ends up in landfills or the environment</p>
-                </div>
-                <div class="fact-card">
-                    <div class="fact-number">50%</div>
-                    <p>of the world's coral reefs have died in the last 30 years due to climate change</p>
-                </div>
-                <div class="fact-card">
-                    <div class="fact-number">1M</div>
-                    <p>species are at risk of extinction due to human activities</p>
-                </div>
-                <div class="fact-card">
-                    <div class="fact-number">80%</div>
-                    <p>of wastewater flows back into the ecosystem without being treated or reused</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Call to Action -->
-        <section class="hero hero-cta">
-            <h2>Ready to Make a Difference?</h2>
-            <p>Join thousands of students who are already making positive changes for our planet.</p>
-            <a href="#" class="cta-button">Join the Movement</a>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container footer-content">
-            <div class="footer-section">
-                <h3>EcoQuest</h3>
-                <p>Making environmental education fun and engaging for students worldwide.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <p><a href="#">About Us</a></p>
-                <p><a href="#">Resources</a></p>
-                <p><a href="#">Contact</a></p>
-            </div>
-            <div class="footer-section">
-                <h3>Connect With Us</h3>
-                <div class="social-links">
-                    <a href="#" class="social-link">F</a>
-                    <a href="#" class="social-link">T</a>
-                    <a href="#" class="social-link">I</a>
-                    <a href="#" class="social-link">Y</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+  <footer>
+    © 2025 Greenify | All Rights Reserved
+  </footer>
 </body>
+
 </html>
-
-
-
-
