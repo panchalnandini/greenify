@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Activities</title>
+    <title>Gamify</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -18,7 +18,7 @@
       ☰
     </button>
 
-    <div class="relative flex size-full min-h-screen group/design-root">
+    <div class="relative flex size-full min-h-screen">
       <!-- Sidebar -->
       <aside
         id="sidebar"
@@ -33,30 +33,22 @@
         </div>
         <nav class="flex-1 py-2">
           <a
-            href="environmentalactivities.html"
-            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            href="#"
+            class="menu-item block py-2 px-3 rounded hover:bg-gray-700 transition"
+            data-page="activities"
             >Activities</a
           >
           <a
             href="games.html"
-            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
+            class="menu-item block py-2 px-3 rounded hover:bg-gray-700 transition"
+            data-page="games"
             >Games</a
           >
           <a
-            href="quiz.html"
-            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
-            >Quize</a
-          >
-          <a
             href="#"
-            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
-            >Club</a
-          >
-
-          <a
-            href="#"
-            class="block py-2 px-3 rounded hover:bg-gray-700 transition"
-            >Communities</a
+            class="menu-item block py-2 px-3 rounded hover:bg-gray-700 transition"
+            data-page="games"
+            >dashboard</a
           >
         </nav>
       </aside>
@@ -68,7 +60,7 @@
       >
         <!-- Header -->
         <header class="flex justify-between items-center mb-8">
-          <h1 class="text-3xl font-bold">Activities</h1>
+          <h1 id="pageTitle" class="text-3xl font-bold">Welcome</h1>
           <div class="relative">
             <!-- Dropdown Button -->
             <button
@@ -89,205 +81,28 @@
               id="dropdownMenu"
               class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-lg shadow-lg hidden"
             >
-              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Profile</a>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-700"
-                >Dashboard</a
+              <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-700"
+                >Profile</a
               >
-              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Badges</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700"
+                >Leaderboard</a
+              >
+              <a href="#" class="block px-4 py-2 hover:bg-gray-700"
+                >Help & Support</a
+              >
               <a href="#" class="block px-4 py-2 hover:bg-gray-700">Logout</a>
             </div>
           </div>
         </header>
 
-        <!-- Hero Section -->
-        <section class="mb-8">
-          <h2 class="text-2xl font-semibold mb-2">
-            🌍 Environmental Activities
-          </h2>
-          <p class="text-gray-400 mb-4">
-            Earn points while learning to protect our planet
-          </p>
-          <div class="flex gap-4">
-            <span
-              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-              >⭐ Total Points: 250</span
-            >
-            <span
-              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-              >🎯 Level: Beginner</span
-            >
-            <span
-              class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-              >🔥 Streak: 5 Days</span
-            >
-          </div>
-        </section>
-
-        <!-- Activities Grid -->
-        <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Activity Card -->
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                ♻️ Recycling Challenge <span class="text-orange-500">+50</span>
-              </h3>
-              <p class="mb-4">Sort and recycle household items correctly.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
-                  >beginner</span
-                >
-                <span
-                  class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full"
-                  >challenge</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 15 min</span>
-                <span>👥 1200</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-
-          <!-- More Activity Cards -->
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                🌳 Tree Planting <span class="text-orange-500">+75</span>
-              </h3>
-              <p class="mb-4">Plant a tree in your community or garden.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full"
-                  >intermediate</span
-                >
-                <span
-                  class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full"
-                  >outdoor</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 20 min</span>
-                <span>👥 500</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                💡 Energy Saving <span class="text-orange-500">+40</span>
-              </h3>
-              <p class="mb-4">Implement energy-saving practices at home.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
-                  >beginner</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 10 min</span>
-                <span>👥 800</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                💡 Energy Saving <span class="text-orange-500">+40</span>
-              </h3>
-              <p class="mb-4">Implement energy-saving practices at home.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
-                  >beginner</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 10 min</span>
-                <span>👥 800</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                💡 Energy Saving <span class="text-orange-500">+40</span>
-              </h3>
-              <p class="mb-4">Implement energy-saving practices at home.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
-                  >beginner</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 10 min</span>
-                <span>👥 800</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-          <div
-            class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-                💡 Energy Saving <span class="text-orange-500">+40</span>
-              </h3>
-              <p class="mb-4">Implement energy-saving practices at home.</p>
-              <div class="flex gap-2 mb-2">
-                <span
-                  class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
-                  >beginner</span
-                >
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>⏱ 10 min</span>
-                <span>👥 800</span>
-              </div>
-            </div>
-            <button
-              class="mt-4 bg-black text-white py-2 rounded-lg font-semibold"
-            >
-              Start Activity
-            </button>
-          </div>
-        </section>
+        <!-- Center Fixed Box -->
+        <div
+          id="centerBox"
+          class="bg-gray-800 p-6 rounded-2xl shadow-md min-h-[60vh] flex flex-col items-center justify-center text-gray-400"
+        >
+          <!-- Initially empty, will fill when menu items clicked -->
+          <span class="text-lg">Select an option from the menu</span>
+        </div>
       </div>
     </div>
 
@@ -303,7 +118,6 @@
         main.classList.toggle("ml-64");
       });
 
-      // Auto-close when clicking outside
       document.addEventListener("click", (e) => {
         if (
           !sidebar.contains(e.target) &&
@@ -321,13 +135,11 @@
       const dropdownBtn = document.getElementById("dropdownBtn");
       const dropdownMenu = document.getElementById("dropdownMenu");
 
-      // Toggle dropdown
       dropdownBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         dropdownMenu.classList.toggle("hidden");
       });
 
-      // Close when clicking outside
       document.addEventListener("click", (e) => {
         if (
           !dropdownBtn.contains(e.target) &&
@@ -337,8 +149,118 @@
         }
       });
     </script>
+
+    <!-- Menu Item Click Script -->
+    <script>
+      const centerBox = document.getElementById("centerBox");
+      const pageTitle = document.getElementById("pageTitle");
+      const menuItems = document.querySelectorAll(".menu-item");
+
+      const activitiesData = [
+        {
+          title: "♻️ Recycling Challenge",
+          points: "+50",
+          description: "Sort and recycle household items correctly.",
+          tags: ["beginner", "challenge"],
+          time: "15 min",
+          participants: "1200",
+        },
+        {
+          title: "🌳 Tree Planting",
+          points: "+75",
+          description: "Plant a tree in your community or garden.",
+          tags: ["intermediate", "outdoor"],
+          time: "20 min",
+          participants: "500",
+        },
+        {
+          title: "💡 Energy Saving",
+          points: "+40",
+          description: "Implement energy-saving practices at home.",
+          tags: ["beginner"],
+          time: "10 min",
+          participants: "800",
+        },
+        {
+          title: "Use Public Transport",
+          points: "+40",
+          description: "use public transport instead of personal vehicles.",
+          tags: ["beginner"],
+          time: "no time-limit",
+          participants: "800",
+        },
+        {
+          title: "Make Meme on Environment",
+          points: "+40",
+          description: "Make a creative meme on environment.",
+          tags: ["beginner"],
+          time: "30 min",
+          participants: "800",
+        },
+        {
+          title: "Use cycle or just walk for short distances",
+          points: "+70",
+          description: "Use cycle or just walk for short distances",
+          tags: ["beginner"],
+          time: "1 day",
+          participants: "800",
+        },
+      ];
+
+      // Function to render activity cards
+      function renderActivities() {
+        let html = `<h2 class="text-2xl font-semibold mb-4 text-white">🌍 Environmental Activities</h2>
+              <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">`;
+
+        activitiesData.forEach((activity) => {
+          html += `
+      <div class="bg-white text-black p-6 rounded-2xl shadow-md flex flex-col justify-between">
+        <div>
+          <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+            ${activity.title} <span class="text-orange-500">${
+            activity.points
+          }</span>
+          </h3>
+          <p class="mb-4">${activity.description}</p>
+          <div class="flex gap-2 mb-2">
+            ${activity.tags
+              .map(
+                (tag) =>
+                  `<span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">${tag}</span>`
+              )
+              .join("")}
+          </div>
+          <div class="flex justify-between text-gray-500 text-sm">
+            <span>⏱ ${activity.time}</span>
+            <span>👥 ${activity.participants}</span>
+          </div>
+        </div>
+        <button class="mt-4 bg-black text-white py-2 rounded-lg font-semibold">Start Activity</button>
+      </div>
+    `;
+        });
+
+        html += `</div>`;
+        centerBox.innerHTML = html;
+      }
+
+      // Handle menu clicks
+      menuItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+          const page = item.getAttribute("data-page");
+
+          // Change page title
+          pageTitle.textContent = item.textContent;
+
+          // Populate center box only for Activities
+          if (page === "activities") {
+            renderActivities();
+          } else {
+            centerBox.innerHTML = `<div class="flex items-center justify-center text-gray-400">This page will load here</div>`;
+          }
+        });
+      });
+    </script>
   </body>
 </html>
-
-
-
