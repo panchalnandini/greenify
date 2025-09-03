@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Game Hub – 10 Games</title>
+  <style>
+    :root {
+      --green: #4caf50;
+      --bg: #f2f9f2;
+      --card: #ffffff;
+      --ink: #333;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--green);
+      color: white;
+      padding: 16px 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      width: min(1100px, 92%);
+      margin: 20px auto;
+    }
+    .game-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      text-align: center;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      border: 1px solid #e7f5e7;
+      user-select: none;
+    }
+    .game-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.12); }
+    .game-card h3 { margin: 8px 0 4px; font-size: 18px; }
+    .game-card p { margin: 0; font-size: 12px; opacity: .75; }
+
+    #game-container {
+      width: min(1100px, 92%);
+      min-height: 520px;
+      background: var(--card);
+      margin: 16px auto 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.12);
+      overflow: hidden;
+      position: relative;
+      display: none;
+    }
+
+    .topbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; background: #f7fff7; border-bottom: 1px solid #e7f5e7;
+    }
+    .back-btn {
+      appearance: none; border: 0; background: var(--green); color: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600;
+    }
+    .panel { padding: 14px; }
+    canvas { background: #eafbe7; border: 2px solid var(--green); border-radius: 10px; display: block; margin: 12px auto; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    .stat { background:#f3fbf3; padding:6px 10px; border-radius:8px; border:1px solid #e2f3e2; font-size: 14px; }
+    .btn { appearance: none; border: 1px solid #e2f3e2; background: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
+    .grid { display:grid; gap:10px; }
+
+    /* Memory Flip */
+    .board { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; width: min(520px, 92%); margin: 20px auto; }
+    .card { background:#eafbe7; border:2px solid var(--green); border-radius:10px; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer; user-select:none; }
+    .card.matched { background:#d7ffd7; opacity:.9; }
+
+    /* Puzzle (Sliding 3x3) */
+    .puzzle { width: 360px; margin: 14px auto; display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .tile { height: 110px; border-radius: 10px; background:#eafbe7; border:2px solid var(--green); display:flex; align-items:center; justify-content:center; font-size: 28px; cursor: pointer; }
+    .tile.blank { background: transparent; border: 2px dashed #b5e6b5; cursor: default; }
+
+    /* Shadow Match */
+    .shadow-wrap { display:flex; gap:20px; justify-content:center; align-items:center; padding: 20px; flex-wrap: wrap; }
+    .shadow { width: 200px; height: 200px; background:#eafbe7; border:2px dashed var(--green); border-radius: 12px; position: relative; }
+    .shape { width: 80px; height: 80px; background:#c8f7c8; border:2px solid var(--green); border-radius: 10px; display:flex; align-items:center; justify-content:center; cursor: grab; user-select:none; }
+    .shape.circle { border-radius: 50%; }
+    .shape.triangle { width: 0; height: 0; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 80px solid #c8f7c8; background: transparent; border-radius:0; border: none; position: relative; }
+    .shape.triangle::after { content:""; position:absolute; inset:-2px; border-left:42px solid transparent; border-right:42px solid transparent; border-bottom:84px solid rgba(76,175,80,.3); }
+    .shadow .ghost.circle { position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(76,175,80,.18); top:60px; left:60px; }
+    .shadow .ghost.square { position:absolute; width:80px; height:80px; background:rgba(76,175,80,.18); top:60px; left:60px; border-radius:10px; }
+    .shadow .ghost.triangle { position:absolute; width:0; height:0; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 80px solid rgba(76,175,80,.18); top:60px; left:60px; }
+
+    /* Maze */
+    .maze-wrap { display:flex; justify-content:center; padding-bottom: 16px; }
+    .progress { height: 10px; background: #e8f7e8; border-radius: 8px; overflow:hidden; border:1px solid #d6efd6; }
+    .progress > div { height:100%; width:0; background: var(--green); transition: width .25s; }
+
+    /* Typing */
+    .fall-area { position: relative; width: 700px; height: 360px; background:#eafbe7; border:2px solid var(--green); border-radius: 12px; margin: 10px auto; overflow:hidden; }
+    .particle { position:absolute; pointer-events:none; font-weight:700; }
+  </style>
+</head>
+<body>
+  <header>🎮 Mini Creative Games Hub — 10 Games</header>
+
+  <div class="games-grid" id="menu">
+    <div class="game-card" onclick="loadGame('ecoCatcher')"><h3>🌍 Eco-Catcher</h3><p>Catch recyclables, avoid trash</p></div>
+    <div class="game-card" onclick="loadGame('wordBuilder')"><h3>✍️ Word Builder</h3><p>Build words from letters</p></div>
+    <div class="game-card" onclick="loadGame('memoryFlip')"><h3>🧠 Memory Flip</h3><p>Match pairs</p></div>
+    <div class="game-card" onclick="loadGame('quizRace')"><h3>🚀 Quick Quiz Race</h3><p>Answer fast to win</p></div>
+    <div class="game-card" onclick="loadGame('fruitCollector')"><h3>🍎 Fruit Collector</h3><p>Catch only the target fruit</p></div>
+    <div class="game-card" onclick="loadGame('puzzleBuilder')"><h3>🧩 Sliding Puzzle</h3><p>Arrange 1–8 tiles</p></div>
+    <div class="game-card" onclick="loadGame('balanceBuilder')"><h3>⚖️ Balance Builder</h3><p>Stack blocks carefully</p></div>
+    <div class="game-card" onclick="loadGame('typingChallenge')"><h3>⌨️ Typing Challenge</h3><p>Type falling words</p></div>
+    <div class="game-card" onclick="loadGame('shadowMatch')"><h3>🌟 Shadow Match</h3><p>Drag the right shape</p></div>
+    <div class="game-card" onclick="loadGame('mazeEscape')"><h3>🌀 Escape the Maze</h3><p>Find the exit</p></div>
+  </div>
+
+  <div id="game-container"></div>
+
+  <script>
+    const container = document.getElementById('game-container');
+    const menu = document.getElementById('menu');
+
+    function backToMenu(){
+      container.style.display = 'none';
+      menu.style.display = 'grid';
+      container.innerHTML = '';
+      window.onkeydown = null; // clean listeners
+    }
+
+    function loadGame(name){
+      menu.style.display = 'none';
+      container.style.display = 'block';
+      const topbar = `
+        <div class="topbar">
+          <button class="back-btn" onclick="backToMenu()">⬅ Back</button>
+          <div class="stat" id="title">Game: ${name}</div>
+          <div class="stat" id="status"></div>
+          <div class="stat" id="scoreStat"></div>
+          <button class="btn" onclick="reloadGame()">Restart</button>
+        </div>`;
+      container.dataset.game = name;
+      window.reloadGame = () => loadGame(name);
+
+      const wrap = document.createElement('div');
+      wrap.innerHTML = topbar;
+      container.innerHTML = '';
+      container.appendChild(wrap);
+
+      const panel = document.createElement('div');
+      panel.className = 'panel';
+      wrap.appendChild(panel);
+
+      const G = {
+        setStatus: (t)=> document.getElementById('status').textContent = t,
+        setScore: (n)=> document.getElementById('scoreStat').textContent = (n!=null?`Score: ${n}`:''),
+        panel
+      };
+
+      const map = {
+        ecoCatcher: playEcoCatcher,
+        wordBuilder: playWordBuilder,
+        memoryFlip: playMemoryFlip,
+        quizRace: playQuizRace,
+        fruitCollector: playFruitCollector,
+        puzzleBuilder: playPuzzleBuilder,
+        balanceBuilder: playBalanceBuilder,
+        typingChallenge: playTypingChallenge,
+        shadowMatch: playShadowMatch,
+        mazeEscape: playMazeEscape,
+      };
+      map[name](G);
+    }
+
+    /* =====================
+       1) Eco-Catcher (Canvas)
+    ====================== */
+    function playEcoCatcher(G){
+      G.setStatus('Catch blue (recycle), avoid red (trash). Arrows = move.');
+      let score = 0, lives = 3;
+      G.setScore(score);
+      const canvas = document.createElement('canvas');
+      canvas.width = 700; canvas.height = 420; G.panel.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      let basketX = 300; const basketW = 100;
+      let items = []; let t=0; let running=true;
+
+      window.onkeydown = (e)=>{
+        if(e.key==='ArrowLeft') basketX = Math.max(0, basketX-22);
+        if(e.key==='ArrowRight') basketX = Math.min(canvas.width-basketW, basketX+22);
+      };
+
+      function spawn(){ items.push({x: Math.random()*(canvas.width-20), y: -20, type: Math.random()>.55?'recycle':'trash', vy: 2+Math.random()*2}); }
+
+      function loop(){
+        if(!running) return;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        // ground & basket
+        ctx.fillStyle = '#9be09b'; ctx.fillRect(0,390,canvas.width,30);
+        ctx.fillStyle = 'green'; ctx.fillRect(basketX, 360, basketW, 24);
+
+        if(t%40===0) spawn();
+        items.forEach((it,i)=>{
+          it.y += it.vy;
+          ctx.fillStyle = it.type==='recycle'?'#1e88e5':'#e53935';
+          ctx.fillRect(it.x, it.y, 20, 20);
+          // catch
+          if(it.y>=340 && it.x>basketX-5 && it.x<basketX+basketW-15){
+            if(it.type==='recycle') score+=10; else lives--;
+            items.splice(i,1);
+            G.setScore(score);
+          } else if(it.y>400){ items.splice(i,1); if(it.type==='recycle'){ lives--; } }
+        });
+
+        // HUD
+        ctx.fillStyle = '#000'; ctx.font='16px sans-serif'; ctx.fillText(`Lives: ${lives}`, 10, 20); ctx.fillText(`Score: ${score}`, 10, 40);
+        if(lives<=0){ running=false; G.setStatus('Game Over!'); ctx.fillText('Game Over', 300, 200); return; }
+        t++; requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    /* =====================
+       2) Word Builder (DOM)
+    ====================== */
+    function playWordBuilder(G){
+      let time=60, score=0; G.setScore(score);
+      const letters = randomLetters(9);
+      G.panel.innerHTML += `
+        <div class="row"><div class="stat">Make words from letters below. 60s.</div></div>
+        <h2 style="text-align:center; letter-spacing:8px;">${letters.join(' ')}</h2>
+        <div class="row" style="justify-content:center; margin:10px 0;">
+          <input id="wbInput" class="btn" style="min-width:240px;" placeholder="type word" />
+          <button class="btn primary" id="wbAdd">Add</button>
+          <div class="stat" id="wbTime">⏱️ ${time}s</div>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+          <div><b>Words</b>
+            <ul id="wbList" style="min-height:120px; padding-left:18px;">
+            </ul>
+          </div>
+          <div><b>Rules</b>
+            <ul style="padding-left:18px; margin-top:6px;">
+              <li>Use only shown letters (each letter at most as many times).</li>
+              <li>No repeats. Length ≥ 3 earns points = length.</li>
+            </ul>
+          </div>
+        </div>`;
+      const input = G.panel.querySelector('#wbInput');
+      const list = G.panel.querySelector('#wbList');
+      const add = G.panel.querySelector('#wbAdd');
+      const timeBox = G.panel.querySelector('#wbTime');
+      const used = new Set();
+
+      function valid(word){
+        if(!word || word.length<3) return false;
+        const w = word.toUpperCase();
+        const counts = Object.create(null);
+        letters.forEach(ch=>counts[ch]=(counts[ch]||0)+1);
+        for(const ch of w){ if(!counts[ch]) return false; counts[ch]--; }
+        return !used.has(w);
+      }
+      function addWord(){
+        const w = input.value.trim();
+        if(valid(w)){
+          used.add(w.toUpperCase());
+          score += w.length;
+          G.setScore(score);
+          const li = document.createElement('li'); li.textContent = w; list.appendChild(li);
+        }
+        input.value=''; input.focus();
+      }
+      add.onclick = addWord; input.onkeydown = (e)=>{ if(e.key==='Enter') addWord(); };
+      const timer = setInterval(()=>{ time--; timeBox.textContent = `⏱️ ${time}s`; if(time<=0){ clearInterval(timer); input.disabled=true; add.disabled=true; G.setStatus('Time up!'); } }, 1000);
+      G.setStatus('Type words and press Add/Enter.');
+    }
+    function randomLetters(n){
+      const freq = 'EEEEEEEAAAAIIOONNRRTTLLSSUUDGBCMPFHVWYJKQXZ';
+      return Array.from({length:n},()=> freq[Math.floor(Math.random()*freq.length)]);
+    }
+
+    /* =====================
+       3) Memory Flip (DOM)
+    ====================== */
+    function playMemoryFlip(G){
+      const icons = ['🌳','🌞','💧','♻️','🌿','🐝','🪵','🍃'];
+      const deck = shuffle([...icons, ...icons]);
+      let first=null, lock=false, matched=0, moves=0; G.setScore(0);
+      const board = document.createElement('div'); board.className='board'; G.panel.appendChild(board);
+      deck.forEach((v,i)=>{
+        const c = document.createElement('div'); c.className='card'; c.dataset.value=v; c.dataset.index=i; c.textContent='?'; board.appendChild(c);
+        c.onclick=()=>{
+          if(lock||c.classList.contains('matched')||c.classList.contains('open')) return;
+          c.classList.add('open'); c.textContent=v;
+          if(!first){ first=c; }
+          else {
+            moves++;
+            if(first.dataset.value===c.dataset.value){
+              first.classList.add('matched'); c.classList.add('matched'); matched+=2; first=null; G.setScore(matched);
+              if(matched===deck.length) G.setStatus(`You matched all in ${moves} moves!`);
+            } else {
+              lock=true; setTimeout(()=>{ first.classList.remove('open'); c.classList.remove('open'); first.textContent='?'; c.textContent='?'; first=null; lock=false; }, 700);
+            }
+          }
+        };
+      });
+      G.setStatus('Flip and match all pairs.');
+    }
+
+    /* =====================
+       4) Quick Quiz Race (DOM)
+    ====================== */
+    function playQuizRace(G){
+      const qs=[
+        {q:'Which gas do plants absorb?', a:['Oxygen','Carbon Dioxide','Nitrogen','Helium'], c:1},
+        {q:'Which is a renewable source?', a:['Coal','Oil','Wind','Gas'], c:2},
+        {q:'Oceans are mainly made of?', a:['Freshwater','Saltwater','Acid','Oil'], c:1},
+        {q:'Which symbol means recycle?', a:['♻️','⚠️','❌','✅'], c:0},
+        {q:'Best way to save energy?', a:['Leave lights on','Use LED bulbs','Open fridge often','Waste water'], c:1},
+      ];
+      let i=0, score=0;
+      const bar = document.createElement('div'); bar.className='progress'; bar.innerHTML='<div></div>';
+      const qbox = document.createElement('div');
+      const abox = document.createElement('div'); abox.className='grid'; abox.style.gridTemplateColumns='1fr 1fr';
+      G.panel.append(bar, qbox, abox);
+      function render(){
+        if(i>=qs.length){ G.setStatus('Finished!'); qbox.innerHTML=`<h3>Score: ${score}/${qs.length}</h3>`; abox.innerHTML=''; return; }
+        const cur=qs[i]; qbox.innerHTML=`<h3>${cur.q}</h3>`; abox.innerHTML='';
+        cur.a.forEach((opt,idx)=>{
+          const b=document.createElement('button'); b.className='btn'; b.textContent=opt; b.onclick=()=>{
+            if(idx===cur.c){ score++; G.setScore(score); }
+            i++; bar.firstElementChild.style.width = ((i/qs.length)*100)+'%'; render();
+          }; abox.appendChild(b);
+        });
+      }
+      render(); G.setStatus('Answer quickly!');
+    }
+
+    /* =====================
+       5) Fruit Collector (Canvas)
+    ====================== */
+    function playFruitCollector(G){
+      const fruits = ['🍎','🍌','🍇','🍊'];
+      const target = fruits[Math.floor(Math.random()*fruits.length)];
+      let score=0, misses=0; G.setScore(score); G.setStatus(`Catch only: ${target}`);
+      const canvas = document.createElement('canvas'); canvas.width=700; canvas.height=420; G.panel.appendChild(canvas);
+      const ctx=canvas.getContext('2d'); let x=320; const w=90; let items=[]; let t=0; let run=true;
+      window.onkeydown = (e)=>{ if(e.key==='ArrowLeft') x=Math.max(0,x-24); if(e.key==='ArrowRight') x=Math.min(canvas.width-w,x+24); };
+      function spawn(){ const f = fruits[Math.floor(Math.random()*fruits.length)]; items.push({x:Math.random()*(canvas.width-24),y:-30,t:f,vy:2+Math.random()*2}); }
+      function loop(){ if(!run) return; ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#9be09b'; ctx.fillRect(0,390,canvas.width,30); ctx.fillStyle='#2e7d32'; ctx.fillRect(x,360,w,20);
+        if(t%35===0) spawn(); items.forEach((it,i)=>{ it.y+=it.vy; ctx.font='24px serif'; ctx.fillText(it.t,it.x,it.y);
+          if(it.y>340 && it.x>x-10 && it.x<x+w){ if(it.t===target){ score+=5; } else { misses++; }
+            items.splice(i,1); G.setScore(score);
+          } else if(it.y>420){ items.splice(i,1); }
+        }); ctx.fillStyle='#000'; ctx.font='16px sans-serif'; ctx.fillText(`Misses: ${misses}/5`,10,22);
+        if(misses>=5){ run=false; G.setStatus('Too many wrong fruits!'); ctx.fillText('Game Over',310,200); return; }
+        t++; requestAnimationFrame(loop);
+      } loop();
+    }
+
+    /* =====================
+       6) Sliding Puzzle (DOM 3x3)
+    ====================== */
+    function playPuzzleBuilder(G){
+      G.setStatus('Arrange tiles 1–8 in order; blank is empty.');
+      const wrap = document.createElement('div'); wrap.className='puzzle'; G.panel.appendChild(wrap);
+      let tiles = [...Array(8).keys()].map(x=>x+1).concat([0]);
+      do { tiles = shuffle(tiles); } while(!isSolvable(tiles));
+      function render(){
+        wrap.innerHTML='';
+        tiles.forEach((n,idx)=>{
+          const d=document.createElement('div');
+          d.className = 'tile'+(n===0?' blank':'');
+          d.textContent = n||'';
+          d.onclick = ()=> move(idx);
+          wrap.appendChild(d);
+        });
+      }
+      function move(i){
+        const blank = tiles.indexOf(0);
+        const adj = [i-3,i+3,i-1,i+1];
+        if(adj.includes(blank) && validNeighbor(i, blank)){
+          [tiles[i], tiles[blank]] = [tiles[blank], tiles[i]];
+          render();
+          if(isSolved(tiles)) G.setStatus('Great! Puzzle solved.');
+        }
+      }
+      render();
+      function isSolved(t){ for(let i=0;i<8;i++){ if(t[i]!==i+1) return false; } return t[8]===0; }
+      function validNeighbor(i,b){
+        const r1=Math.floor(i/3), c1=i%3, r2=Math.floor(b/3), c2=b%3; return Math.abs(r1-r2)+Math.abs(c1-c2)===1;
+      }
+      function isSolvable(arr){
+        let inv=0; for(let i=0;i<9;i++){ for(let j=i+1;j<9;j++){ if(arr[i]&&arr[j]&&arr[i]>arr[j]) inv++; }} return inv%2===0; }
+    }
+
+    /* =====================
+       7) Balance Builder (Canvas)
+    ====================== */
+    function playBalanceBuilder(G){
+      G.setStatus('Move block with arrows; press Space to drop. Stack without overhang.');
+      const canvas=document.createElement('canvas'); canvas.width=700; canvas.height=420; G.panel.appendChild(canvas);
+      const ctx=canvas.getContext('2d'); let stack=[{x:300,y:360,w:120,h:20}]; let curr={x:0,y:100,w:120,h:20,dir:1}; let score=0; G.setScore(score); let run=true;
+      function resetCurr(){ curr={x:0,y:100,w:Math.max(60,120-5*stack.length),h:20,dir:1}; }
+      resetCurr();
+      window.onkeydown=(e)=>{ if(e.key==='ArrowLeft') curr.x-=18; if(e.key==='ArrowRight') curr.x+=18; if(e.key===' '||e.code==='Space'){ drop(); } };
+      function drop(){ if(!run) return; // place on top
+        const top = stack[stack.length-1];
+        const overlap = Math.min(curr.x+curr.w, top.x+top.w) - Math.max(curr.x, top.x);
+        if(overlap<=20){ run=false; G.setStatus('Too much overhang — tower fell!'); return; }
+        const newW = Math.max(40, overlap);
+        const newX = Math.max(curr.x, top.x);
+        stack.push({x:newX,y:top.y-22,w:newW,h:20}); score++; G.setScore(score); resetCurr();
+      }
+      function loop(){ if(!run) return; ctx.clearRect(0,0,canvas.width,canvas.height);
+        // ground
+        ctx.fillStyle='#9be09b'; ctx.fillRect(0,390,canvas.width,30);
+        // stack
+        ctx.fillStyle='#2e7d32'; stack.forEach(b=> ctx.fillRect(b.x,b.y,b.w,b.h));
+        // current
+        ctx.fillStyle='#66bb6a'; ctx.fillRect(curr.x,curr.y,curr.w,curr.h); curr.x+=curr.dir*2; if(curr.x<0||curr.x+curr.w>canvas.width){ curr.dir*=-1; }
+        requestAnimationFrame(loop);
+      } loop();
+    }
+
+    /* =====================
+       8) Typing Challenge (DOM + animate)
+    ====================== */
+    function playTypingChallenge(G){
+      G.setStatus('Type words before they hit the ground.');
+      let score=0, speed=1.2, t=0; G.setScore(score);
+      const words = 'leaf earth green solar wind water energy recycle planet nature reduce reuse grow clean air soil tree forest river ocean save light power eco'.split(' ');
+      const area=document.createElement('div'); area.className='fall-area';
+      const input=document.createElement('input'); input.className='btn'; input.style.minWidth='280px'; input.placeholder='type word here';
+      const spawnBtn=document.createElement('button'); spawnBtn.className='btn'; spawnBtn.textContent='Spawn';
+      const row=document.createElement('div'); row.className='row'; row.style.justifyContent='center'; row.append(input, spawnBtn);
+      G.panel.append(area,row);
+      const items=[];
+      function spawn(){ const w=words[Math.floor(Math.random()*words.length)]; items.push({w, x:Math.random()*(area.clientWidth-80), y:-10}); renderWord(w); }
+      function renderWord(text){ const el=document.createElement('div'); el.className='particle'; el.textContent=text; area.appendChild(el); const obj = items[items.length-1]; obj.el=el; el.style.left=obj.x+'px'; el.style.top=obj.y+'px'; }
+      function loop(){ t++; if(t%100===0) spawn(); items.forEach((o,i)=>{ o.y+=speed; if(o.el){ o.el.style.top=o.y+'px'; }
+        if(o.y>area.clientHeight-24){ // miss
+          if(o.el) o.el.remove(); items.splice(i,1);
+        }
+      }); requestAnimationFrame(loop); }
+      function check(){ const v=input.value.trim().toLowerCase(); if(!v) return; const idx=items.findIndex(o=>o.w===v); if(idx>-1){ score+=v.length; G.setScore(score); items[idx].el.remove(); items.splice(idx,1); input.value=''; speed = Math.min(4.5, speed+0.05); }
+      }
+      input.onkeydown=(e)=>{ if(e.key==='Enter') check(); };
+      spawnBtn.onclick=spawn; loop(); input.focus();
+    }
+
+    /* =====================
+       9) Shadow Match (DOM Drag & Drop)
+    ====================== */
+    function playShadowMatch(G){
+      const kinds=['circle','square','triangle']; const target=kinds[Math.floor(Math.random()*kinds.length)];
+      G.setStatus('Drag the matching shape into the shadow.');
+      const wrap=document.createElement('div'); wrap.className='shadow-wrap';
+      const shadow=document.createElement('div'); shadow.className='shadow';
+      const ghost=document.createElement('div'); ghost.className='ghost '+target; shadow.appendChild(ghost);
+      const shapes=document.createElement('div'); shapes.style.display='flex'; shapes.style.gap='12px';
+
+      kinds.forEach(k=>{
+        const s=document.createElement('div'); s.className='shape '+(k==='square'?'':k); s.draggable=true; s.dataset.kind=k; s.textContent = k==='triangle'?'' : '';
+        s.ondragstart = (e)=>{ e.dataTransfer.setData('text/plain', k); };
+        shapes.appendChild(s);
+      });
+      shadow.ondragover = (e)=> e.preventDefault();
+      shadow.ondrop = (e)=>{ const k=e.dataTransfer.getData('text/plain'); if(k===target){ shadow.style.background='#d7ffd7'; G.setStatus('Nice! You matched it.'); } else { shadow.style.background='#ffd7d7'; G.setStatus('Oops! Try again.'); setTimeout(()=> shadow.style.background='#eafbe7', 500); } };
+
+      wrap.append(shadow, shapes); G.panel.appendChild(wrap);
+    }
+
+    /* =====================
+       10) Maze Escape (Canvas)
+    ====================== */
+    function playMazeEscape(G){
+      G.setStatus('Use arrow keys to reach the green goal.');
+      const canvas=document.createElement('canvas'); canvas.width=600; canvas.height=400; G.panel.appendChild(canvas); const ctx=canvas.getContext('2d');
+      const cols=24, rows=16, cell=25; // fits 600x400 roughly (with margins)
+      // Simple predefined maze (0 path, 1 wall)
+      const M = genMaze(rows, cols);
+      let start={x:1,y:1}, goal={x:cols-2,y:rows-2};
+      let px=start.x, py=start.y;
+      window.onkeydown=(e)=>{ const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key]; if(!d) return; const nx=px+d[0], ny=py+d[1]; if(M[ny]&&M[ny][nx]===0){ px=nx; py=ny; draw(); if(px===goal.x&&py===goal.y) G.setStatus('You escaped the maze!'); }};
+      function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#2e7d32'; for(let y=0;y<rows;y++){ for(let x=0;x<cols;x++){ if(M[y][x]===1){ ctx.fillRect(x*cell, y*cell, cell, cell); } } } ctx.fillStyle='#66bb6a'; ctx.fillRect(goal.x*cell, goal.y*cell, cell, cell); ctx.fillStyle='#1565c0'; ctx.fillRect(px*cell+4, py*cell+4, cell-8, cell-8); }
+      draw();
+    }
+    function genMaze(r,c){ // simple randomized DFS maze
+      const grid = Array.from({length:r},()=>Array(c).fill(1));
+      function carve(x,y){ grid[y][x]=0; const dirs=shuffle([[2,0],[-2,0],[0,2],[0,-2]]); for(const [dx,dy] of dirs){ const nx=x+dx, ny=y+dy; if(ny>0&&ny<r-1&&nx>0&&nx<c-1&&grid[ny][nx]===1){ grid[y+dy/2][x+dx/2]=0; carve(nx,ny);} } }
+      carve(1,1); grid[r-2][c-2]=0; return grid;
+    }
+
+    /* ===== Helpers ===== */
+    function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  </script>
+</body>
+</html>
