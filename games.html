@@ -1,515 +1,1229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Game Hub – 10 Games</title>
-  <style>
-    :root {
-      --green: #4caf50;
-      --bg: #f2f9f2;
-      --card: #ffffff;
-      --ink: #333;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    header {
-      background: var(--green);
-      color: white;
-      padding: 16px 20px;
-      width: 100%;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      width: min(1100px, 92%);
-      margin: 20px auto;
-    }
-    .game-card {
-      background: var(--card);
-      padding: 18px;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.08);
-      text-align: center;
-      cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease;
-      border: 1px solid #e7f5e7;
-      user-select: none;
-    }
-    .game-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.12); }
-    .game-card h3 { margin: 8px 0 4px; font-size: 18px; }
-    .game-card p { margin: 0; font-size: 12px; opacity: .75; }
-
-    #game-container {
-      width: min(1100px, 92%);
-      min-height: 520px;
-      background: var(--card);
-      margin: 16px auto 40px;
-      border-radius: 16px;
-      box-shadow: 0 8px 22px rgba(0,0,0,.12);
-      overflow: hidden;
-      position: relative;
-      display: none;
-    }
-
-    .topbar {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; background: #f7fff7; border-bottom: 1px solid #e7f5e7;
-    }
-    .back-btn {
-      appearance: none; border: 0; background: var(--green); color: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600;
-    }
-    .panel { padding: 14px; }
-    canvas { background: #eafbe7; border: 2px solid var(--green); border-radius: 10px; display: block; margin: 12px auto; }
-    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
-    .stat { background:#f3fbf3; padding:6px 10px; border-radius:8px; border:1px solid #e2f3e2; font-size: 14px; }
-    .btn { appearance: none; border: 1px solid #e2f3e2; background: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-    .btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
-    .grid { display:grid; gap:10px; }
-
-    /* Memory Flip */
-    .board { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; width: min(520px, 92%); margin: 20px auto; }
-    .card { background:#eafbe7; border:2px solid var(--green); border-radius:10px; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer; user-select:none; }
-    .card.matched { background:#d7ffd7; opacity:.9; }
-
-    /* Puzzle (Sliding 3x3) */
-    .puzzle { width: 360px; margin: 14px auto; display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .tile { height: 110px; border-radius: 10px; background:#eafbe7; border:2px solid var(--green); display:flex; align-items:center; justify-content:center; font-size: 28px; cursor: pointer; }
-    .tile.blank { background: transparent; border: 2px dashed #b5e6b5; cursor: default; }
-
-    /* Shadow Match */
-    .shadow-wrap { display:flex; gap:20px; justify-content:center; align-items:center; padding: 20px; flex-wrap: wrap; }
-    .shadow { width: 200px; height: 200px; background:#eafbe7; border:2px dashed var(--green); border-radius: 12px; position: relative; }
-    .shape { width: 80px; height: 80px; background:#c8f7c8; border:2px solid var(--green); border-radius: 10px; display:flex; align-items:center; justify-content:center; cursor: grab; user-select:none; }
-    .shape.circle { border-radius: 50%; }
-    .shape.triangle { width: 0; height: 0; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 80px solid #c8f7c8; background: transparent; border-radius:0; border: none; position: relative; }
-    .shape.triangle::after { content:""; position:absolute; inset:-2px; border-left:42px solid transparent; border-right:42px solid transparent; border-bottom:84px solid rgba(76,175,80,.3); }
-    .shadow .ghost.circle { position:absolute; width:80px; height:80px; border-radius:50%; background:rgba(76,175,80,.18); top:60px; left:60px; }
-    .shadow .ghost.square { position:absolute; width:80px; height:80px; background:rgba(76,175,80,.18); top:60px; left:60px; border-radius:10px; }
-    .shadow .ghost.triangle { position:absolute; width:0; height:0; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 80px solid rgba(76,175,80,.18); top:60px; left:60px; }
-
-    /* Maze */
-    .maze-wrap { display:flex; justify-content:center; padding-bottom: 16px; }
-    .progress { height: 10px; background: #e8f7e8; border-radius: 8px; overflow:hidden; border:1px solid #d6efd6; }
-    .progress > div { height:100%; width:0; background: var(--green); transition: width .25s; }
-
-    /* Typing */
-    .fall-area { position: relative; width: 700px; height: 360px; background:#eafbe7; border:2px solid var(--green); border-radius: 12px; margin: 10px auto; overflow:hidden; }
-    .particle { position:absolute; pointer-events:none; font-weight:700; }
-  </style>
-</head>
-<body>
-  <header>🎮 Mini Creative Games Hub — 10 Games</header>
-
-  <div class="games-grid" id="menu">
-    <div class="game-card" onclick="loadGame('ecoCatcher')"><h3>🌍 Eco-Catcher</h3><p>Catch recyclables, avoid trash</p></div>
-    <div class="game-card" onclick="loadGame('wordBuilder')"><h3>✍️ Word Builder</h3><p>Build words from letters</p></div>
-    <div class="game-card" onclick="loadGame('memoryFlip')"><h3>🧠 Memory Flip</h3><p>Match pairs</p></div>
-    <div class="game-card" onclick="loadGame('quizRace')"><h3>🚀 Quick Quiz Race</h3><p>Answer fast to win</p></div>
-    <div class="game-card" onclick="loadGame('fruitCollector')"><h3>🍎 Fruit Collector</h3><p>Catch only the target fruit</p></div>
-    <div class="game-card" onclick="loadGame('puzzleBuilder')"><h3>🧩 Sliding Puzzle</h3><p>Arrange 1–8 tiles</p></div>
-    <div class="game-card" onclick="loadGame('balanceBuilder')"><h3>⚖️ Balance Builder</h3><p>Stack blocks carefully</p></div>
-    <div class="game-card" onclick="loadGame('typingChallenge')"><h3>⌨️ Typing Challenge</h3><p>Type falling words</p></div>
-    <div class="game-card" onclick="loadGame('shadowMatch')"><h3>🌟 Shadow Match</h3><p>Drag the right shape</p></div>
-    <div class="game-card" onclick="loadGame('mazeEscape')"><h3>🌀 Escape the Maze</h3><p>Find the exit</p></div>
-  </div>
-
-  <div id="game-container"></div>
-
-  <script>
-    const container = document.getElementById('game-container');
-    const menu = document.getElementById('menu');
-
-    function backToMenu(){
-      container.style.display = 'none';
-      menu.style.display = 'grid';
-      container.innerHTML = '';
-      window.onkeydown = null; // clean listeners
-    }
-
-    function loadGame(name){
-      menu.style.display = 'none';
-      container.style.display = 'block';
-      const topbar = `
-        <div class="topbar">
-          <button class="back-btn" onclick="backToMenu()">⬅ Back</button>
-          <div class="stat" id="title">Game: ${name}</div>
-          <div class="stat" id="status"></div>
-          <div class="stat" id="scoreStat"></div>
-          <button class="btn" onclick="reloadGame()">Restart</button>
-        </div>`;
-      container.dataset.game = name;
-      window.reloadGame = () => loadGame(name);
-
-      const wrap = document.createElement('div');
-      wrap.innerHTML = topbar;
-      container.innerHTML = '';
-      container.appendChild(wrap);
-
-      const panel = document.createElement('div');
-      panel.className = 'panel';
-      wrap.appendChild(panel);
-
-      const G = {
-        setStatus: (t)=> document.getElementById('status').textContent = t,
-        setScore: (n)=> document.getElementById('scoreStat').textContent = (n!=null?`Score: ${n}`:''),
-        panel
-      };
-
-      const map = {
-        ecoCatcher: playEcoCatcher,
-        wordBuilder: playWordBuilder,
-        memoryFlip: playMemoryFlip,
-        quizRace: playQuizRace,
-        fruitCollector: playFruitCollector,
-        puzzleBuilder: playPuzzleBuilder,
-        balanceBuilder: playBalanceBuilder,
-        typingChallenge: playTypingChallenge,
-        shadowMatch: playShadowMatch,
-        mazeEscape: playMazeEscape,
-      };
-      map[name](G);
-    }
-
-    /* =====================
-       1) Eco-Catcher (Canvas)
-    ====================== */
-    function playEcoCatcher(G){
-      G.setStatus('Catch blue (recycle), avoid red (trash). Arrows = move.');
-      let score = 0, lives = 3;
-      G.setScore(score);
-      const canvas = document.createElement('canvas');
-      canvas.width = 700; canvas.height = 420; G.panel.appendChild(canvas);
-      const ctx = canvas.getContext('2d');
-      let basketX = 300; const basketW = 100;
-      let items = []; let t=0; let running=true;
-
-      window.onkeydown = (e)=>{
-        if(e.key==='ArrowLeft') basketX = Math.max(0, basketX-22);
-        if(e.key==='ArrowRight') basketX = Math.min(canvas.width-basketW, basketX+22);
-      };
-
-      function spawn(){ items.push({x: Math.random()*(canvas.width-20), y: -20, type: Math.random()>.55?'recycle':'trash', vy: 2+Math.random()*2}); }
-
-      function loop(){
-        if(!running) return;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        // ground & basket
-        ctx.fillStyle = '#9be09b'; ctx.fillRect(0,390,canvas.width,30);
-        ctx.fillStyle = 'green'; ctx.fillRect(basketX, 360, basketW, 24);
-
-        if(t%40===0) spawn();
-        items.forEach((it,i)=>{
-          it.y += it.vy;
-          ctx.fillStyle = it.type==='recycle'?'#1e88e5':'#e53935';
-          ctx.fillRect(it.x, it.y, 20, 20);
-          // catch
-          if(it.y>=340 && it.x>basketX-5 && it.x<basketX+basketW-15){
-            if(it.type==='recycle') score+=10; else lives--;
-            items.splice(i,1);
-            G.setScore(score);
-          } else if(it.y>400){ items.splice(i,1); if(it.type==='recycle'){ lives--; } }
-        });
-
-        // HUD
-        ctx.fillStyle = '#000'; ctx.font='16px sans-serif'; ctx.fillText(`Lives: ${lives}`, 10, 20); ctx.fillText(`Score: ${score}`, 10, 40);
-        if(lives<=0){ running=false; G.setStatus('Game Over!'); ctx.fillText('Game Over', 300, 200); return; }
-        t++; requestAnimationFrame(loop);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mini Creative Games Hub — 10 Games</title>
+    <style>
+      :root {
+        --green: #2e7d32;
+        --bg: #f2fbf2;
+        --card: #ffffff;
+        --ink: #223;
+        --muted: #6b6b6b;
+        --accent: #66bb6a;
       }
-      loop();
-    }
-
-    /* =====================
-       2) Word Builder (DOM)
-    ====================== */
-    function playWordBuilder(G){
-      let time=60, score=0; G.setScore(score);
-      const letters = randomLetters(9);
-      G.panel.innerHTML += `
-        <div class="row"><div class="stat">Make words from letters below. 60s.</div></div>
-        <h2 style="text-align:center; letter-spacing:8px;">${letters.join(' ')}</h2>
-        <div class="row" style="justify-content:center; margin:10px 0;">
-          <input id="wbInput" class="btn" style="min-width:240px;" placeholder="type word" />
-          <button class="btn primary" id="wbAdd">Add</button>
-          <div class="stat" id="wbTime">⏱️ ${time}s</div>
-        </div>
-        <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px;">
-          <div><b>Words</b>
-            <ul id="wbList" style="min-height:120px; padding-left:18px;">
-            </ul>
-          </div>
-          <div><b>Rules</b>
-            <ul style="padding-left:18px; margin-top:6px;">
-              <li>Use only shown letters (each letter at most as many times).</li>
-              <li>No repeats. Length ≥ 3 earns points = length.</li>
-            </ul>
-          </div>
-        </div>`;
-      const input = G.panel.querySelector('#wbInput');
-      const list = G.panel.querySelector('#wbList');
-      const add = G.panel.querySelector('#wbAdd');
-      const timeBox = G.panel.querySelector('#wbTime');
-      const used = new Set();
-
-      function valid(word){
-        if(!word || word.length<3) return false;
-        const w = word.toUpperCase();
-        const counts = Object.create(null);
-        letters.forEach(ch=>counts[ch]=(counts[ch]||0)+1);
-        for(const ch of w){ if(!counts[ch]) return false; counts[ch]--; }
-        return !used.has(w);
+      * {
+        box-sizing: border-box;
       }
-      function addWord(){
-        const w = input.value.trim();
-        if(valid(w)){
-          used.add(w.toUpperCase());
-          score += w.length;
-          G.setScore(score);
-          const li = document.createElement('li'); li.textContent = w; list.appendChild(li);
+      body {
+        margin: 0;
+        font-family: system-ui, Segoe UI, Roboto, Arial;
+        background: var(--bg);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        align-items: center;
+      }
+      header {
+        width: 100%;
+        background: var(--green);
+        color: #fff;
+        padding: 14px 18px;
+        text-align: center;
+        font-weight: 700;
+        font-size: clamp(18px, 2.8vw, 22px);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+
+      .games-grid {
+        width: min(1100px, 96%);
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        margin: 18px auto;
+      }
+      .game-card {
+        background: var(--card);
+        padding: 14px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+        user-select: none;
+        border: 1px solid rgba(46, 125, 50, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        text-align: center;
+      }
+      .game-card h3 {
+        margin: 6px 0 4px;
+        font-size: 16px;
+      }
+      .game-card p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .game-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      #game-container {
+        width: min(1100px, 96%);
+        background: var(--card);
+        border-radius: 14px;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+        margin: 10px auto 32px;
+        overflow: hidden;
+        display: none;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: #f6fff6;
+        border-bottom: 1px solid #e7f5e7;
+        flex-wrap: wrap;
+      }
+      .back-btn {
+        background: var(--green);
+        color: #fff;
+        border: 0;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .stat {
+        background: #fff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid #e9f6ea;
+        font-weight: 600;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid #e7f5e7;
+        background: white;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+      .panel {
+        padding: 16px;
+        min-height: 420px;
+      }
+      canvas {
+        display: block;
+        margin: 12px auto;
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        background: #eafbe7;
+        border: 2px solid var(--green);
+      }
+
+      /* grid helpers */
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      /* memory / match board */
+      .board {
+        display: grid;
+        gap: 10px;
+        justify-content: center;
+        margin: 18px auto;
+      }
+      .card {
+        background: #eafbe7;
+        border: 2px solid var(--green);
+        border-radius: 10px;
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .card.open {
+        background: #fff;
+      }
+      .card.matched {
+        background: #d7ffd7;
+        opacity: 0.95;
+        cursor: default;
+      }
+
+      /* sliding puzzle */
+      .puzzle {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        width: min(360px, 90%);
+        margin: 12px auto;
+      }
+      .tile {
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 28px;
+        background: #eafbe7;
+        border: 2px solid var(--green);
+        cursor: pointer;
+      }
+      .tile.blank {
+        background: transparent;
+        border: 2px dashed #bfecc0;
+        cursor: default;
+      }
+
+      /* trash sorter */
+      .bins {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin: 12px auto;
+        flex-wrap: wrap;
+      }
+      .bin {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        border: 2px solid #d9f2d9;
+        background: #f7fff7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        color: var(--muted);
+      }
+      .trash-pile {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 12px;
+      }
+
+      /* mobile controls */
+      .mobile-controls {
+        display: none;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 8px;
+      }
+      .mobile-controls button {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 0;
+        background: var(--green);
+        color: #fff;
+        font-size: 20px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+      }
+      @media (max-width: 820px) {
+        .mobile-controls {
+          display: flex;
         }
-        input.value=''; input.focus();
+        .panel {
+          padding: 12px;
+        }
+        .game-card h3 {
+          font-size: 15px;
+        }
       }
-      add.onclick = addWord; input.onkeydown = (e)=>{ if(e.key==='Enter') addWord(); };
-      const timer = setInterval(()=>{ time--; timeBox.textContent = `⏱️ ${time}s`; if(time<=0){ clearInterval(timer); input.disabled=true; add.disabled=true; G.setStatus('Time up!'); } }, 1000);
-      G.setStatus('Type words and press Add/Enter.');
-    }
-    function randomLetters(n){
-      const freq = 'EEEEEEEAAAAIIOONNRRTTLLSSUUDGBCMPFHVWYJKQXZ';
-      return Array.from({length:n},()=> freq[Math.floor(Math.random()*freq.length)]);
-    }
 
-    /* =====================
-       3) Memory Flip (DOM)
-    ====================== */
-    function playMemoryFlip(G){
-      const icons = ['🌳','🌞','💧','♻️','🌿','🐝','🪵','🍃'];
-      const deck = shuffle([...icons, ...icons]);
-      let first=null, lock=false, matched=0, moves=0; G.setScore(0);
-      const board = document.createElement('div'); board.className='board'; G.panel.appendChild(board);
-      deck.forEach((v,i)=>{
-        const c = document.createElement('div'); c.className='card'; c.dataset.value=v; c.dataset.index=i; c.textContent='?'; board.appendChild(c);
-        c.onclick=()=>{
-          if(lock||c.classList.contains('matched')||c.classList.contains('open')) return;
-          c.classList.add('open'); c.textContent=v;
-          if(!first){ first=c; }
-          else {
-            moves++;
-            if(first.dataset.value===c.dataset.value){
-              first.classList.add('matched'); c.classList.add('matched'); matched+=2; first=null; G.setScore(matched);
-              if(matched===deck.length) G.setStatus(`You matched all in ${moves} moves!`);
-            } else {
-              lock=true; setTimeout(()=>{ first.classList.remove('open'); c.classList.remove('open'); first.textContent='?'; c.textContent='?'; first=null; lock=false; }, 700);
+      footer {
+        margin-bottom: 22px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      header .back-btn {
+        background: #fff;
+        color: var(--green);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 12px;
+      }
+      header .back-btn:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="homepage2.html" class="back-btn" style="margin-right: 10px"
+        >⬅ Back</a
+      >
+      🎮 Mini Creative Games Hub — 10 Games
+    </header>
+
+    <div class="games-grid" id="menu">
+      <div class="game-card" onclick="loadGame('ecoCatcher')">
+        <h3>🌍 Eco-Catcher</h3>
+        <p>Catch recyclables, avoid trash</p>
+      </div>
+      <div class="game-card" onclick="loadGame('ecoQuiz')">
+        <h3>❓ Eco-Quiz</h3>
+        <p>Quick environmental questions</p>
+      </div>
+      <div class="game-card" onclick="loadGame('ecoMatch')">
+        <h3>🪄 Eco-Match</h3>
+        <p>Flip & match pairs</p>
+      </div>
+      <div class="game-card" onclick="loadGame('trashSorter')">
+        <h3>🗑️ Trash Sorter</h3>
+        <p>Drag items into correct bins</p>
+      </div>
+      <div class="game-card" onclick="loadGame('fruitCollector')">
+        <h3>🍎 Fruit Collector</h3>
+        <p>Catch the target fruit</p>
+      </div>
+      <div class="game-card" onclick="loadGame('puzzleBuilder')">
+        <h3>🧩 Eco-Puzzle</h3>
+        <p>3×3 sliding puzzle</p>
+      </div>
+      <div class="game-card" onclick="loadGame('balanceBuilder')">
+        <h3>⚖️ Balance Builder</h3>
+        <p>Stack blocks without falling</p>
+      </div>
+      <div class="game-card" onclick="loadGame('ecoRunner')">
+        <h3>🏃 Eco-Runner</h3>
+        <p>Run & avoid obstacles</p>
+      </div>
+      <div class="game-card" onclick="loadGame('memoryMatch')">
+        <h3>🧠 Memory Match</h3>
+        <p>Classic memory pairs</p>
+      </div>
+      <div class="game-card" onclick="loadGame('mazeEscape')">
+        <h3>🌀 Maze Escape</h3>
+        <p>Find the exit</p>
+      </div>
+    </div>
+
+    <div id="game-container"></div>
+
+    <footer style="text-align: center">
+      Tip: On mobile use on-screen buttons shown under game area for movement.
+    </footer>
+
+    <script>
+      const container = document.getElementById("game-container");
+      const menu = document.getElementById("menu");
+
+      function backToMenu() {
+        container.style.display = "none";
+        menu.style.display = "grid";
+        container.innerHTML = "";
+        window.onkeydown = null;
+      }
+
+      function loadGame(name) {
+        menu.style.display = "none";
+        container.style.display = "block";
+        container.dataset.game = name;
+        // topbar
+        container.innerHTML = `
+      <div class="topbar">
+        <button class="back-btn" onclick="backToMenu()">⬅ Back</button>
+        <div class="stat" id="title">Game: ${name}</div>
+        <div class="stat" id="status"></div>
+        <div class="stat" id="scoreStat"></div>
+        <button class="btn" onclick="reloadGame()">Restart</button>
+      </div>
+    `;
+        window.reloadGame = () => loadGame(name);
+
+        const panel = document.createElement("div");
+        panel.className = "panel";
+        container.appendChild(panel);
+
+        const G = {
+          setStatus: (t) => (document.getElementById("status").textContent = t),
+          setScore: (n) =>
+            (document.getElementById("scoreStat").textContent =
+              n != null ? `Score: ${n}` : ""),
+          panel,
+        };
+
+        const map = {
+          ecoCatcher: playEcoCatcher,
+          ecoQuiz: playEcoQuiz,
+          ecoMatch: playEcoMatch,
+          trashSorter: playTrashSorter,
+          fruitCollector: playFruitCollector,
+          puzzleBuilder: playPuzzleBuilder,
+          balanceBuilder: playBalanceBuilder,
+          ecoRunner: playEcoRunner,
+          memoryMatch: playMemoryMatch,
+          mazeEscape: playMazeEscape,
+        };
+        map[name](G);
+      }
+
+      /* --------- mobile controls helper --------- */
+      function addMobileControls(parent, onMove) {
+        // parent: element to append controls
+        const wrap = document.createElement("div");
+        wrap.className = "mobile-controls";
+        wrap.innerHTML = `<button data-dir="left">⬅</button><button data-dir="up">⬆</button><button data-dir="down">⬇</button><button data-dir="right">➡</button>`;
+        parent.appendChild(wrap);
+        wrap.querySelectorAll("button").forEach((b) => {
+          b.addEventListener(
+            "touchstart",
+            (e) => {
+              e.preventDefault();
+              onMove(b.dataset.dir);
+            },
+            { passive: false }
+          );
+          b.addEventListener("click", () => onMove(b.dataset.dir));
+        });
+        return wrap;
+      }
+
+      /* =====================
+     1) Eco-Catcher (Canvas)
+     keyboard arrows + mobile controls
+  =======================*/
+      function playEcoCatcher(G) {
+        G.setStatus(
+          "Catch blue (recycle), avoid red (trash). Use arrows or mobile buttons."
+        );
+        let score = 0,
+          lives = 3;
+        G.setScore(score);
+        const canvas = document.createElement("canvas");
+        canvas.width = 700;
+        canvas.height = 420;
+        G.panel.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        let basketX = 300;
+        const basketW = 100;
+        let items = [];
+        let t = 0;
+        let running = true;
+        function spawn() {
+          items.push({
+            x: Math.random() * (canvas.width - 24),
+            y: -20,
+            type: Math.random() > 0.55 ? "recycle" : "trash",
+            vy: 2 + Math.random() * 2,
+          });
+        }
+
+        function onMove(dir) {
+          if (dir === "left") basketX = Math.max(0, basketX - 28);
+          if (dir === "right")
+            basketX = Math.min(canvas.width - basketW, basketX + 28);
+        }
+        window.onkeydown = (e) => {
+          if (e.key === "ArrowLeft") onMove("left");
+          if (e.key === "ArrowRight") onMove("right");
+        };
+        addMobileControls(G.panel, onMove);
+
+        function loop() {
+          if (!running) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // ground & basket
+          ctx.fillStyle = "#9be09b";
+          ctx.fillRect(0, 390, canvas.width, 30);
+          ctx.fillStyle = "green";
+          ctx.fillRect(basketX, 360, basketW, 24);
+
+          if (t % 40 === 0) spawn();
+          for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            it.y += it.vy;
+            ctx.fillStyle = it.type === "recycle" ? "#1e88e5" : "#e53935";
+            ctx.fillRect(it.x, it.y, 20, 20);
+            // catch
+            if (
+              it.y >= 340 &&
+              it.x > basketX - 5 &&
+              it.x < basketX + basketW - 15
+            ) {
+              if (it.type === "recycle") score += 10;
+              else lives--;
+              items.splice(i, 1);
+              G.setScore(score);
+            } else if (it.y > 400) {
+              if (it.type === "recycle") {
+                lives--;
+              }
+              items.splice(i, 1);
             }
           }
+
+          // HUD
+          ctx.fillStyle = "#000";
+          ctx.font = "16px sans-serif";
+          ctx.fillText(`Lives: ${lives}`, 10, 20);
+          ctx.fillText(`Score: ${score}`, 10, 40);
+          if (lives <= 0) {
+            running = false;
+            G.setStatus("Game Over!");
+            ctx.fillStyle = "rgba(0,0,0,0.6)";
+            ctx.font = "36px sans-serif";
+            ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
+            return;
+          }
+          t++;
+          requestAnimationFrame(loop);
+        }
+        loop();
+      }
+
+      /* =====================
+     2) Eco-Quiz (DOM)
+  =======================*/
+      function playEcoQuiz(G) {
+        G.setStatus("Answer quickly!");
+        const qs = [
+          {
+            q: "Which gas do plants absorb?",
+            a: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"],
+            c: 1,
+          },
+          {
+            q: "Which is a renewable source?",
+            a: ["Coal", "Oil", "Wind", "Gas"],
+            c: 2,
+          },
+          {
+            q: "Best way to save energy?",
+            a: [
+              "Leave lights on",
+              "Use LED bulbs",
+              "Open fridge often",
+              "Waste water",
+            ],
+            c: 1,
+          },
+        ];
+        let i = 0,
+          score = 0;
+        G.setScore(0);
+
+        const bar = document.createElement("div");
+        bar.className = "progress";
+        bar.style.width = "100%";
+        bar.style.height = "12px";
+        bar.style.background = "#eaf7ea";
+        bar.style.borderRadius = "8px";
+        bar.style.overflow = "hidden";
+        bar.style.margin = "8px 0";
+        const inner = document.createElement("div");
+        inner.style.width = "0%";
+        inner.style.height = "100%";
+        inner.style.background = "var(--green)";
+        inner.style.transition = "width .25s";
+        bar.appendChild(inner);
+
+        const qbox = document.createElement("div");
+        qbox.style.marginTop = "6px";
+        const abox = document.createElement("div");
+        abox.className = "grid";
+        abox.style.gridTemplateColumns = "1fr 1fr";
+        abox.style.marginTop = "10px";
+
+        G.panel.append(bar, qbox, abox);
+
+        function render() {
+          if (i >= qs.length) {
+            G.setStatus("Finished!");
+            qbox.innerHTML = `<h3>Score: ${score}/${qs.length}</h3>`;
+            abox.innerHTML = "";
+            inner.style.width = "100%";
+            return;
+          }
+          const cur = qs[i];
+          qbox.innerHTML = `<h3 style="margin:6px 0">${cur.q}</h3>`;
+          abox.innerHTML = "";
+          cur.a.forEach((opt, idx) => {
+            const b = document.createElement("button");
+            b.className = "btn";
+            b.textContent = opt;
+            b.style.padding = "12px";
+            b.onclick = () => {
+              if (idx === cur.c) {
+                score++;
+                G.setScore(score);
+              }
+              i++;
+              inner.style.width = (i / qs.length) * 100 + "%";
+              render();
+            };
+            abox.appendChild(b);
+          });
+        }
+        render();
+      }
+
+      /* =====================
+     3) Eco-Match (flip pairs icons)
+  =======================*/
+      function playEcoMatch(G) {
+        G.setStatus("Flip and match pairs!");
+        const icons = ["🌳", "🌞", "💧", "♻️", "🌿", "🐝", "🍃", "🪴"];
+        const deck = shuffle([...icons, ...icons]);
+        let first = null,
+          lock = false,
+          matched = 0,
+          moves = 0;
+        G.setScore(0);
+
+        const board = document.createElement("div");
+        board.className = "board";
+        board.style.gridTemplateColumns = "repeat(4, 1fr)";
+        board.style.width = "min(560px, 92%)";
+        G.panel.appendChild(board);
+
+        deck.forEach((v, i) => {
+          const c = document.createElement("div");
+          c.className = "card";
+          c.dataset.value = v;
+          c.dataset.index = i;
+          c.textContent = "❓";
+          c.style.fontSize = "28px";
+          c.onclick = () => {
+            if (
+              lock ||
+              c.classList.contains("matched") ||
+              c.classList.contains("open")
+            )
+              return;
+            c.classList.add("open");
+            c.textContent = v;
+            if (!first) {
+              first = c;
+            } else {
+              moves++;
+              if (first.dataset.value === c.dataset.value) {
+                first.classList.add("matched");
+                c.classList.add("matched");
+                matched += 2;
+                first = null;
+                G.setScore((matched / 2) * 10);
+                if (matched === deck.length)
+                  G.setStatus(`You matched all in ${moves} moves!`);
+              } else {
+                lock = true;
+                setTimeout(() => {
+                  first.classList.remove("open");
+                  c.classList.remove("open");
+                  first.textContent = "❓";
+                  c.textContent = "❓";
+                  first = null;
+                  lock = false;
+                }, 700);
+              }
+            }
+          };
+          board.appendChild(c);
+        });
+      }
+
+      /* =====================
+     4) Trash Sorter (drag & drop)
+  =======================*/
+      function playTrashSorter(G) {
+        G.setStatus("Drag items to the correct bin (Glass / Plastic / Paper).");
+        let score = 0;
+        G.setScore(score);
+
+        const binsWrap = document.createElement("div");
+        binsWrap.className = "bins";
+        const bins = [
+          { id: "glass", label: "Glass", color: "#cdeffd" },
+          { id: "plastic", label: "Plastic", color: "#ffe7c6" },
+          { id: "paper", label: "Paper", color: "#e9ffd9" },
+        ];
+        bins.forEach((b) => {
+          const el = document.createElement("div");
+          el.className = "bin";
+          el.id = "bin-" + b.id;
+          el.innerHTML = `<strong>${b.label}</strong><div style="font-size:12px;color:var(--muted);margin-top:6px">Drop here</div>`;
+          binsWrap.appendChild(el);
+
+          el.addEventListener("dragover", (e) => e.preventDefault());
+          el.addEventListener("drop", (e) => {
+            const id = e.dataTransfer.getData("text/plain");
+            const item = document.getElementById(id);
+            if (!item) return;
+            const kind = item.dataset.kind;
+            if (kind === b.id) {
+              // correct
+              item.remove();
+              score += 10;
+              G.setScore(score);
+              G.setStatus("Nice! Correct.");
+            } else {
+              // wrong
+              G.setStatus("Wrong bin. Try again.");
+              item.style.transform = "translateY(0)";
+            }
+          });
+        });
+        G.panel.appendChild(binsWrap);
+
+        const pile = document.createElement("div");
+        pile.className = "trash-pile";
+        G.panel.appendChild(pile);
+
+        const items = [
+          { id: "i1", name: "Bottle", kind: "glass", emoji: "🍾" },
+          { id: "i2", name: "Jar", kind: "glass", emoji: "🫙" },
+          { id: "i3", name: "Bottle (plastic)", kind: "plastic", emoji: "🧴" },
+          { id: "i4", name: "Bag", kind: "plastic", emoji: "🛍️" },
+          { id: "i5", name: "Newspaper", kind: "paper", emoji: "📰" },
+          { id: "i6", name: "Cardboard", kind: "paper", emoji: "📦" },
+        ];
+        // shuffle display
+        shuffle(items).forEach((it) => {
+          const el = document.createElement("div");
+          el.id = it.id;
+          el.draggable = true;
+          el.className = "card";
+          el.style.width = "80px";
+          el.style.height = "80px";
+          el.style.display = "flex";
+          el.style.flexDirection = "column";
+          el.style.justifyContent = "center";
+          el.style.alignItems = "center";
+          el.style.fontSize = "22px";
+          el.style.margin = "6px";
+          el.dataset.kind = it.kind;
+          el.innerHTML = `<div style="font-size:26px">${it.emoji}</div><div style="font-size:12px;color:var(--muted)">${it.name}</div>`;
+          el.addEventListener("dragstart", (e) =>
+            e.dataTransfer.setData("text/plain", it.id)
+          );
+          pile.appendChild(el);
+        });
+
+        // simple timer to reshuffle incorrect or timed: not necessary
+      }
+
+      /* =====================
+     5) Fruit Collector (Canvas)
+     similar to Eco-Catcher but target fruit
+  =======================*/
+      function playFruitCollector(G) {
+        const fruits = ["🍎", "🍌", "🍇", "🍊"];
+        const target = fruits[Math.floor(Math.random() * fruits.length)];
+        let score = 0,
+          misses = 0;
+        G.setScore(score);
+        G.setStatus(`Catch only: ${target}`);
+        const canvas = document.createElement("canvas");
+        canvas.width = 700;
+        canvas.height = 420;
+        G.panel.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        let x = 320;
+        const w = 90;
+        let items = [];
+        let t = 0;
+        let run = true;
+
+        function onMove(dir) {
+          if (dir === "left") x = Math.max(0, x - 32);
+          if (dir === "right") x = Math.min(canvas.width - w, x + 32);
+        }
+        window.onkeydown = (e) => {
+          if (e.key === "ArrowLeft") onMove("left");
+          if (e.key === "ArrowRight") onMove("right");
         };
-      });
-      G.setStatus('Flip and match all pairs.');
-    }
+        addMobileControls(G.panel, onMove);
 
-    /* =====================
-       4) Quick Quiz Race (DOM)
-    ====================== */
-    function playQuizRace(G){
-      const qs=[
-        {q:'Which gas do plants absorb?', a:['Oxygen','Carbon Dioxide','Nitrogen','Helium'], c:1},
-        {q:'Which is a renewable source?', a:['Coal','Oil','Wind','Gas'], c:2},
-        {q:'Oceans are mainly made of?', a:['Freshwater','Saltwater','Acid','Oil'], c:1},
-        {q:'Which symbol means recycle?', a:['♻️','⚠️','❌','✅'], c:0},
-        {q:'Best way to save energy?', a:['Leave lights on','Use LED bulbs','Open fridge often','Waste water'], c:1},
-      ];
-      let i=0, score=0;
-      const bar = document.createElement('div'); bar.className='progress'; bar.innerHTML='<div></div>';
-      const qbox = document.createElement('div');
-      const abox = document.createElement('div'); abox.className='grid'; abox.style.gridTemplateColumns='1fr 1fr';
-      G.panel.append(bar, qbox, abox);
-      function render(){
-        if(i>=qs.length){ G.setStatus('Finished!'); qbox.innerHTML=`<h3>Score: ${score}/${qs.length}</h3>`; abox.innerHTML=''; return; }
-        const cur=qs[i]; qbox.innerHTML=`<h3>${cur.q}</h3>`; abox.innerHTML='';
-        cur.a.forEach((opt,idx)=>{
-          const b=document.createElement('button'); b.className='btn'; b.textContent=opt; b.onclick=()=>{
-            if(idx===cur.c){ score++; G.setScore(score); }
-            i++; bar.firstElementChild.style.width = ((i/qs.length)*100)+'%'; render();
-          }; abox.appendChild(b);
-        });
+        function spawn() {
+          const f = fruits[Math.floor(Math.random() * fruits.length)];
+          items.push({
+            x: Math.random() * (canvas.width - 24),
+            y: -30,
+            t: f,
+            vy: 2 + Math.random() * 2,
+          });
+        }
+        function loop() {
+          if (!run) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#9be09b";
+          ctx.fillRect(0, 390, canvas.width, 30);
+          ctx.fillStyle = "#2e7d32";
+          ctx.fillRect(x, 360, w, 20);
+          if (t % 35 === 0) spawn();
+          for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            it.y += it.vy;
+            ctx.font = "28px serif";
+            ctx.fillText(it.t, it.x, it.y);
+            if (it.y > 340 && it.x > x - 10 && it.x < x + w) {
+              if (it.t === target) {
+                score += 5;
+              } else {
+                misses++;
+              }
+              items.splice(i, 1);
+              G.setScore(score);
+            } else if (it.y > 420) {
+              items.splice(i, 1);
+            }
+          }
+          ctx.fillStyle = "#000";
+          ctx.font = "16px sans-serif";
+          ctx.fillText(`Misses: ${misses}/5`, 10, 22);
+          if (misses >= 5) {
+            run = false;
+            G.setStatus("Too many wrong fruits!");
+            ctx.fillStyle = "rgba(0,0,0,0.6)";
+            ctx.font = "36px sans-serif";
+            ctx.fillText("Game Over", 310, 200);
+            return;
+          }
+          t++;
+          requestAnimationFrame(loop);
+        }
+        loop();
       }
-      render(); G.setStatus('Answer quickly!');
-    }
 
-    /* =====================
-       5) Fruit Collector (Canvas)
-    ====================== */
-    function playFruitCollector(G){
-      const fruits = ['🍎','🍌','🍇','🍊'];
-      const target = fruits[Math.floor(Math.random()*fruits.length)];
-      let score=0, misses=0; G.setScore(score); G.setStatus(`Catch only: ${target}`);
-      const canvas = document.createElement('canvas'); canvas.width=700; canvas.height=420; G.panel.appendChild(canvas);
-      const ctx=canvas.getContext('2d'); let x=320; const w=90; let items=[]; let t=0; let run=true;
-      window.onkeydown = (e)=>{ if(e.key==='ArrowLeft') x=Math.max(0,x-24); if(e.key==='ArrowRight') x=Math.min(canvas.width-w,x+24); };
-      function spawn(){ const f = fruits[Math.floor(Math.random()*fruits.length)]; items.push({x:Math.random()*(canvas.width-24),y:-30,t:f,vy:2+Math.random()*2}); }
-      function loop(){ if(!run) return; ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle='#9be09b'; ctx.fillRect(0,390,canvas.width,30); ctx.fillStyle='#2e7d32'; ctx.fillRect(x,360,w,20);
-        if(t%35===0) spawn(); items.forEach((it,i)=>{ it.y+=it.vy; ctx.font='24px serif'; ctx.fillText(it.t,it.x,it.y);
-          if(it.y>340 && it.x>x-10 && it.x<x+w){ if(it.t===target){ score+=5; } else { misses++; }
-            items.splice(i,1); G.setScore(score);
-          } else if(it.y>420){ items.splice(i,1); }
-        }); ctx.fillStyle='#000'; ctx.font='16px sans-serif'; ctx.fillText(`Misses: ${misses}/5`,10,22);
-        if(misses>=5){ run=false; G.setStatus('Too many wrong fruits!'); ctx.fillText('Game Over',310,200); return; }
-        t++; requestAnimationFrame(loop);
-      } loop();
-    }
-
-    /* =====================
-       6) Sliding Puzzle (DOM 3x3)
-    ====================== */
-    function playPuzzleBuilder(G){
-      G.setStatus('Arrange tiles 1–8 in order; blank is empty.');
-      const wrap = document.createElement('div'); wrap.className='puzzle'; G.panel.appendChild(wrap);
-      let tiles = [...Array(8).keys()].map(x=>x+1).concat([0]);
-      do { tiles = shuffle(tiles); } while(!isSolvable(tiles));
-      function render(){
-        wrap.innerHTML='';
-        tiles.forEach((n,idx)=>{
-          const d=document.createElement('div');
-          d.className = 'tile'+(n===0?' blank':'');
-          d.textContent = n||'';
-          d.onclick = ()=> move(idx);
-          wrap.appendChild(d);
-        });
-      }
-      function move(i){
-        const blank = tiles.indexOf(0);
-        const adj = [i-3,i+3,i-1,i+1];
-        if(adj.includes(blank) && validNeighbor(i, blank)){
-          [tiles[i], tiles[blank]] = [tiles[blank], tiles[i]];
-          render();
-          if(isSolved(tiles)) G.setStatus('Great! Puzzle solved.');
+      /* =====================
+     6) Sliding Puzzle (3x3)
+  =======================*/
+      function playPuzzleBuilder(G) {
+        G.setStatus("Arrange tiles 1–8 in order; blank is empty.");
+        const wrap = document.createElement("div");
+        wrap.className = "puzzle";
+        G.panel.appendChild(wrap);
+        let tiles = [...Array(8).keys()].map((x) => x + 1).concat([0]);
+        do {
+          tiles = shuffle(tiles);
+        } while (!isSolvable(tiles) || isSolved(tiles));
+        function render() {
+          wrap.innerHTML = "";
+          tiles.forEach((n, idx) => {
+            const d = document.createElement("div");
+            d.className = "tile" + (n === 0 ? " blank" : "");
+            d.textContent = n || "";
+            d.onclick = () => move(idx);
+            wrap.appendChild(d);
+          });
+        }
+        function move(i) {
+          const blank = tiles.indexOf(0);
+          const adj = [i - 3, i + 3, i - 1, i + 1];
+          if (adj.includes(blank) && validNeighbor(i, blank)) {
+            [tiles[i], tiles[blank]] = [tiles[blank], tiles[i]];
+            render();
+            if (isSolved(tiles)) G.setStatus("Great! Puzzle solved.");
+          }
+        }
+        render();
+        function isSolved(t) {
+          for (let i = 0; i < 8; i++) {
+            if (t[i] !== i + 1) return false;
+          }
+          return t[8] === 0;
+        }
+        function validNeighbor(i, b) {
+          const r1 = Math.floor(i / 3),
+            c1 = i % 3,
+            r2 = Math.floor(b / 3),
+            c2 = b % 3;
+          return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
+        }
+        function isSolvable(arr) {
+          let inv = 0;
+          for (let i = 0; i < 9; i++) {
+            for (let j = i + 1; j < 9; j++) {
+              if (arr[i] && arr[j] && arr[i] > arr[j]) inv++;
+            }
+          }
+          return inv % 2 === 0;
         }
       }
-      render();
-      function isSolved(t){ for(let i=0;i<8;i++){ if(t[i]!==i+1) return false; } return t[8]===0; }
-      function validNeighbor(i,b){
-        const r1=Math.floor(i/3), c1=i%3, r2=Math.floor(b/3), c2=b%3; return Math.abs(r1-r2)+Math.abs(c1-c2)===1;
-      }
-      function isSolvable(arr){
-        let inv=0; for(let i=0;i<9;i++){ for(let j=i+1;j<9;j++){ if(arr[i]&&arr[j]&&arr[i]>arr[j]) inv++; }} return inv%2===0; }
-    }
 
-    /* =====================
-       7) Balance Builder (Canvas)
-    ====================== */
-    function playBalanceBuilder(G){
-      G.setStatus('Move block with arrows; press Space to drop. Stack without overhang.');
-      const canvas=document.createElement('canvas'); canvas.width=700; canvas.height=420; G.panel.appendChild(canvas);
-      const ctx=canvas.getContext('2d'); let stack=[{x:300,y:360,w:120,h:20}]; let curr={x:0,y:100,w:120,h:20,dir:1}; let score=0; G.setScore(score); let run=true;
-      function resetCurr(){ curr={x:0,y:100,w:Math.max(60,120-5*stack.length),h:20,dir:1}; }
-      resetCurr();
-      window.onkeydown=(e)=>{ if(e.key==='ArrowLeft') curr.x-=18; if(e.key==='ArrowRight') curr.x+=18; if(e.key===' '||e.code==='Space'){ drop(); } };
-      function drop(){ if(!run) return; // place on top
-        const top = stack[stack.length-1];
-        const overlap = Math.min(curr.x+curr.w, top.x+top.w) - Math.max(curr.x, top.x);
-        if(overlap<=20){ run=false; G.setStatus('Too much overhang — tower fell!'); return; }
-        const newW = Math.max(40, overlap);
-        const newX = Math.max(curr.x, top.x);
-        stack.push({x:newX,y:top.y-22,w:newW,h:20}); score++; G.setScore(score); resetCurr();
-      }
-      function loop(){ if(!run) return; ctx.clearRect(0,0,canvas.width,canvas.height);
-        // ground
-        ctx.fillStyle='#9be09b'; ctx.fillRect(0,390,canvas.width,30);
-        // stack
-        ctx.fillStyle='#2e7d32'; stack.forEach(b=> ctx.fillRect(b.x,b.y,b.w,b.h));
-        // current
-        ctx.fillStyle='#66bb6a'; ctx.fillRect(curr.x,curr.y,curr.w,curr.h); curr.x+=curr.dir*2; if(curr.x<0||curr.x+curr.w>canvas.width){ curr.dir*=-1; }
-        requestAnimationFrame(loop);
-      } loop();
-    }
-
-    /* =====================
-       8) Typing Challenge (DOM + animate)
-    ====================== */
-    function playTypingChallenge(G){
-      G.setStatus('Type words before they hit the ground.');
-      let score=0, speed=1.2, t=0; G.setScore(score);
-      const words = 'leaf earth green solar wind water energy recycle planet nature reduce reuse grow clean air soil tree forest river ocean save light power eco'.split(' ');
-      const area=document.createElement('div'); area.className='fall-area';
-      const input=document.createElement('input'); input.className='btn'; input.style.minWidth='280px'; input.placeholder='type word here';
-      const spawnBtn=document.createElement('button'); spawnBtn.className='btn'; spawnBtn.textContent='Spawn';
-      const row=document.createElement('div'); row.className='row'; row.style.justifyContent='center'; row.append(input, spawnBtn);
-      G.panel.append(area,row);
-      const items=[];
-      function spawn(){ const w=words[Math.floor(Math.random()*words.length)]; items.push({w, x:Math.random()*(area.clientWidth-80), y:-10}); renderWord(w); }
-      function renderWord(text){ const el=document.createElement('div'); el.className='particle'; el.textContent=text; area.appendChild(el); const obj = items[items.length-1]; obj.el=el; el.style.left=obj.x+'px'; el.style.top=obj.y+'px'; }
-      function loop(){ t++; if(t%100===0) spawn(); items.forEach((o,i)=>{ o.y+=speed; if(o.el){ o.el.style.top=o.y+'px'; }
-        if(o.y>area.clientHeight-24){ // miss
-          if(o.el) o.el.remove(); items.splice(i,1);
+      /* =====================
+     7) Balance Builder (Canvas)
+  =======================*/
+      function playBalanceBuilder(G) {
+        G.setStatus(
+          "Move block with arrows; press Space to drop. Stack without too much overhang."
+        );
+        const canvas = document.createElement("canvas");
+        canvas.width = 700;
+        canvas.height = 420;
+        G.panel.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        let stack = [{ x: 300, y: 360, w: 120, h: 20 }];
+        let curr = { x: 0, y: 100, w: 120, h: 20, dir: 1 };
+        let score = 0;
+        G.setScore(score);
+        let run = true;
+        function resetCurr() {
+          curr = {
+            x: 0,
+            y: 100,
+            w: Math.max(60, 120 - 5 * stack.length),
+            h: 20,
+            dir: 1,
+          };
         }
-      }); requestAnimationFrame(loop); }
-      function check(){ const v=input.value.trim().toLowerCase(); if(!v) return; const idx=items.findIndex(o=>o.w===v); if(idx>-1){ score+=v.length; G.setScore(score); items[idx].el.remove(); items.splice(idx,1); input.value=''; speed = Math.min(4.5, speed+0.05); }
+        resetCurr();
+        function onMove(dir) {
+          if (dir === "left") curr.x -= 26;
+          if (dir === "right") curr.x += 26;
+        }
+        window.onkeydown = (e) => {
+          if (e.key === "ArrowLeft") onMove("left");
+          if (e.key === "ArrowRight") onMove("right");
+          if (e.key === " " || e.code === "Space") {
+            drop();
+          }
+        };
+        addMobileControls(G.panel, (d) => {
+          if (d === "left" || d === "right") onMove(d);
+          if (d === "up") drop();
+        });
+
+        function drop() {
+          if (!run) return;
+          const top = stack[stack.length - 1];
+          const overlap =
+            Math.min(curr.x + curr.w, top.x + top.w) - Math.max(curr.x, top.x);
+          if (overlap <= 20) {
+            run = false;
+            G.setStatus("Too much overhang — tower fell!");
+            return;
+          }
+          const newW = Math.max(40, overlap);
+          const newX = Math.max(curr.x, top.x);
+          stack.push({ x: newX, y: top.y - 22, w: newW, h: 20 });
+          score++;
+          G.setScore(score);
+          resetCurr();
+        }
+
+        function loop() {
+          if (!run) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#9be09b";
+          ctx.fillRect(0, 390, canvas.width, 30);
+          ctx.fillStyle = "#2e7d32";
+          stack.forEach((b) => ctx.fillRect(b.x, b.y, b.w, b.h));
+          ctx.fillStyle = "#66bb6a";
+          ctx.fillRect(curr.x, curr.y, curr.w, curr.h);
+          curr.x += curr.dir * 2;
+          if (curr.x < 0 || curr.x + curr.w > canvas.width) {
+            curr.dir *= -1;
+          }
+          requestAnimationFrame(loop);
+        }
+        loop();
       }
-      input.onkeydown=(e)=>{ if(e.key==='Enter') check(); };
-      spawnBtn.onclick=spawn; loop(); input.focus();
-    }
 
-    /* =====================
-       9) Shadow Match (DOM Drag & Drop)
-    ====================== */
-    function playShadowMatch(G){
-      const kinds=['circle','square','triangle']; const target=kinds[Math.floor(Math.random()*kinds.length)];
-      G.setStatus('Drag the matching shape into the shadow.');
-      const wrap=document.createElement('div'); wrap.className='shadow-wrap';
-      const shadow=document.createElement('div'); shadow.className='shadow';
-      const ghost=document.createElement('div'); ghost.className='ghost '+target; shadow.appendChild(ghost);
-      const shapes=document.createElement('div'); shapes.style.display='flex'; shapes.style.gap='12px';
+      /* =====================
+     8) Eco-Runner (side-scroller)
+     Press up/space to jump. mobile tap Up button.
+  =======================*/
+      function playEcoRunner(G) {
+        G.setStatus("Tap Up or press Space/Up arrow to jump over obstacles.");
+        G.setScore(0);
+        const canvas = document.createElement("canvas");
+        canvas.width = 760;
+        canvas.height = 320;
+        G.panel.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        const groundY = 260;
+        let player = {
+          x: 80,
+          y: groundY - 36,
+          w: 36,
+          h: 36,
+          vy: 0,
+          onGround: true,
+        };
+        const obstacles = [];
+        let t = 0,
+          speed = 3,
+          score = 0,
+          running = true;
 
-      kinds.forEach(k=>{
-        const s=document.createElement('div'); s.className='shape '+(k==='square'?'':k); s.draggable=true; s.dataset.kind=k; s.textContent = k==='triangle'?'' : '';
-        s.ondragstart = (e)=>{ e.dataTransfer.setData('text/plain', k); };
-        shapes.appendChild(s);
-      });
-      shadow.ondragover = (e)=> e.preventDefault();
-      shadow.ondrop = (e)=>{ const k=e.dataTransfer.getData('text/plain'); if(k===target){ shadow.style.background='#d7ffd7'; G.setStatus('Nice! You matched it.'); } else { shadow.style.background='#ffd7d7'; G.setStatus('Oops! Try again.'); setTimeout(()=> shadow.style.background='#eafbe7', 500); } };
+        function spawnObs() {
+          const h = 24 + Math.random() * 36;
+          obstacles.push({ x: canvas.width + 20, y: groundY - h, w: 20, h });
+        }
+        function jump() {
+          if (player.onGround) {
+            player.vy = -10;
+            player.onGround = false;
+          }
+        }
+        window.onkeydown = (e) => {
+          if (e.key === "ArrowUp" || e.code === "Space") jump();
+        };
+        addMobileControls(G.panel, (d) => {
+          if (d === "up") jump();
+        });
 
-      wrap.append(shadow, shapes); G.panel.appendChild(wrap);
-    }
+        function loop() {
+          if (!running) return;
+          t++;
+          if (t % 90 === 0) spawnObs();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // ground
+          ctx.fillStyle = "#9be09b";
+          ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+          // player physics
+          player.vy += 0.5;
+          player.y += player.vy;
+          if (player.y >= groundY - player.h) {
+            player.y = groundY - player.h;
+            player.vy = 0;
+            player.onGround = true;
+          }
+          ctx.fillStyle = "#1565c0";
+          ctx.fillRect(player.x, player.y, player.w, player.h);
+          // obstacles
+          for (let i = obstacles.length - 1; i >= 0; i--) {
+            const o = obstacles[i];
+            o.x -= speed;
+            ctx.fillStyle = "#8d6e63";
+            ctx.fillRect(o.x, o.y, o.w, o.h);
+            // collision
+            if (
+              o.x < player.x + player.w &&
+              o.x + o.w > player.x &&
+              o.y < player.y + player.h &&
+              o.y + o.h > player.y
+            ) {
+              // crash
+              running = false;
+              G.setStatus("Crashed! Game Over");
+              ctx.fillStyle = "rgba(0,0,0,0.6)";
+              ctx.font = "36px sans-serif";
+              ctx.fillText(
+                "Game Over",
+                canvas.width / 2 - 90,
+                canvas.height / 2
+              );
+            }
+            if (o.x + o.w < 0) {
+              obstacles.splice(i, 1);
+              score++;
+              G.setScore(score);
+            }
+          }
+          requestAnimationFrame(loop);
+        }
+        loop();
+      }
 
-    /* =====================
-       10) Maze Escape (Canvas)
-    ====================== */
-    function playMazeEscape(G){
-      G.setStatus('Use arrow keys to reach the green goal.');
-      const canvas=document.createElement('canvas'); canvas.width=600; canvas.height=400; G.panel.appendChild(canvas); const ctx=canvas.getContext('2d');
-      const cols=24, rows=16, cell=25; // fits 600x400 roughly (with margins)
-      // Simple predefined maze (0 path, 1 wall)
-      const M = genMaze(rows, cols);
-      let start={x:1,y:1}, goal={x:cols-2,y:rows-2};
-      let px=start.x, py=start.y;
-      window.onkeydown=(e)=>{ const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key]; if(!d) return; const nx=px+d[0], ny=py+d[1]; if(M[ny]&&M[ny][nx]===0){ px=nx; py=ny; draw(); if(px===goal.x&&py===goal.y) G.setStatus('You escaped the maze!'); }};
-      function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#2e7d32'; for(let y=0;y<rows;y++){ for(let x=0;x<cols;x++){ if(M[y][x]===1){ ctx.fillRect(x*cell, y*cell, cell, cell); } } } ctx.fillStyle='#66bb6a'; ctx.fillRect(goal.x*cell, goal.y*cell, cell, cell); ctx.fillStyle='#1565c0'; ctx.fillRect(px*cell+4, py*cell+4, cell-8, cell-8); }
-      draw();
-    }
-    function genMaze(r,c){ // simple randomized DFS maze
-      const grid = Array.from({length:r},()=>Array(c).fill(1));
-      function carve(x,y){ grid[y][x]=0; const dirs=shuffle([[2,0],[-2,0],[0,2],[0,-2]]); for(const [dx,dy] of dirs){ const nx=x+dx, ny=y+dy; if(ny>0&&ny<r-1&&nx>0&&nx<c-1&&grid[ny][nx]===1){ grid[y+dy/2][x+dx/2]=0; carve(nx,ny);} } }
-      carve(1,1); grid[r-2][c-2]=0; return grid;
-    }
+      /* =====================
+     9) Memory Match (classic, different icons)
+  =======================*/
+      function playMemoryMatch(G) {
+        G.setStatus("Match card pairs!");
+        const icons = ["🐢", "🦋", "🐝", "🦜", "🐬", "🦉", "🐠", "🐿"];
+        const deck = shuffle([...icons, ...icons]);
+        let first = null,
+          lock = false,
+          matched = 0,
+          moves = 0;
+        G.setScore(0);
+        const board = document.createElement("div");
+        board.className = "board";
+        board.style.gridTemplateColumns = "repeat(4, 1fr)";
+        board.style.width = "min(520px,92%)";
+        G.panel.appendChild(board);
+        deck.forEach((v, i) => {
+          const c = document.createElement("div");
+          c.className = "card";
+          c.dataset.value = v;
+          c.dataset.index = i;
+          c.textContent = "❔";
+          c.onclick = () => {
+            if (
+              lock ||
+              c.classList.contains("matched") ||
+              c.classList.contains("open")
+            )
+              return;
+            c.classList.add("open");
+            c.textContent = v;
+            if (!first) {
+              first = c;
+            } else {
+              moves++;
+              if (first.dataset.value === c.dataset.value) {
+                first.classList.add("matched");
+                c.classList.add("matched");
+                matched += 2;
+                first = null;
+                G.setScore((matched / 2) * 20);
+                if (matched === deck.length)
+                  G.setStatus(`You matched all pairs! Moves: ${moves}`);
+              } else {
+                lock = true;
+                setTimeout(() => {
+                  first.classList.remove("open");
+                  c.classList.remove("open");
+                  first.textContent = "❔";
+                  c.textContent = "❔";
+                  first = null;
+                  lock = false;
+                }, 700);
+              }
+            }
+          };
+          board.appendChild(c);
+        });
+      }
 
-    /* ===== Helpers ===== */
-    function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-  </script>
-</body>
+      /* =====================
+     10) Maze Escape (Canvas)
+  =======================*/
+      function playMazeEscape(G) {
+        G.setStatus(
+          "Use arrow keys or mobile buttons to reach the green goal."
+        );
+        const canvas = document.createElement("canvas");
+        canvas.width = 600;
+        canvas.height = 400;
+        G.panel.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+        const cols = 24,
+          rows = 16,
+          cell = 25;
+        const M = genMaze(rows, cols);
+        let start = { x: 1, y: 1 },
+          goal = { x: cols - 2, y: rows - 2 };
+        let px = start.x,
+          py = start.y;
+
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#2e7d32";
+          for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+              if (M[y][x] === 1) {
+                ctx.fillRect(x * cell, y * cell, cell, cell);
+              }
+            }
+          }
+          ctx.fillStyle = "#66bb6a";
+          ctx.fillRect(goal.x * cell, goal.y * cell, cell, cell);
+          ctx.fillStyle = "#1565c0";
+          ctx.fillRect(px * cell + 4, py * cell + 4, cell - 8, cell - 8);
+        }
+
+        function moveDir(dir) {
+          const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
+            dir
+          ];
+          if (!d) return;
+          const nx = px + d[0],
+            ny = py + d[1];
+          if (M[ny] && M[ny][nx] === 0) {
+            px = nx;
+            py = ny;
+            draw();
+            if (px === goal.x && py === goal.y)
+              G.setStatus("You escaped the maze!");
+          }
+        }
+        window.onkeydown = (e) => {
+          const k = e.key.replace("Arrow", "").toLowerCase();
+          moveDir(k);
+        };
+        addMobileControls(G.panel, moveDir);
+        draw();
+      }
+
+      /* ===== Helpers ===== */
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function genMaze(r, c) {
+        const grid = Array.from({ length: r }, () => Array(c).fill(1));
+        function carve(x, y) {
+          grid[y][x] = 0;
+          const dirs = shuffle([
+            [2, 0],
+            [-2, 0],
+            [0, 2],
+            [0, -2],
+          ]);
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx,
+              ny = y + dy;
+            if (
+              ny > 0 &&
+              ny < r - 1 &&
+              nx > 0 &&
+              nx < c - 1 &&
+              grid[ny][nx] === 1
+            ) {
+              grid[y + dy / 2][x + dx / 2] = 0;
+              carve(nx, ny);
+            }
+          }
+        }
+        carve(1, 1);
+        grid[r - 2][c - 2] = 0;
+        return grid;
+      }
+
+      /* Utility shuffle for nodes already used above */
+      // (already defined)
+
+      // Prevent page scroll while tapping mobile control buttons (optional)
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          // if a mobile control was touched, prevent default page scroll
+          if (e.target.closest(".mobile-controls")) e.preventDefault();
+        },
+        { passive: false }
+      );
+    </script>
+  </body>
 </html>
