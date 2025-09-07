@@ -86,58 +86,52 @@
       >
         <!-- Header -->
         <header
-          class="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:justify-between sm:items-center mb-6 sm:mb-8"
-        >
-          <!-- Left section: menu button (mobile) + title -->
-          <div class="flex items-center justify-between w-full sm:w-auto">
-            <!-- Menu Button (only on mobile) -->
-            <button
-              class="menu-toggle bg-gray-800 text-white p-2 rounded md:hidden"
-            >
-              ☰
-            </button>
-            <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold ml-2">
-              Welcome
-            </h1>
-          </div>
+  class="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:justify-between sm:items-center mb-6 sm:mb-8 relative z-50"
+>
+  <div class="flex items-center justify-between w-full sm:w-auto">
+    <button
+      class="menu-toggle bg-gray-800 text-white p-2 rounded md:hidden"
+    >
+      ☰
+    </button>
+    <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold ml-2">
+      Welcome
+    </h1>
+  </div>
 
-          <!-- Right section: dropdown -->
-          <div class="relative">
-            <button
-              id="dropdownBtn"
-              class="flex items-center gap-2 bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-700"
-            >
-              <img
-                src="https://i.pravatar.cc/40"
-                alt="User"
-                class="w-8 h-8 rounded-full"
-              />
-              <span>Jane Doe</span>
-              <span class="material-symbols-outlined"></span>
-            </button>
+  <div class="relative">
+    <button
+      id="dropdownBtn"
+      class="flex items-center gap-2 bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-700"
+    >
+      <img
+        src="https://i.pravatar.cc/40"
+        alt="User"
+        class="w-8 h-8 rounded-full"
+      />
+      <span>Jane Doe</span>
+      <span class="material-symbols-outlined"></span>
+    </button>
 
-            <!-- Dropdown Menu -->
-            <div
-              id="dropdownMenu"
-              class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-lg shadow-lg hidden"
-            >
-              <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-700"
-                >Profile</a
-              >
-              <a
-                href="leaderboard.html"
-                class="block px-4 py-2 hover:bg-gray-700"
-                >Leaderboard</a
-              >
-              <a
-                href="helpandsupport.html"
-                class="block px-4 py-2 hover:bg-gray-700"
-                >Help & Support</a
-              >
-              <a href="#" class="block px-4 py-2 hover:bg-gray-700">Logout</a>
-            </div>
-          </div>
-        </header>
+    <div
+      id="dropdownMenu"
+      class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-lg shadow-lg hidden z-50"
+    >
+      <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-700">Profile</a>
+      <a
+        href="leaderboard.html"
+        class="block px-4 py-2 hover:bg-gray-700"
+        >Leaderboard</a
+      >
+      <a
+        href="helpandsupport.html"
+        class="block px-4 py-2 hover:bg-gray-700"
+        >Help & Support</a
+      >
+      <a href="#" class="block px-4 py-2 hover:bg-gray-700">Logout</a>
+    </div>
+  </div>
+</header>
 
         <!-- Center Fixed Box -->
         <div
@@ -256,6 +250,7 @@
               width: 100px;
               height: 100px;
               perspective: 600px;
+              margin: auto;
             }
 
             /* Cube (3D Box) */
