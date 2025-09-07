@@ -10,6 +10,12 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="logo-modified-removebg-preview.png"
+    />
     <title>Greenify - Environmental Studies for Students</title>
     <style>
       body {
@@ -286,15 +292,15 @@
         <div class="footer-section links">
           <h3>Quick Links</h3>
           <ul>
-            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="index.html">🏠 Home</a></li>
             <li><a href="terms.html">📖 About</a></li>
-            <li><a href="signup.html">📝 Signup</a></li>
+            <li><a href="help.html">🧑‍💻 Help and Support</a></li>
           </ul>
         </div>
 
         <div class="footer-section contact">
           <h3>Contact</h3>
-          <p>📧 greenifyindia01@gamil.com</p>
+          <p>📧 greenifyindia01@gmail.com</p>
           <p>📍 Ahmedabad, India</p>
         </div>
 
@@ -393,6 +399,18 @@
         font-size: 0.9em;
         opacity: 0.8;
       }
+      .icons :hover {
+        background-color: #228b22;
+        color: white;
+        border-radius: 5px;
+        padding: 10px;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #06c01f;
+        transition: 0.3s;
+      }
     </style>
 
     <script>
@@ -406,7 +424,10 @@
       });
 
       document.addEventListener("click", (e) => {
-        if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        if (
+          !dropdownBtn.contains(e.target) &&
+          !dropdownMenu.contains(e.target)
+        ) {
           dropdownMenu.classList.remove("show");
         }
       });
