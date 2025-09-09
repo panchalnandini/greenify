@@ -37,6 +37,7 @@
         height: 40px;
         border-radius: 8px;
       }
+
       nav {
         display: flex;
         gap: 15px;
@@ -123,8 +124,11 @@
         text-align: center;
       }
       .hero-image img {
-        max-width: 100%;
+        width: 100%;
+        max-width: 400px; /* optional to stop it from being too huge */
         height: auto;
+        display: block;
+        margin: auto;
       }
 
       .features {
@@ -193,6 +197,10 @@
           color: white;
           cursor: pointer;
         }
+        .hero button {
+          width: 100%;
+          display: block;
+        }
       }
 
       @media (max-width: 480px) {
@@ -201,6 +209,7 @@
         }
         .hero button {
           width: 100%;
+          display: block;
         }
         nav {
           flex-direction: column;
@@ -209,11 +218,44 @@
         nav a {
           margin: 5px 0;
         }
+        .hero-image img {
+          width: 100%; /* force image to fill container */
+          max-width: 350px; /* prevent oversized image */
+        }
       }
 
       /* Hide hamburger on desktop */
       .hamburger {
         display: none;
+      }
+      @media (max-width: 768px) {
+        .hero {
+          flex-direction: column; /* stack items */
+          text-align: center;
+        }
+
+        /* Put image first */
+        .hero-image {
+          order: -1; /* move image above text */
+        }
+
+        .hero-text {
+          width: 100%;
+        }
+
+        .hero button {
+          width: 100%;
+          max-width: 350px;
+          margin: 15px auto 0;
+          display: block;
+        }
+
+        .hero-image img {
+          width: 100% !important;
+          max-width: 500px;
+          height: auto;
+          margin-bottom: 20px;
+        }
       }
     </style>
   </head>
@@ -262,7 +304,6 @@
         <img
           src="index_photo_cover-removebg-preview.png"
           alt="Students learning nature"
-          width="400"
           class="img"
         />
       </div>
