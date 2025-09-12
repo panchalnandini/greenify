@@ -6,7 +6,6 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -17,257 +16,13 @@
       href="logo-modified-removebg-preview.png"
     />
     <title>Greenify - Environmental Studies for Students</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #f9fdf9;
-        color: #333;
-      }
-      header {
-        background: #3ce64a91;
-        color: white;
-        padding: 15px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-      header img.logo {
-        height: 40px;
-        border-radius: 8px;
-      }
-
-      nav {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin-top: 10px;
-      }
-      nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-      /* Profile Dropdown */
-      .profile-container {
-        position: relative;
-      }
-      .profile-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        color: white;
-        font-weight: bold;
-      }
-      .profile-pic {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-      }
-      .dropdown-menu {
-        position: absolute;
-        right: 0;
-        top: 50px;
-        background: #228b22;
-        border-radius: 8px;
-        display: none;
-        flex-direction: column;
-        min-width: 160px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      }
-      .dropdown-menu a {
-        color: white;
-        padding: 10px;
-        text-decoration: none;
-        display: block;
-      }
-      .dropdown-menu a:hover {
-        background: #1c6d1c;
-      }
-      .dropdown-menu.show {
-        display: flex;
-      }
-
-      .hero {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 50px 20px;
-        background: #eafaf1;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
-      .hero-text {
-        flex: 1;
-        min-width: 280px;
-      }
-      .hero h1 {
-        font-size: 2.2em;
-        color: #004d26;
-      }
-      .hero button {
-        background: #228b22;
-        color: white;
-        padding: 12px 25px;
-        border: none;
-        cursor: pointer;
-        font-size: 1em;
-        border-radius: 5px;
-      }
-      .hero-image {
-        flex: 1;
-        text-align: center;
-      }
-      .hero-image img {
-        width: 100%;
-        max-width: 400px; /* optional to stop it from being too huge */
-        height: auto;
-        display: block;
-        margin: auto;
-      }
-
-      .features {
-        padding: 40px 20px;
-        text-align: center;
-      }
-      .features h2 {
-        color: #004d26;
-      }
-      .features .icons {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        gap: 40px;
-        flex-wrap: wrap;
-      }
-      .icons div {
-        text-align: center;
-        min-width: 100px;
-      }
-
-      footer {
-        background: #228b22;
-        color: white;
-        text-align: center;
-        padding: 15px;
-        margin-top: 30px;
-      }
-      .logo {
-        border-radius: 20px;
-        height: 50px;
-      }
-      .navigation {
-        margin-left: auto;
-      }
-      .text {
-        margin-left: 10px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #004d27c0;
-      }
-
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        header {
-          flex-wrap: nowrap;
-          align-items: center;
-        }
-        .navigation {
-          display: none;
-          flex-direction: column;
-          width: 100%;
-          background: #228b22;
-          padding: 10px 0;
-          border-radius: 10px;
-        }
-        .navigation.show {
-          display: flex;
-        }
-        .hamburger {
-          display: block;
-          margin-left: auto;
-          background: transparent;
-          border: none;
-          font-size: 1.8em;
-          color: white;
-          cursor: pointer;
-        }
-        .hero button {
-          width: 100%;
-          display: block;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .hero h1 {
-          font-size: 1.5em;
-        }
-        .hero button {
-          width: 100%;
-          display: block;
-        }
-        nav {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        nav a {
-          margin: 5px 0;
-        }
-        .hero-image img {
-          width: 100%; /* force image to fill container */
-          max-width: 350px; /* prevent oversized image */
-        }
-      }
-
-      /* Hide hamburger on desktop */
-      .hamburger {
-        display: none;
-      }
-      @media (max-width: 768px) {
-        .hero {
-          flex-direction: column; /* stack items */
-          text-align: center;
-        }
-
-        /* Put image first */
-        .hero-image {
-          order: -1; /* move image above text */
-        }
-
-        .hero-text {
-          width: 100%;
-        }
-
-        .hero button {
-          width: 100%;
-          max-width: 350px;
-          margin: 15px auto 0;
-          display: block;
-        }
-
-        .hero-image img {
-          width: 100% !important;
-          max-width: 500px;
-          height: auto;
-          margin-bottom: 20px;
-        }
-      }
-    </style>
+    <!-- Link external CSS -->
+    <link rel="stylesheet" href="index.css" />
   </head>
   <body>
     <header>
       <img src="logo-modified.png" alt="Greenify Logo" class="logo" />
       <span class="text">Greenify</span>
-
-      <!-- Hamburger button (mobile only) -->
-      <button class="hamburger" id="hamburger">
-        <i class="fa fa-bars"></i>
-      </button>
 
       <!-- Navigation -->
       <nav class="navigation" id="navMenu">
@@ -275,6 +30,9 @@
         <a href="signup.html">Signup</a>
         <a href="terms.html">About</a>
       </nav>
+
+      <!-- Theme Toggle Button -->
+      <button id="themeToggle" class="theme-toggle">🌙</button>
 
       <!-- Profile Dropdown -->
       <div class="profile-container">
@@ -309,15 +67,102 @@
       </div>
     </section>
 
-    <section class="features">
-      <h2>Learn How to Greenify The World</h2>
-      <p>Explore sustainability, recycling, and eco-friendly practices.</p>
-      <div class="icons">
-        <div>♻<br />Recycling</div>
-        <div>🌱<br />Leaf</div>
-        <div>⚡<br />Energy</div>
+    <div class="about-container">
+      <div class="info-section">
+        <div class="text-content">
+          <h2>What is Greenify? 🤔</h2>
+          <p>
+            <strong>Greenify</strong> is a dynamic and interactive web platform
+            dedicated to making environmental education fun, accessible, and
+            engaging for everyone. It's a one-stop destination where you can
+            learn about our planet, connect with a like-minded community, and
+            discover actionable ways to make a positive impact.
+          </p>
+        </div>
+        <div class="image-content">
+          <img
+            src="what_is_greenify-removebg-preview.png"
+            alt="A vibrant image representing the Greenify platform"
+          />
+        </div>
       </div>
-    </section>
+
+      <div class="info-section reverse">
+        <div class="text-content">
+          <h2>What are the features of Greenify? 🌟</h2>
+          <ul>
+            <li>
+              <strong>🎓 Learning Modules:</strong> Dive deep into specific
+              environmental topics.
+            </li>
+            <li>
+              <strong>🧩 Fun Quizzes:</strong> Test your knowledge and earn
+              badges.
+            </li>
+            <li>
+              <strong>🎮 Engaging Games:</strong> Learn complex concepts through
+              play.
+            </li>
+            <li>
+              <strong>🤝 Thriving Community:</strong> Join forums and
+              participate in group challenges.
+            </li>
+            <li>
+              <strong>📰 Latest News:</strong> Stay updated with positive
+              environmental news.
+            </li>
+            <li>
+              <strong>💡 Fun Facts:</strong> Get your daily dose of amazing and
+              shareable facts.
+            </li>
+          </ul>
+        </div>
+        <div class="image-content">
+          <img
+            src="future 1.png"
+            alt="Collage of Greenify features like games, quizzes, and community icons"
+          />
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="text-content">
+          <h2>What is the purpose of Greenify? 🎯</h2>
+          <p>
+            The core purpose of Greenify is to
+            <strong>educate, engage, and empower</strong>. We break down complex
+            environmental issues, make learning an active experience, and give
+            you the confidence to make more sustainable choices in your daily
+            life.
+          </p>
+        </div>
+        <div class="image-content">
+          <img
+            src="purpose png.png"
+            alt="Image showing people empowered and taking environmental action"
+          />
+        </div>
+      </div>
+
+      <div class="info-section reverse">
+        <div class="text-content">
+          <h2>Why choose Greenify? ✅</h2>
+          <p>
+            Greenify stands out by offering a unique, all-in-one approach. We
+            provide <strong>trustworthy information</strong> in a
+            <strong>positive and action-oriented</strong> way. You're not just
+            learning alone; you're joining a supportive community dedicated to
+            creating a healthier planet for everyone.
+          </p>
+        </div>
+        <div class="image-content">
+          <img
+            src="why greenify png.png"
+            alt="A person smiling while using the Greenify website on a laptop"
+          />
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="footer-container">
@@ -349,9 +194,7 @@
           <h3>Follow Us</h3>
           <div class="social-icons">
             <a href="https://www.instagram.com/greenifyindia01/">
-              <span>
-                <i class="fa-brands fa-instagram" style="color: #b197fc"></i>
-              </span>
+              <span><i class="fa-brands fa-instagram"></i></span>
             </a>
           </div>
         </div>
@@ -361,98 +204,6 @@
         © 2025 Greenify | Designed with 💚 for the Environment
       </div>
     </footer>
-
-    <style>
-      .footer {
-        background: linear-gradient(135deg, #004d26, #228b22);
-        color: white;
-        padding: 50px 20px 20px;
-        margin-top: 30px;
-        border-top-left-radius: 30px;
-        border-top-right-radius: 30px;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-      }
-
-      .footer-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 30px;
-        max-width: 1200px;
-        margin: auto;
-      }
-
-      .footer-section h3 {
-        margin-bottom: 15px;
-        font-size: 1.2em;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-        padding-bottom: 5px;
-      }
-
-      .footer-section p {
-        line-height: 1.6;
-        font-size: 0.95em;
-      }
-
-      .footer-section ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      .footer-section ul li {
-        margin: 8px 0;
-      }
-
-      .footer-section ul li a {
-        color: #f1fdf1;
-        text-decoration: none;
-        transition: color 0.3s, transform 0.3s;
-        display: inline-block;
-      }
-
-      .footer-section ul li a:hover {
-        color: #ffe66d;
-        transform: translateX(5px);
-      }
-
-      .social-icons {
-        display: block;
-      }
-
-      .social-icons a {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 10px;
-        border-radius: 50%;
-        font-size: 1.2em;
-        transition: background 0.3s, transform 0.3s;
-        color: white;
-        text-decoration: none;
-      }
-
-      .social-icons a:hover {
-        background: #ffe66d;
-        color: #004d26;
-        transform: scale(1.1);
-      }
-
-      .footer-bottom {
-        text-align: center;
-        margin-top: 30px;
-        font-size: 0.9em;
-        opacity: 0.8;
-      }
-      .icons :hover {
-        background-color: #228b22;
-        color: white;
-        border-radius: 5px;
-        padding: 10px;
-        transition: 0.3s;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #06c01f;
-        transition: 0.3s;
-      }
-    </style>
 
     <script>
       // Profile dropdown
@@ -473,18 +224,51 @@
         }
       });
 
-      // Hamburger menu
+      // Hamburger menu (safe check in case no hamburger exists)
       const hamburger = document.getElementById("hamburger");
       const navMenu = document.getElementById("navMenu");
 
-      hamburger.addEventListener("click", () => {
-        navMenu.classList.toggle("show");
-      });
+      if (hamburger) {
+        hamburger.addEventListener("click", () => {
+          navMenu.classList.toggle("show");
+        });
+      }
 
       // Explore button
       function goToHomepage() {
         window.location.href = "loading.html";
       }
+
+      // Theme toggle
+      const themeToggle = document.getElementById("themeToggle");
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        // Switch icon 🌙 <-> 🌞
+        if (document.body.classList.contains("dark-mode")) {
+          themeToggle.textContent = "🌞";
+        } else {
+          themeToggle.textContent = "🌙";
+        }
+      });
+
+      // Accordion functionality
+      const accordions = document.querySelectorAll(".accordion-header");
+
+      accordions.forEach((header) => {
+        header.addEventListener("click", () => {
+          const item = header.parentElement;
+
+          // Close other accordions
+          document.querySelectorAll(".accordion-item").forEach((acc) => {
+            if (acc !== item) acc.classList.remove("active");
+          });
+
+          // Toggle current
+          item.classList.toggle("active");
+        });
+      });
     </script>
   </body>
 </html>
