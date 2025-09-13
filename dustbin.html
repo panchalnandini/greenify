@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waste Segregation Quiz - India</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e0f7fa);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #004d40;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+  }
+  .quiz-container {
+    max-width: 850px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  .progress {
+    background: #f1f1f1;
+    border-radius: 10px;
+    height: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg,#26a69a,#ff7043);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .question {
+    font-size: 20px;
+    margin: 20px 0;
+    font-weight: bold;
+    color: #00796b;
+  }
+  .options div {
+    margin: 10px 0;
+    padding: 14px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background: #fafafa;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .options div:hover {
+    border-color: #26a69a;
+    background: #e0f2f1;
+    transform: translateX(5px);
+  }
+  .options div.selected {
+    border-color: #26a69a;
+    background: #b2dfdb;
+  }
+  .options div.correct {
+    background: #26a69a;
+    color: white;
+    border-color: #004d40;
+  }
+  .options div.wrong {
+    background: #ef5350;
+    color: white;
+    border-color: #c62828;
+  }
+  .controls {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .controls button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #ff7043;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  .controls button:hover {
+    background: #e64a19;
+    transform: scale(1.05);
+  }
+  #score {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #004d40;
+    margin-top: 30px;
+  }
+  #savedBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    background: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+  #savedBtn:hover { background: #00796b; }
+  #savedPage {
+    display: none;
+    max-width: 850px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  #savedList {
+    padding-left: 0;
+    list-style: none;
+  }
+  .saved-item {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f9f9f9;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  }
+  .quiz-selector {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .quiz-selector button {
+    margin: 8px;
+    padding: 14px 24px;
+    background: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  .quiz-selector button:hover { background: #00796b; transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<h1>♻️ Waste Segregation Quiz: Dustbins in India 🗑️</h1>
+
+<button id="savedBtn" onclick="showSavedPage()">⭐ Saved</button>
+
+<div class="quiz-selector" id="quizMenu">
+  <button onclick="startQuiz(0)">Start Quiz 1</button>
+  <button onclick="startQuiz(1)">Start Quiz 2</button>
+</div>
+
+<div class="quiz-container" id="quizBox" style="display:none;">
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button onclick="prevQuestion()">⬅ Previous</button>
+    <button onclick="saveQuestion()">⭐ Save</button>
+    <button onclick="nextQuestion()">Next ➡</button>
+  </div>
+  <div id="score"></div>
+</div>
+
+<div id="savedPage">
+  <h2>⭐ Saved Questions Review</h2>
+  <ul id="savedList"></ul>
+  <button onclick="closeSavedPage()">⬅ Back to Quiz</button>
+</div>
+
+<script>
+const quizzes = [
+  // Quiz 1
+  [
+    {q:"What type of waste goes into the Green Bin?", opts:["Plastic","Organic/Biodegradable","Glass","Metal"], ans:"Organic/Biodegradable"},
+    {q:"What type of waste goes into the Blue Bin?", opts:["E-waste","Plastic, Metal, Glass","Food waste","Biomedical"], ans:"Plastic, Metal, Glass"},
+    {q:"What is the purpose of the Yellow Bin?", opts:["Biomedical waste","Hazardous waste","Dry waste","Wet waste"], ans:"Biomedical waste"},
+    {q:"Which bin should vegetable peels go into?", opts:["Green","Blue","Yellow","Red"], ans:"Green"},
+    {q:"Which bin should used plastic bottles go into?", opts:["Green","Blue","Yellow","Red"], ans:"Blue"},
+    {q:"What is waste segregation?", opts:["Mixing all waste","Separating waste into categories","Throwing in landfills","Burning waste"], ans:"Separating waste into categories"},
+    {q:"Which waste should NOT go in the Green Bin?", opts:["Food waste","Vegetable peels","Plastic bags","Garden waste"], ans:"Plastic bags"},
+    {q:"What color bin is used for biomedical waste?", opts:["Blue","Yellow","Green","Black"], ans:"Yellow"},
+    {q:"Why is waste segregation important?", opts:["For looks","To reduce landfill load","Just a rule","No reason"], ans:"To reduce landfill load"},
+    {q:"Which organization promotes Swachh Bharat Mission?", opts:["UN","NITI Aayog","Indian Government","WHO"], ans:"Indian Government"}
+  ],
+  // Quiz 2
+  [
+    {q:"Improper segregation can lead to?", opts:["Better recycling","Soil and water pollution","No change","Cleaner streets"], ans:"Soil and water pollution"},
+    {q:"Bengaluru’s 3-bin system includes:", opts:["Green, Blue, Red","Green, Blue, Yellow","Green, Black, White","Only one bin"], ans:"Green, Blue, Red"},
+    {q:"What is dry waste?", opts:["Food leftovers","Garden leaves","Plastic, paper, glass","Coconut shells"], ans:"Plastic, paper, glass"},
+    {q:"What is wet waste?", opts:["Vegetable peels, food scraps","Plastic","Glass","Metal"], ans:"Vegetable peels, food scraps"},
+    {q:"Which bin is used for recyclable waste?", opts:["Blue","Green","Yellow","Red"], ans:"Blue"},
+    {q:"What happens if biomedical waste is mixed with normal waste?", opts:["Safe","Health hazards","Easier recycling","Odor control"], ans:"Health hazards"},
+    {q:"Which rule in India makes segregation mandatory?", opts:["Waste Law Act","Solid Waste Management Rules 2016","Clean India Act","Environment Act"], ans:"Solid Waste Management Rules 2016"},
+    {q:"Which type of waste increases methane gas when dumped?", opts:["Dry waste","Wet waste","Plastic","Metal"], ans:"Wet waste"},
+    {q:"Which mission promotes ‘Reduce, Reuse, Recycle’?", opts:["Digital India","Swachh Bharat","Jal Jeevan Mission","Skill India"], ans:"Swachh Bharat"},
+    {q:"Which city is often cited as a success in waste segregation in India?", opts:["Mumbai","Bengaluru","Delhi","Kolkata"], ans:"Bengaluru"}
+  ]
+];
+
+let currentQuiz = [];
+let currentQuizIndex = 0;
+let currentQ = 0;
+let answers = {};
+let saved = [];
+
+function startQuiz(index){
+  currentQuizIndex = index;
+  currentQuiz = quizzes[index];
+  currentQ = 0; answers = {}; saved = [];
+  document.getElementById("quizMenu").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+  document.querySelector(".controls").style.display="flex";
+  document.getElementById("quiz").style.display="block";
+  document.getElementById("score").innerHTML="";
+  loadQuestion();
+}
+
+function loadQuestion(){
+  let qObj = currentQuiz[currentQ];
+  let progress = ((currentQ+1)/currentQuiz.length)*100;
+  document.getElementById("progressBar").style.width = progress+"%";
+
+  document.getElementById("quiz").innerHTML = `
+    <div class="question">Q${currentQ+1}/${currentQuiz.length}: ${qObj.q}</div>
+    <div class="options">
+      ${qObj.opts.map(opt=>`
+        <div onclick="selectOption('${opt}')"
+             class="${answers[currentQ]===opt ? 'selected':''}">
+             ${opt}
+        </div>`).join("")}
+    </div>
+    ${currentQ===currentQuiz.length-1 ? '<button onclick="submitQuiz()">✅ Submit Quiz</button>' : ''}
+  `;
+}
+
+function selectOption(opt){
+  answers[currentQ] = opt;
+  loadQuestion();
+}
+
+function nextQuestion(){ if(currentQ < currentQuiz.length-1){ currentQ++; loadQuestion(); } }
+function prevQuestion(){ if(currentQ > 0){ currentQ--; loadQuestion(); } }
+
+function saveQuestion(){
+  let qObj = currentQuiz[currentQ];
+  if(!saved.find(s=>s.q===qObj.q)){ saved.push(qObj); alert(`Question ${currentQ+1} saved!`); }
+}
+
+function showSavedPage(){
+  document.getElementById("quizBox").style.display="none";
+  document.getElementById("savedPage").style.display="block";
+  document.getElementById("savedBtn").style.display="none";
+
+  if(saved.length){
+    document.getElementById("savedList").innerHTML = saved.map((s,i)=>`
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${s.q}</div>
+        <div class="options">
+          ${s.opts.map(opt=>`<div class="${opt===s.ans ? 'correct':''}">${opt}</div>`).join("")}
+        </div>
+      </li>
+    `).join("");
+  } else {
+    document.getElementById("savedList").innerHTML = "<li>No questions saved yet.</li>";
+  }
+}
+function closeSavedPage(){
+  document.getElementById("savedPage").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+}
+
+function submitQuiz(){
+  let correct = 0;
+  let reviewHTML = "";
+  currentQuiz.forEach((q,i)=>{
+    let userAns = answers[i] || "Not answered";
+    if(userAns === q.ans) correct++;
+    reviewHTML += `
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${q.q}</div>
+        <div class="options">
+          ${q.opts.map(opt=>{
+            if(opt===q.ans) return `<div class="correct">${opt} ✅</div>`;
+            if(opt===userAns) return `<div class="wrong">${opt} ❌</div>`;
+            return `<div>${opt}</div>`;
+          }).join("")}
+        </div>
+      </li>
+    `;
+  });
+
+  let nextQuiz = currentQuizIndex === 0 ? 1 : 0;
+  document.getElementById("quiz").innerHTML = `
+    <h2>📊 Your Quiz Report</h2>
+    <p>You scored <b>${correct} / ${currentQuiz.length}</b></p>
+    <ul>${reviewHTML}</ul>
+    <button onclick="startQuiz(${currentQuizIndex})">🔄 Start Again</button>
+    <button onclick="startQuiz(${nextQuiz})">➡ Start Quiz ${nextQuiz+1}</button>
+  `;
+  document.querySelector(".controls").style.display="none";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deforestation Quiz - India Matters</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #1b5e20;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+  }
+  .quiz-container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+  }
+  .progress {
+    background: #f1f1f1;
+    border-radius: 10px;
+    height: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg,#66bb6a,#2e7d32);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .question {
+    font-size: 20px;
+    margin: 20px 0;
+    font-weight: bold;
+    color: #2e7d32;
+  }
+  .options div {
+    margin: 10px 0;
+    padding: 14px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #fafafa;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .options div:hover {
+    border-color: #2e7d32;
+    background: #e8f5e9;
+    transform: translateX(5px);
+  }
+  .options div.selected {
+    border-color: #2e7d32;
+    background: #c8e6c9;
+  }
+  .options div.correct {
+    background: #66bb6a;
+    color: white;
+    border-color: #388e3c;
+  }
+  .options div.wrong {
+    background: #ef5350;
+    color: white;
+    border-color: #c62828;
+  }
+  .controls {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .controls button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #2e7d32;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  .controls button:hover {
+    background: #1b5e20;
+    transform: scale(1.05);
+  }
+  #score {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1b5e20;
+    margin-top: 30px;
+  }
+  #savedBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    background: #388e3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+  #savedBtn:hover { background: #1b5e20; }
+  #savedPage {
+    display: none;
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  #savedList {
+    padding-left: 0;
+    list-style: none;
+  }
+  .saved-item {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  }
+  .quiz-selector {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .quiz-selector button {
+    margin: 8px;
+    padding: 14px 24px;
+    background: #388e3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  .quiz-selector button:hover { background: #1b5e20; transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+  <h1>🌳 Deforestation Quiz: Why India Matters 🌍</h1>
+
+  <button id="savedBtn" onclick="showSavedPage()">⭐ Saved</button>
+
+  <div class="quiz-selector" id="quizMenu">
+    <button onclick="startQuiz(0)">Start Quiz 1</button>
+    <button onclick="startQuiz(1)">Start Quiz 2</button>
+  </div>
+
+  <div class="quiz-container" id="quizBox" style="display:none;">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="quiz"></div>
+    <div class="controls">
+      <button onclick="prevQuestion()">⬅ Previous</button>
+      <button onclick="saveQuestion()">⭐ Save</button>
+      <button onclick="nextQuestion()">Next ➡</button>
+    </div>
+    <div id="score"></div>
+  </div>
+
+  <div id="savedPage">
+    <h2>⭐ Saved Questions Review</h2>
+    <ul id="savedList"></ul>
+    <button onclick="closeSavedPage()">⬅ Back to Quiz</button>
+  </div>
+
+<script>
+const quizzes = [
+  [
+    {q:"How many hectares of forest does the world lose annually?", opts:["5M","10M","15M","20M"], ans:"10M"},
+    {q:"India lost how much tree cover (2001–2024)?", opts:["1.1M","2.31M","3.5M","5M"], ans:"2.31M"},
+    {q:"% of India’s tree cover loss due to infrastructure expansion?", opts:["50%","65%","80%","90%"], ans:"80%"},
+    {q:"Which species is heavily affected by deforestation?", opts:["Bengal Tiger","Polar Bear","Elephant","Kangaroo"], ans:"Bengal Tiger"},
+    {q:"CO₂ equivalent emissions from India’s deforestation?", opts:["0.5 GT","1.29 GT","2.5 GT","5 GT"], ans:"1.29 GT"},
+    {q:"Main cause of India’s forest loss?", opts:["Fishing","Agriculture","Mining","Tourism"], ans:"Agriculture"},
+    {q:"Urbanization increase (1975–2015) in sensitive areas?", opts:["100%","150%","184%","200%"], ans:"184%"},
+    {q:"A major environmental effect of deforestation?", opts:["Deserts","Water crisis","Pollution","Earthquakes"], ans:"Water crisis"},
+    {q:"Which initiative helps reverse deforestation?", opts:["Policy reforms","Green initiatives","Community management","All of these"], ans:"All of these"},
+    {q:"India’s share of global forest loss is:", opts:["1%","2.3%","5%","10%"], ans:"2.3%"}
+  ],
+  [
+    {q:"Global net forest loss per year since 2000?", opts:["2M","4.7M","6M","10M"], ans:"4.7M"},
+    {q:"Forests are known as:", opts:["Planet’s lungs","Ocean’s filter","Earth’s skin","Nature’s wall"], ans:"Planet’s lungs"},
+    {q:"Slash-and-burn farming in India involves how many cultivators?", opts:["10M","100M","300M","500M"], ans:"300M"},
+    {q:"Deforestation impacts hydrological cycles causing:", opts:["Volcanoes","Water crisis","Glaciers","Coral bleaching"], ans:"Water crisis"},
+    {q:"Which two regions saw a 184% urban growth?", opts:["Western Ghats & Himalayas","Sundarbans & Deccan","Punjab & Ganga Basin","Aravallis & Thar"], ans:"Western Ghats & Himalayas"},
+    {q:"India’s deforestation released how many gigatons of CO₂?", opts:["0.7 GT","1.29 GT","2 GT","3 GT"], ans:"1.29 GT"},
+    {q:"Main driver of deforestation worldwide?", opts:["Mining","Agriculture expansion","Space programs","Fishing"], ans:"Agriculture expansion"},
+    {q:"Indigenous communities suffer due to:", opts:["Loss of forests","Modern education","Better healthcare","Migration"], ans:"Loss of forests"},
+    {q:"India’s deforestation contributes how much to global share?", opts:["1%","2.3%","4%","7%"], ans:"2.3%"},
+    {q:"Which factor drives over 80% of India’s tree cover loss?", opts:["Tourism","Infrastructure","Logging","Mining"], ans:"Infrastructure"}
+  ]
+];
+
+let currentQuiz = [];
+let currentQuizIndex = 0;
+let currentQ = 0;
+let answers = {};
+let saved = [];
+
+function startQuiz(index){
+  currentQuizIndex = index;
+  currentQuiz = quizzes[index];
+  currentQ = 0; answers = {}; saved = [];
+  document.getElementById("quizMenu").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+  document.querySelector(".controls").style.display="flex";
+  document.getElementById("quiz").style.display="block";
+  document.getElementById("score").innerHTML="";
+  loadQuestion();
+}
+
+function loadQuestion(){
+  let qObj = currentQuiz[currentQ];
+  let progress = ((currentQ+1)/currentQuiz.length)*100;
+  document.getElementById("progressBar").style.width = progress+"%";
+
+  document.getElementById("quiz").innerHTML = `
+    <div class="question">Q${currentQ+1}/${currentQuiz.length}: ${qObj.q}</div>
+    <div class="options">
+      ${qObj.opts.map(opt=>`
+        <div onclick="selectOption('${opt}')"
+             class="${answers[currentQ]===opt ? 'selected':''}">
+             ${opt}
+        </div>`).join("")}
+    </div>
+    ${currentQ===currentQuiz.length-1 ? '<button onclick="submitQuiz()">✅ Submit Quiz</button>' : ''}
+  `;
+}
+
+function selectOption(opt){
+  answers[currentQ] = opt;
+  loadQuestion();
+}
+
+function nextQuestion(){ if(currentQ < currentQuiz.length-1){ currentQ++; loadQuestion(); } }
+function prevQuestion(){ if(currentQ > 0){ currentQ--; loadQuestion(); } }
+
+function saveQuestion(){
+  let qObj = currentQuiz[currentQ];
+  if(!saved.find(s=>s.q===qObj.q)){ saved.push(qObj); alert(`Question ${currentQ+1} saved!`); }
+}
+
+function showSavedPage(){
+  document.getElementById("quizBox").style.display="none";
+  document.getElementById("savedPage").style.display="block";
+  document.getElementById("savedBtn").style.display="none";
+
+  if(saved.length){
+    document.getElementById("savedList").innerHTML = saved.map((s,i)=>`
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${s.q}</div>
+        <div class="options">
+          ${s.opts.map(opt=>`<div class="${opt===s.ans ? 'correct':''}">${opt}</div>`).join("")}
+        </div>
+      </li>
+    `).join("");
+  } else {
+    document.getElementById("savedList").innerHTML = "<li>No questions saved yet.</li>";
+  }
+}
+function closeSavedPage(){
+  document.getElementById("savedPage").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+}
+
+function submitQuiz(){
+  let correct = 0;
+  let reviewHTML = "";
+  currentQuiz.forEach((q,i)=>{
+    let userAns = answers[i] || "Not answered";
+    if(userAns === q.ans) correct++;
+    reviewHTML += `
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${q.q}</div>
+        <div class="options">
+          ${q.opts.map(opt=>{
+            if(opt===q.ans) return `<div class="correct">${opt} ✅</div>`;
+            if(opt===userAns) return `<div class="wrong">${opt} ❌</div>`;
+            return `<div>${opt}</div>`;
+          }).join("")}
+        </div>
+      </li>
+    `;
+  });
+
+  let nextQuiz = currentQuizIndex === 0 ? 1 : 0;
+  document.getElementById("quiz").innerHTML = `
+    <h2>📊 Your Quiz Report</h2>
+    <p>You scored <b>${correct} / ${currentQuiz.length}</b></p>
+    <ul>${reviewHTML}</ul>
+    <button onclick="startQuiz(${currentQuizIndex})">🔄 Start Again</button>
+    <button onclick="startQuiz(${nextQuiz})">➡ Start Quiz ${nextQuiz+1}</button>
+  `;
+  document.querySelector(".controls").style.display="none";
+}
+</script>
+
+</body>
+</html>

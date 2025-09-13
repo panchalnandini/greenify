@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Pollution Quiz - India</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #0d47a1;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+  }
+  .quiz-container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  .progress {
+    background: #f1f1f1;
+    border-radius: 10px;
+    height: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg,#42a5f5,#1565c0);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .question {
+    font-size: 20px;
+    margin: 20px 0;
+    font-weight: bold;
+    color: #1565c0;
+  }
+  .options div {
+    margin: 10px 0;
+    padding: 14px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #fafafa;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .options div:hover {
+    border-color: #1565c0;
+    background: #e3f2fd;
+    transform: translateX(5px);
+  }
+  .options div.selected {
+    border-color: #1565c0;
+    background: #bbdefb;
+  }
+  .options div.correct {
+    background: #42a5f5;
+    color: white;
+    border-color: #1565c0;
+  }
+  .options div.wrong {
+    background: #ef5350;
+    color: white;
+    border-color: #c62828;
+  }
+  .controls {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .controls button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1565c0;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  .controls button:hover {
+    background: #0d47a1;
+    transform: scale(1.05);
+  }
+  #score {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #0d47a1;
+    margin-top: 30px;
+  }
+  #savedBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    background: #1565c0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+  #savedBtn:hover { background: #0d47a1; }
+  #savedPage {
+    display: none;
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  #savedList {
+    padding-left: 0;
+    list-style: none;
+  }
+  .saved-item {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  }
+  .quiz-selector {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .quiz-selector button {
+    margin: 8px;
+    padding: 14px 24px;
+    background: #1565c0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  .quiz-selector button:hover { background: #0d47a1; transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<h1>💧 Water Pollution Quiz: India’s Crisis 🌊</h1>
+
+<button id="savedBtn" onclick="showSavedPage()">⭐ Saved</button>
+
+<div class="quiz-selector" id="quizMenu">
+  <button onclick="startQuiz(0)">Start Quiz 1</button>
+  <button onclick="startQuiz(1)">Start Quiz 2</button>
+</div>
+
+<div class="quiz-container" id="quizBox" style="display:none;">
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button onclick="prevQuestion()">⬅ Previous</button>
+    <button onclick="saveQuestion()">⭐ Save</button>
+    <button onclick="nextQuestion()">Next ➡</button>
+  </div>
+  <div id="score"></div>
+</div>
+
+<div id="savedPage">
+  <h2>⭐ Saved Questions Review</h2>
+  <ul id="savedList"></ul>
+  <button onclick="closeSavedPage()">⬅ Back to Quiz</button>
+</div>
+
+<script>
+const quizzes = [
+  [
+    {q:"What percentage of India’s surface water is unfit for consumption?", opts:["50%","60%","70%","80%"], ans:"70%"},
+    {q:"How many of India’s 605 rivers are heavily polluted?", opts:["25%","40%","50%+","70%"], ans:"50%+"},
+    {q:"How many million liters of untreated wastewater enter water bodies daily?", opts:["10M","20M","30M","40M"], ans:"40M"},
+    {q:"What percentage of sewage in India is treated?", opts:["15%","28%","40%","50%"], ans:"28%"},
+    {q:"Which sectors release toxic effluents into rivers?", opts:["IT","Textiles & Chemicals","Banking","Education"], ans:"Textiles & Chemicals"},
+    {q:"What % of groundwater sources are contaminated with arsenic?", opts:["10%","15%","20%","25%"], ans:"20%"},
+    {q:"Which Indian river is considered one of the most polluted in the world?", opts:["Ganga","Yamuna","Godavari","Brahmaputra"], ans:"Yamuna"},
+    {q:"Which state has the highest number of polluted river stretches?", opts:["Maharashtra","Uttar Pradesh","Tamil Nadu","Bihar"], ans:"Maharashtra"},
+    {q:"What fraction of wastewater treatment plants in India are non-functional?", opts:["1/4","1/3","1/2","2/3"], ans:"1/3"},
+    {q:"Which Supreme Court initiative monitors river pollution?", opts:["Namami Gange","MC Mehta PIL","Swachh Bharat","Clean Rivers Act"], ans:"MC Mehta PIL"}
+  ],
+  [
+    {q:"How many Indians lack access to safe water?", opts:["50M","100M","163M","200M"], ans:"163M"},
+    {q:"What % of communicable diseases are linked to unsafe water?", opts:["10%","15%","21%","30%"], ans:"21%"},
+    {q:"How many child deaths occur annually due to diarrhea?", opts:["0.5M","1M","1.5M","2M"], ans:"1.5M"},
+    {q:"What is the annual economic cost of water pollution in India?", opts:["$20B","$50B","$80B","$100B"], ans:"$80B"},
+    {q:"By what year will India’s water demand exceed supply by 70%?", opts:["2025","2030","2040","2050"], ans:"2030"},
+    {q:"Which Indian city faces the worst groundwater depletion?", opts:["Delhi","Chennai","Bangalore","Hyderabad"], ans:"Chennai"},
+    {q:"What % of rural households still lack access to piped water?", opts:["25%","35%","45%","55%"], ans:"45%"},
+    {q:"Which Indian program aims to provide tap water to all households?", opts:["Jal Jeevan Mission","Namami Gange","Water for All","Har Ghar Nal"], ans:"Jal Jeevan Mission"},
+    {q:"How much of India’s GDP is lost due to water-related health issues?", opts:["1%","2%","3%","5%"], ans:"2%"},
+    {q:"Which pollutant is most common in industrial effluents?", opts:["Mercury","Lead","Chromium","All of these"], ans:"All of these"}
+  ]
+];
+
+let currentQuiz = [];
+let currentQuizIndex = 0;
+let currentQ = 0;
+let answers = {};
+let saved = [];
+
+function startQuiz(index){
+  currentQuizIndex = index;
+  currentQuiz = quizzes[index];
+  currentQ = 0; answers = {}; saved = [];
+  document.getElementById("quizMenu").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+  document.querySelector(".controls").style.display="flex";
+  document.getElementById("quiz").style.display="block";
+  document.getElementById("score").innerHTML="";
+  loadQuestion();
+}
+
+function loadQuestion(){
+  let qObj = currentQuiz[currentQ];
+  let progress = ((currentQ+1)/currentQuiz.length)*100;
+  document.getElementById("progressBar").style.width = progress+"%";
+
+  document.getElementById("quiz").innerHTML = `
+    <div class="question">Q${currentQ+1}/${currentQuiz.length}: ${qObj.q}</div>
+    <div class="options">
+      ${qObj.opts.map(opt=>`
+        <div onclick="selectOption('${opt}')"
+             class="${answers[currentQ]===opt ? 'selected':''}">
+             ${opt}
+        </div>`).join("")}
+    </div>
+    ${currentQ===currentQuiz.length-1 ? '<button onclick="submitQuiz()">✅ Submit Quiz</button>' : ''}
+  `;
+}
+
+function selectOption(opt){
+  answers[currentQ] = opt;
+  loadQuestion();
+}
+
+function nextQuestion(){ if(currentQ < currentQuiz.length-1){ currentQ++; loadQuestion(); } }
+function prevQuestion(){ if(currentQ > 0){ currentQ--; loadQuestion(); } }
+
+function saveQuestion(){
+  let qObj = currentQuiz[currentQ];
+  if(!saved.find(s=>s.q===qObj.q)){ saved.push(qObj); alert(`Question ${currentQ+1} saved!`); }
+}
+
+function showSavedPage(){
+  document.getElementById("quizBox").style.display="none";
+  document.getElementById("savedPage").style.display="block";
+  document.getElementById("savedBtn").style.display="none";
+
+  if(saved.length){
+    document.getElementById("savedList").innerHTML = saved.map((s,i)=>`
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${s.q}</div>
+        <div class="options">
+          ${s.opts.map(opt=>`<div class="${opt===s.ans ? 'correct':''}">${opt}</div>`).join("")}
+        </div>
+      </li>
+    `).join("");
+  } else {
+    document.getElementById("savedList").innerHTML = "<li>No questions saved yet.</li>";
+  }
+}
+function closeSavedPage(){
+  document.getElementById("savedPage").style.display="none";
+  document.getElementById("quizBox").style.display="block";
+  document.getElementById("savedBtn").style.display="block";
+}
+
+function submitQuiz(){
+  let correct = 0;
+  let reviewHTML = "";
+  currentQuiz.forEach((q,i)=>{
+    let userAns = answers[i] || "Not answered";
+    if(userAns === q.ans) correct++;
+    reviewHTML += `
+      <li class="saved-item">
+        <div class="question">Q${i+1}. ${q.q}</div>
+        <div class="options">
+          ${q.opts.map(opt=>{
+            if(opt===q.ans) return `<div class="correct">${opt} ✅</div>`;
+            if(opt===userAns) return `<div class="wrong">${opt} ❌</div>`;
+            return `<div>${opt}</div>`;
+          }).join("")}
+        </div>
+      </li>
+    `;
+  });
+
+  let nextQuiz = currentQuizIndex === 0 ? 1 : 0;
+  document.getElementById("quiz").innerHTML = `
+    <h2>📊 Your Quiz Report</h2>
+    <p>You scored <b>${correct} / ${currentQuiz.length}</b></p>
+    <ul>${reviewHTML}</ul>
+    <button onclick="startQuiz(${currentQuizIndex})">🔄 Start Again</button>
+    <button onclick="startQuiz(${nextQuiz})">➡ Start Quiz ${nextQuiz+1}</button>
+  `;
+  document.querySelector(".controls").style.display="none";
+}
+</script>
+
+</body>
+</html>
