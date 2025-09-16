@@ -47,8 +47,19 @@
                         style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCYfMTj8o7WOXq-lS2FvzwUiCRCJNmpwiG2XZqhQf7ERpNCZV4gIoCNLDtL2Lr7rBclKZtZTHiGOvCTHY62OXsRhLnGeBer2KwP4_6phx1KTVGwDYioMaICqkq3rJHo4OmdzrFZ86WOckGgEYBUMihIG_ZTPowhHTrfYRULniAW5OUJ8hmSrN3CwH3sVy1DTtpfkc8jB0y25I-9uNoz6oxfVuJ6PTpM0CJjCA-Oi5PyiLLI9QbbbOEgxNo8DKX_EqAShIMAekNqju8");'>
                     </div>
                     </a>
+                    <button id="menu-btn"
+    class="md:hidden flex items-center justify-center rounded-md p-2 text-[#374137] hover:bg-[#eef3ee]">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
                 </div>
             </header>
+            <!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden md:hidden flex-col bg-white border-b border-[#e0e7e0] px-6 py-4">
+  <a href="homepage2.html"
+    class="block py-2 text-[#374137] font-medium hover:text-[var(--primary-color)]">Home</a>
+  <a href="#" class="block py-2 text-[var(--primary-color)] font-medium">Modules</a>
+</div>
+
             
             <div class="px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-12">
                 <div class="layout-content-container flex flex-col max-w-6xl flex-1">
@@ -133,12 +144,22 @@
         </div>
     </div>
     <script src="theme.js"></script>
+    <script>
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuBtn.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>
+
 
 
 </body>
 
 
 </html>
+
 
 
 
