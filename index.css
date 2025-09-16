@@ -19,7 +19,7 @@ body {
    HEADER
 ====================== */
 header {
-    background: #3ce64a91;
+    background: #228b22;
     color: white;
     padding: 15px 20px;
     display: flex;
@@ -56,6 +56,27 @@ nav a {
     color: white;
     cursor: pointer;
 }
+
+.brand {
+  display: flex;
+  align-items: center; /* Vertically align logo + text */
+  gap: 3px;            /* Reduced gap (set to 0 if you want no gap at all) */
+}
+
+.brand .logo {
+  margin: 0;
+  padding: 0;
+  height: 40px; /* keep your existing logo size */
+}
+
+.brand .text {
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+  margin: 0;   /* Ensure no extra margin */
+  padding: 0;  /* Ensure no extra padding */
+}
+
 
 /* ======================
    PROFILE DROPDOWN
