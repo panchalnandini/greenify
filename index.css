@@ -613,3 +613,7 @@ body.dark-mode .info-section .text-content ul li {
 .info-section:hover .image-content img {
     transform: scale(1.05);
 }
+.social-media {
+    display: flex;
+justify-content: space-evenly;
+}
