@@ -7,15 +7,17 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 10px; /* extra padding for mobile */
 }
 
 .leaderboard-container {
   max-width: 600px;
-  width: 90%;
+  width: 100%;
   background: white;
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .title {
@@ -41,6 +43,7 @@ body {
   border-radius: 12px;
   font-size: 1rem;
   transition: transform 0.2s ease;
+  flex-wrap: wrap; /* allows items to wrap on smaller screens */
 }
 
 .leaderboard-item:hover {
@@ -61,6 +64,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .medal {
@@ -73,6 +78,12 @@ body {
   font-size: 0.8rem;
   padding: 4px 8px;
   border-radius: 50%;
+}
+
+.score {
+  font-weight: bold;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Back to home button */
@@ -92,4 +103,31 @@ body {
 
 .back-home:hover {
   background: #15803d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .leaderboard-item {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .medal {
+    font-size: 1.2rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 7px;
+  }
+
+  .back-home {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 0.9rem;
+  }
 }
