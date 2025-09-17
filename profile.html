@@ -1,221 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<title>Profile</title>
-<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<style type="text/tailwindcss">
-    :root {
-      --primary-color: #137fec;
-    }
-  </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scroll for modal */
+    .modal-open {
+      overflow: hidden;
     }
   </style>
 </head>
-<body class="bg-gray-50">
-<div class="relative flex size-full min-h-screen flex-col justify-between group/design-root" style='font-family: Inter, "Noto Sans", sans-serif;'>
-  <div class="flex flex-col flex-1">
-    <header class="flex items-center justify-between p-4">
-      <a href="index.html">
-      <button class="flex items-center justify-center text-gray-800">
-        <span class="material-symbols-outlined text-3xl"> arrow_back_ios_new </span>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Top Bar -->
+  <header class="w-full flex items-center justify-between p-4 bg-white shadow">
+    <button class="text-gray-600 text-xl">←</button>
+    <h1 class="text-lg font-semibold">Profile</h1>
+    <div class="w-6"></div>
+  </header>
+
+  <!-- Profile Card -->
+  <main class="flex-1 flex items-center justify-center p-4">
+    <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-sm text-center">
+      <img id="profile-pic" src="https://via.placeholder.com/150" alt="Profile Picture" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+      <h2 id="profile-name" class="text-xl font-semibold">Sophia Carter</h2>
+      <p id="profile-email" class="text-gray-600">sophia@example.com</p>
+      <p id="profile-dob" class="text-gray-500 text-sm">July 15, 1992</p>
+      <p id="profile-bio" class="mt-2 text-gray-500 text-sm">This is a short bio about Sophia Carter.</p>
+      <button onclick="openModal()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+        Edit Profile
       </button>
-      </a>
-      <h1 class="text-xl font-bold text-gray-900">Profile</h1>
-      <div class="w-8"></div>
-    </header>
-    <main class="flex-1 flex flex-col items-center justify-center px-6 pb-12">
-      <div class="flex flex-col items-center gap-6">
-        <div class="relative">
-          <div id="profile-photo" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-32 w-32" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcVG1pKfhvmZZL_NLiXzzA7nPyjXEy0H3mcfJv7LdiF7JFIuhE--ZFyD_F0XBRsIbLHjrmemD0TXQT1HzC48zlUQEo2igncNz-r4s6wUz2n88AkTP1KbbqDrL-oAp-kezrTLKvVC3sLLq1cM9VDUVGdFp5rEav8EdC0UOaClkR-V95afvuxcBONrPJFwgxgZSrEh4LF5bmBMGECmwDXOzaDDB3-bSVi8W8K1iIBkuqr82bE2-5aisE24a7OaykjAFZydafA_nC");'></div>
-          <button id="edit-photo-btn" class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white hover:bg-gray-700" title="Edit Photo">
-            <span class="material-symbols-outlined text-xl"> edit </span>
-          </button>
-        </div>
-        <div class="text-center">
-          <p id="profile-name" class="text-2xl font-bold text-gray-900">Sophia Carter</p>
-          <p id="profile-email" class="text-base text-gray-500">sophia.carter@email.com</p>
-          <p id="profile-dob" class="text-base text-gray-500 mt-1">July 15, 1990</p>
-          <p id="profile-bio" class="text-base text-gray-600 mt-2 max-w-xs">This is a short bio about Sophia Carter.</p>
-        </div>
-        <button id="edit-profile-btn" class="flex w-full max-w-xs cursor-pointer items-center justify-center rounded-lg bg-[var(--primary-color)] py-3 px-4 text-white text-base font-bold transition-colors hover:bg-blue-700">
-          <span class="truncate">Edit Profile</span>
-        </button>
-      </div>
-    </main>
-  </div>
-  <footer class="sticky bottom-0 border-t border-gray-200 bg-white">
-    <nav class="flex justify-around py-2">
-      <a class="flex flex-col items-center justify-end gap-1 text-[var(--primary-color)]" href="index.html">
-        <span class="material-symbols-outlined text-2xl"> home </span>
-        <p class="text-xs font-bold">Home</p>
-      </a>
-      <a class="flex flex-col items-center justify-end gap-1 text-gray-500" href="#">
-        <span class="material-symbols-outlined text-2xl"> person </span>
-        <p class="text-xs font-medium">Profile</p>
-      </a>
-    </nav>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <footer class="w-full bg-white shadow-inner flex justify-around py-3">
+    <button class="flex flex-col items-center text-blue-500">
+      <span class="material-icons">home</span>
+      <span class="text-xs">Home</span>
+    </button>
+    <button class="flex flex-col items-center text-gray-500">
+      <span class="material-icons">person</span>
+      <span class="text-xs">Profile</span>
+    </button>
   </footer>
-</div>
 
-<!-- Modal for editing profile -->
-<div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
-    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
-    <form id="edit-form" class="flex flex-col gap-4">
-      <div class="flex flex-col items-center gap-2">
-        <div id="edit-photo-preview" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border border-gray-300"></div>
-        <label class="cursor-pointer text-sm text-blue-600 hover:underline">
-          Change Photo
-          <input type="file" id="photo-input" accept="image/*" class="hidden" />
-        </label>
-      </div>
-      <div>
-        <label for="name-input" class="block text-sm font-medium text-gray-700">Name</label>
-        <input type="text" id="name-input" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
-      </div>
-      <div>
-        <label for="email-input" class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email-input" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
-      </div>
-      <div>
-        <label for="dob-input" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-        <input type="date" id="dob-input" name="dob" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
-      </div>
-      <div>
-        <label for="bio-input" class="block text-sm font-medium text-gray-700">Bio</label>
-        <textarea id="bio-input" name="bio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"></textarea>
-      </div>
-      <div class="flex justify-end gap-2 mt-4">
-        <button type="button" id="cancel-btn" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Cancel</button>
-        <button type="submit" class="px-4 py-2 rounded bg-[var(--primary-color)] text-white hover:bg-blue-700">Save</button>
-      </div>
-    </form>
+  <!-- Modal -->
+  <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+      <h2 class="text-xl font-semibold mb-4">Edit Profile</h2>
+      <form id="editProfileForm" class="space-y-4">
+        <!-- Profile Image Upload -->
+        <div class="flex flex-col items-center">
+          <img id="preview-pic" src="https://via.placeholder.com/150" class="w-24 h-24 rounded-full object-cover mb-2" />
+          <input type="file" id="photoInput" accept="image/*" class="text-sm text-gray-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Name</label>
+          <input type="text" id="nameInput" class="w-full border rounded-lg px-3 py-2" value="Sophia Carter" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Email</label>
+          <input type="email" id="emailInput" class="w-full border rounded-lg px-3 py-2" value="sophia@example.com" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Date of Birth</label>
+          <input type="date" id="dobInput" class="w-full border rounded-lg px-3 py-2" value="1992-07-15" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Bio</label>
+          <textarea id="bioInput" class="w-full border rounded-lg px-3 py-2">This is a short bio about Sophia Carter.</textarea>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg border">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-blue-500 text-white">Save</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
-<script>
-  const editProfileBtn = document.getElementById('edit-profile-btn');
-  const editModal = document.getElementById('edit-modal');
-  const cancelBtn = document.getElementById('cancel-btn');
-  const editForm = document.getElementById('edit-form');
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  const profilePhoto = document.getElementById('profile-photo');
-  const profileName = document.getElementById('profile-name');
-  const profileEmail = document.getElementById('profile-email');
-  const profileDob = document.getElementById('profile-dob');
-  const profileBio = document.getElementById('profile-bio');
+  <!-- Script -->
+  <script>
+    const modal = document.getElementById("editModal");
+    const body = document.body;
 
-  const editPhotoPreview = document.getElementById('edit-photo-preview');
-  const photoInput = document.getElementById('photo-input');
-  const nameInput = document.getElementById('name-input');
-  const emailInput = document.getElementById('email-input');
-  const dobInput = document.getElementById('dob-input');
-  const bioInput = document.getElementById('bio-input');
-
-  // Helper to format date to readable string like "July 15, 1990"
-  function formatDate(dateStr) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const date = new Date(dateStr);
-    if (isNaN(date)) return '';
-    return date.toLocaleDateString(undefined, options);
-  }
-
-  // Open modal and populate form with current profile data
-  function openEditModal() {
-    // Extract current photo URL from background-image style
-    const bgImage = profilePhoto.style.backgroundImage;
-    const urlMatch = bgImage.match(/url\("(.*)"\)/);
-    const photoUrl = urlMatch ? urlMatch[1] : '';
-
-    editPhotoPreview.style.backgroundImage = `url("${photoUrl}")`;
-    photoInput.value = ''; // reset file input
-
-    nameInput.value = profileName.textContent;
-    emailInput.value = profileEmail.textContent;
-    bioInput.value = profileBio.textContent;
-
-    // Convert displayed DOB to yyyy-mm-dd for input[type=date]
-    const currentDob = profileDob.textContent;
-    const parsedDate = new Date(currentDob);
-    if (!isNaN(parsedDate)) {
-      const yyyy = parsedDate.getFullYear();
-      const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
-      const dd = String(parsedDate.getDate()).padStart(2, '0');
-      dobInput.value = `${yyyy}-${mm}-${dd}`;
-    } else {
-      dobInput.value = '';
+    function openModal() {
+      modal.classList.remove("hidden");
+      body.classList.add("modal-open");
     }
 
-    editModal.classList.remove('hidden');
-  }
-
-  // Close modal
-  function closeEditModal() {
-    editModal.classList.add('hidden');
-  }
-
-  // Update photo preview when user selects a new photo
-  photoInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        editPhotoPreview.style.backgroundImage = `url("${evt.target.result}")`;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Handle form submission
-  editForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    // Update profile photo if a new file is selected
-    const file = photoInput.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        profilePhoto.style.backgroundImage = `url("${evt.target.result}")`;
-      };
-      reader.readAsDataURL(file);
+    function closeModal() {
+      modal.classList.add("hidden");
+      body.classList.remove("modal-open");
     }
 
-    // Update other profile info
-    profileName.textContent = nameInput.value.trim();
-    profileEmail.textContent = emailInput.value.trim();
-    profileBio.textContent = bioInput.value.trim();
+    // Preview uploaded image
+    document.getElementById("photoInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById("preview-pic").src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
 
-    // Format and update DOB display
-    profileDob.textContent = formatDate(dobInput.value);
-
-    closeEditModal();
-  });
-
-  // Open modal on clicking "Edit Profile" button
-  editProfileBtn.addEventListener('click', openEditModal);
-
-  // Also allow editing photo by clicking the small edit icon on photo
-  document.getElementById('edit-photo-btn').addEventListener('click', () => {
-    openEditModal();
-  });
-
-  // Cancel button closes modal without saving
-  cancelBtn.addEventListener('click', closeEditModal);
-
-  // Close modal if clicking outside the modal content
-  editModal.addEventListener('click', (e) => {
-    if (e.target === editModal) {
-      closeEditModal();
-    }
-  });
-</script>
+    // Update profile on save
+    document.getElementById("editProfileForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      document.getElementById("profile-name").textContent = document.getElementById("nameInput").value;
+      document.getElementById("profile-email").textContent = document.getElementById("emailInput").value;
+      document.getElementById("profile-dob").textContent = new Date(document.getElementById("dobInput").value).toDateString();
+      document.getElementById("profile-bio").textContent = document.getElementById("bioInput").value;
+      document.getElementById("profile-pic").src = document.getElementById("preview-pic").src;
+      closeModal();
+    });
+  </script>
 </body>
 </html>
