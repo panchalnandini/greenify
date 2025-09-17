@@ -408,6 +408,9 @@ body.dark-mode .footer-section ul li a {
 body.dark-mode .footer-section ul li a:hover {
     color: #ffe66d;
 }
+body.dark-mode .hero text h2{
+   color: ##FFFFFF
+}
 body.dark-mode .info-section {
     background-color: #2a2a2a;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
