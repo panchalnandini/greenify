@@ -21,49 +21,58 @@
   </head>
   <body>
     <header>
-    
       <!-- Brand: Logo + Text -->
       <div class="brand">
-        <img src="logo-modified.png" alt="Greenify Logo" class="logo" />
+        <img
+          src="logo-modified-removebg-preview.png"
+          alt="Greenify Logo"
+          class="logo"
+        />
         <span class="text">
           <h2>Greenify</h2>
         </span>
       </div>
-    
 
-     <div class="group">
+      <!-- Right side group -->
+      <div class="group">
+        <!-- Navigation -->
+        <nav class="navigation" id="navMenu">
+          <a href="home.html">Home</a>
+          <a href="signup.html">Signup</a>
+          <a href="about.html">About</a>
+        </nav>
 
-      <!-- Theme Toggle Button -->
-      <button id="themeToggle" class="theme-toggle">🌙</button>
- <!-- Navigation -->
-      <nav class="navigation" id="navMenu">
-        <a href="home.html">Home</a>
-        <a href="signup.html">Signup</a>
-        <a href="about.html">About</a>
-      </nav>
-      <!-- Profile Dropdown -->
-      <div class="profile-container">
-        <button id="dropdownBtn" class="profile-btn">
-          <img src="https://i.pravatar.cc/40" alt="User" class="profile-pic" />
-        </button>
-        <div id="dropdownMenu" class="dropdown-menu">
-          <a href="profile.html">Profile</a>
-          <a href="help3.html">Help & Support</a>
-          <a href="dashboard.html">Dashboard</a>
-           <a href="about.html">About us </a>
-          <a href="#">Logout</a>
+        <!-- Theme Toggle Button -->
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+
+        <!-- Profile Dropdown -->
+        <div class="profile-container">
+          <button id="dropdownBtn" class="profile-btn">
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="User"
+              class="profile-pic"
+            />
+          </button>
+          <div id="dropdownMenu" class="dropdown-menu">
+            <a href="profile.html">Profile</a>
+            <a href="help3.html">Help & Support</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="about.html">About us</a>
+            <a href="#">Logout</a>
+          </div>
         </div>
-      </div>
       </div>
     </header>
 
+    <!-- HERO SECTION -->
     <section class="hero">
       <div class="hero-text">
         <h1>Environmental Studies for Students</h1>
         <h2>
-          Greenify is a gamified learning platform designed to make environmental education engaging, interactive, and impactful.
+          Greenify is a gamified learning platform designed to make
+          environmental education engaging, interactive, and impactful.
         </h2>
-        
         <button onclick="goToHomepage()">Explore Now 🚀</button>
       </div>
       <div class="hero-image">
@@ -75,6 +84,8 @@
       </div>
     </section>
 
+    <!-- REST OF YOUR CONTENT STAYS SAME -->
+    <!-- ... About sections, Footer ... -->
     <div class="about-container">
       <div class="info-section">
         <div class="text-content">
@@ -231,6 +242,7 @@
       </div>
     </footer>
 
+
     <script>
       // Profile dropdown
       const dropdownBtn = document.getElementById("dropdownBtn");
@@ -250,16 +262,6 @@
         }
       });
 
-      // Hamburger menu (safe check in case no hamburger exists)
-      const hamburger = document.getElementById("hamburger");
-      const navMenu = document.getElementById("navMenu");
-
-      if (hamburger) {
-        hamburger.addEventListener("click", () => {
-          navMenu.classList.toggle("show");
-        });
-      }
-
       // Explore button
       function goToHomepage() {
         window.location.href = "loading.html";
@@ -278,34 +280,6 @@
           themeToggle.textContent = "🌙";
         }
       });
-
-      // Accordion functionality
-      const accordions = document.querySelectorAll(".accordion-header");
-
-      accordions.forEach((header) => {
-        header.addEventListener("click", () => {
-          const item = header.parentElement;
-
-          // Close other accordions
-          document.querySelectorAll(".accordion-item").forEach((acc) => {
-            if (acc !== item) acc.classList.remove("active");
-          });
-
-          // Toggle current
-          item.classList.toggle("active");
-        });
-      });
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
