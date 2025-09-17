@@ -120,6 +120,9 @@ nav a:hover {
   padding: 40px 20px;
   flex-wrap: wrap; /* allows wrapping on small screens */
      background-color: #5fce5f84;
+    border-radius: 15px;
+    margin-top:5px;
+   
 }
 
 .hero-text {
@@ -168,7 +171,7 @@ nav a:hover {
    INFO SECTIONS
 ====================== */
 .info-section {
-    background-color: #ffffff;
+    background-color: #66ce6684;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 77, 38, 0.1);
     padding: 40px;
@@ -178,6 +181,7 @@ nav a:hover {
     display: flex;
     align-items: center;
     gap: 40px;
+   margin-top:20px;
 }
 
 .info-section.reverse {
