@@ -1,336 +1,221 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="utf-8" />
-  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
-  <link as="style"
-    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
-    onload="this.rel='stylesheet'" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <title>Profile</title>
-  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <style type="text/tailwindcss">
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>Profile</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
     :root {
       --primary-color: #137fec;
     }
   </style>
-  <style>
-    .card {
-      background: rgb(206, 245, 241);
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      width: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto;
-      border-radius: 10%;
-    }
-
+<style>
     body {
       min-height: max(884px, 100dvh);
     }
-
-    /* Puzzle piece styles */
-    .puzzle-piece {
-      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAcVG1pKfhvmZZL_NLiXzzA7nPyjXEy0H3mcfJv7LdiF7JFIuhE--ZFyD_F0XBRsIbLHjrmemD0TXQT1HzC48zlUQEo2igncNz-r4s6wUz2n88AkTP1KbbqDrL-oAp-kezrTLKvVC3sLLq1cM9VDUVGdFp5rEav8EdC0UOaClkR-V95afvuxcBONrPJFwgxgZSrEh4LF5bmBMGECmwDXOzaDDB3-bSVi8W8K1iIBkuqr82bE2-5aisE24a7OaykjAFZydafA_nC');
-      background-size: 300% 300%;
-      /* 3x3 grid */
-      cursor: pointer;
-      border-radius: 4px;
-      transition: transform 0.2s ease;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .puzzle-piece.selected {
-      outline: 3px solid var(--primary-color);
-      transform: scale(1.05);
-      z-index: 10;
-    }
-    
   </style>
 </head>
-
 <body class="bg-gray-50">
-  <div class="card">
-    <div class="relative flex size-full min-h-screen flex-col group/design-root"
-      style='font-family: Inter, "Noto Sans", sans-serif;'>
-      <div class="flex flex-1 flex-col">
-        <header class="flex shrink-0 items-center justify-between p-4">
-          <button id="backBtn" class="flex items-center justify-center text-gray-800" title="Go Back">
-            <span class="material-symbols-outlined text-3xl"> arrow_back_ios_new </span>
+<div class="relative flex size-full min-h-screen flex-col justify-between group/design-root" style='font-family: Inter, "Noto Sans", sans-serif;'>
+  <div class="flex flex-col flex-1">
+    <header class="flex items-center justify-between p-4">
+      <a href="index.html">
+      <button class="flex items-center justify-center text-gray-800">
+        <span class="material-symbols-outlined text-3xl"> arrow_back_ios_new </span>
+      </button>
+      </a>
+      <h1 class="text-xl font-bold text-gray-900">Profile</h1>
+      <div class="w-8"></div>
+    </header>
+    <main class="flex-1 flex flex-col items-center justify-center px-6 pb-12">
+      <div class="flex flex-col items-center gap-6">
+        <div class="relative">
+          <div id="profile-photo" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-32 w-32" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcVG1pKfhvmZZL_NLiXzzA7nPyjXEy0H3mcfJv7LdiF7JFIuhE--ZFyD_F0XBRsIbLHjrmemD0TXQT1HzC48zlUQEo2igncNz-r4s6wUz2n88AkTP1KbbqDrL-oAp-kezrTLKvVC3sLLq1cM9VDUVGdFp5rEav8EdC0UOaClkR-V95afvuxcBONrPJFwgxgZSrEh4LF5bmBMGECmwDXOzaDDB3-bSVi8W8K1iIBkuqr82bE2-5aisE24a7OaykjAFZydafA_nC");'></div>
+          <button id="edit-photo-btn" class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white hover:bg-gray-700" title="Edit Photo">
+            <span class="material-symbols-outlined text-xl"> edit </span>
           </button>
-          <h1 class="text-xl font-bold text-gray-900">Profile</h1>
-          <div class="w-8"></div>
-        </header>
-        <main class="flex flex-1 flex-col px-6 pt-8 pb-4">
-          <div class="flex flex-col items-center gap-6">
-            <div class="relative">
-              <div id="avatar"
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-32 w-32 cursor-pointer"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcVG1pKfhvmZZL_NLiXzzA7nPyjXEy0H3mcfJv7LdiF7JFIuhE--ZFyD_F0XBRsIbLHjrmemD0TXQT1HzC48zlUQEo2igncNz-r4s6wUz2n88AkTP1KbbqDrL-oAp-kezrTLKvVC3sLLq1cM9VDUVGdFp5rEav8EdC0UOaClkR-V95afvuxcBONrPJFwgxgZSrEh4LF5bmBMGECmwDXOzaDDB3-bSVi8W8K1iIBkuqr82bE2-5aisE24a7OaykjAFZydafA_nC");'>
-              </div>
-              <button id="editAvatarBtn"
-                class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white hover:bg-gray-700"
-                title="Change Profile Picture">
-                <span class="material-symbols-outlined text-xl"> edit </span>
-              </button>
-              <input type="file" id="avatarInput" accept="image/*" style="display:none" />
-            </div>
-            <div id="profileInfo" class="text-center">
-              <p id="nameDisplay" class="text-3xl font-bold text-gray-900">Sophia Carter</p>
-              <p id="emailDisplay" class="text-lg text-gray-500">sophia.carter@email.com</p>
-              <p id="dobDisplay" class="text-lg text-gray-500 mt-1">DOB: 15/08/1995</p>
-            </div>
-            <button id="editProfileBtn"
-              class="flex w-full max-w-xs cursor-pointer items-center justify-center rounded-lg bg-[var(--primary-color)] py-3 px-4 text-white text-base font-bold transition-colors hover:bg-blue-700">
-              <span class="truncate">Edit Profile</span>
-            </button>
-          </div>
-          <div class="mt-8 flex justify-center">
-            <div id="puzzleGrid" class="grid w-full max-w-xs grid-cols-3 gap-1 select-none">
-              <!-- Puzzle pieces will be inserted here -->
-            </div>
-          </div>
-        </main>
+        </div>
+        <div class="text-center">
+          <p id="profile-name" class="text-2xl font-bold text-gray-900">Sophia Carter</p>
+          <p id="profile-email" class="text-base text-gray-500">sophia.carter@email.com</p>
+          <p id="profile-dob" class="text-base text-gray-500 mt-1">July 15, 1990</p>
+          <p id="profile-bio" class="text-base text-gray-600 mt-2 max-w-xs">This is a short bio about Sophia Carter.</p>
+        </div>
+        <button id="edit-profile-btn" class="flex w-full max-w-xs cursor-pointer items-center justify-center rounded-lg bg-[var(--primary-color)] py-3 px-4 text-white text-base font-bold transition-colors hover:bg-blue-700">
+          <span class="truncate">Edit Profile</span>
+        </button>
       </div>
-      <footer   class="sticky bottom-0 border-t border-gray-200 bg-white">
-        <nav class="flex justify-center py-2">
-          <a class="flex flex-col items-center justify-end gap-1 px-8 text-[var(--primary-color)]" href="#">
-            <span class="material-symbols-outlined text-2xl"> person </span>
-            <p class="text-xs font-bold">Profile</p>
-          </a>
-          <a id="navHome"
-            class="flex flex-col items-center justify-end gap-1 text-[var(--primary-color)] cursor-pointer" href="index.html"
-            aria-current="page">
-            <span class="material-symbols-outlined text-2xl"> home </span>
-            <p class="text-xs font-bold">Home</p>
-          </a>
-        </nav>
-      </footer>
-    </div>
+    </main>
   </div>
+  <footer class="sticky bottom-0 border-t border-gray-200 bg-white">
+    <nav class="flex justify-around py-2">
+      <a class="flex flex-col items-center justify-end gap-1 text-[var(--primary-color)]" href="index.html">
+        <span class="material-symbols-outlined text-2xl"> home </span>
+        <p class="text-xs font-bold">Home</p>
+      </a>
+      <a class="flex flex-col items-center justify-end gap-1 text-gray-500" href="#">
+        <span class="material-symbols-outlined text-2xl"> person </span>
+        <p class="text-xs font-medium">Profile</p>
+      </a>
+    </nav>
+  </footer>
+</div>
 
-  <script>
-    // Profile editing logic (same as before)
-    const editProfileBtn = document.getElementById('editProfileBtn');
-    const profileInfo = document.getElementById('profileInfo');
-    const nameDisplay = document.getElementById('nameDisplay');
-    const emailDisplay = document.getElementById('emailDisplay');
-    const dobDisplay = document.getElementById('dobDisplay');
+<!-- Modal for editing profile -->
+<div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
+    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+    <form id="edit-form" class="flex flex-col gap-4">
+      <div class="flex flex-col items-center gap-2">
+        <div id="edit-photo-preview" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border border-gray-300"></div>
+        <label class="cursor-pointer text-sm text-blue-600 hover:underline">
+          Change Photo
+          <input type="file" id="photo-input" accept="image/*" class="hidden" />
+        </label>
+      </div>
+      <div>
+        <label for="name-input" class="block text-sm font-medium text-gray-700">Name</label>
+        <input type="text" id="name-input" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
+      </div>
+      <div>
+        <label for="email-input" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="email-input" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
+      </div>
+      <div>
+        <label for="dob-input" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+        <input type="date" id="dob-input" name="dob" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"/>
+      </div>
+      <div>
+        <label for="bio-input" class="block text-sm font-medium text-gray-700">Bio</label>
+        <textarea id="bio-input" name="bio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" id="cancel-btn" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded bg-[var(--primary-color)] text-white hover:bg-blue-700">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-    let isEditing = false;
+<script>
+  const editProfileBtn = document.getElementById('edit-profile-btn');
+  const editModal = document.getElementById('edit-modal');
+  const cancelBtn = document.getElementById('cancel-btn');
+  const editForm = document.getElementById('edit-form');
 
-    editProfileBtn.addEventListener('click', () => {
-      if (!isEditing) {
-        profileInfo.innerHTML = `
-        <input id="nameInput" type="text" class="text-3xl font-bold text-gray-900 text-center w-full max-w-xs border-b border-gray-400 focus:outline-none" value="${nameDisplay.textContent}">
-        <input id="emailInput" type="email" class="text-lg text-gray-500 text-center w-full max-w-xs border-b border-gray-400 focus:outline-none mt-1" value="${emailDisplay.textContent}">
-        <input id="dobInput" type="date" class="text-lg text-gray-500 text-center w-full max-w-xs border-b border-gray-400 focus:outline-none mt-1" value="${formatDateForInput(dobDisplay.textContent)}">
-      `;
-        editProfileBtn.querySelector('span').textContent = 'Save Profile';
-        isEditing = true;
-      } else {
-        const nameInput = document.getElementById('nameInput');
-        const emailInput = document.getElementById('emailInput');
-        const dobInput = document.getElementById('dobInput');
+  const profilePhoto = document.getElementById('profile-photo');
+  const profileName = document.getElementById('profile-name');
+  const profileEmail = document.getElementById('profile-email');
+  const profileDob = document.getElementById('profile-dob');
+  const profileBio = document.getElementById('profile-bio');
 
-        if (!nameInput.value.trim()) {
-          alert('Name cannot be empty');
-          return;
-        }
-        if (!validateEmail(emailInput.value.trim())) {
-          alert('Please enter a valid email');
-          return;
-        }
-        if (!dobInput.value) {
-          alert('Please enter a valid date of birth');
-          return;
-        }
+  const editPhotoPreview = document.getElementById('edit-photo-preview');
+  const photoInput = document.getElementById('photo-input');
+  const nameInput = document.getElementById('name-input');
+  const emailInput = document.getElementById('email-input');
+  const dobInput = document.getElementById('dob-input');
+  const bioInput = document.getElementById('bio-input');
 
-        nameDisplay.textContent = nameInput.value.trim();
-        emailDisplay.textContent = emailInput.value.trim();
-        dobDisplay.textContent = 'DOB: ' + formatDateForDisplay(dobInput.value);
+  // Helper to format date to readable string like "July 15, 1990"
+  function formatDate(dateStr) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(dateStr);
+    if (isNaN(date)) return '';
+    return date.toLocaleDateString(undefined, options);
+  }
 
-        profileInfo.innerHTML = '';
-        profileInfo.appendChild(nameDisplay);
-        profileInfo.appendChild(emailDisplay);
-        profileInfo.appendChild(dobDisplay);
+  // Open modal and populate form with current profile data
+  function openEditModal() {
+    // Extract current photo URL from background-image style
+    const bgImage = profilePhoto.style.backgroundImage;
+    const urlMatch = bgImage.match(/url\("(.*)"\)/);
+    const photoUrl = urlMatch ? urlMatch[1] : '';
 
-        editProfileBtn.querySelector('span').textContent = 'Edit Profile';
-        isEditing = false;
-      }
-    });
+    editPhotoPreview.style.backgroundImage = `url("${photoUrl}")`;
+    photoInput.value = ''; // reset file input
 
-    function formatDateForInput(dobText) {
-      const parts = dobText.replace('DOB: ', '').split('/');
-      if (parts.length === 3) {
-        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-      }
-      return '';
+    nameInput.value = profileName.textContent;
+    emailInput.value = profileEmail.textContent;
+    bioInput.value = profileBio.textContent;
+
+    // Convert displayed DOB to yyyy-mm-dd for input[type=date]
+    const currentDob = profileDob.textContent;
+    const parsedDate = new Date(currentDob);
+    if (!isNaN(parsedDate)) {
+      const yyyy = parsedDate.getFullYear();
+      const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(parsedDate.getDate()).padStart(2, '0');
+      dobInput.value = `${yyyy}-${mm}-${dd}`;
+    } else {
+      dobInput.value = '';
     }
 
-    function formatDateForDisplay(dateStr) {
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-      }
-      return dateStr;
+    editModal.classList.remove('hidden');
+  }
+
+  // Close modal
+  function closeEditModal() {
+    editModal.classList.add('hidden');
+  }
+
+  // Update photo preview when user selects a new photo
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        editPhotoPreview.style.backgroundImage = `url("${evt.target.result}")`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Handle form submission
+  editForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Update profile photo if a new file is selected
+    const file = photoInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        profilePhoto.style.backgroundImage = `url("${evt.target.result}")`;
+      };
+      reader.readAsDataURL(file);
     }
 
-    function validateEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
+    // Update other profile info
+    profileName.textContent = nameInput.value.trim();
+    profileEmail.textContent = emailInput.value.trim();
+    profileBio.textContent = bioInput.value.trim();
+
+    // Format and update DOB display
+    profileDob.textContent = formatDate(dobInput.value);
+
+    closeEditModal();
+  });
+
+  // Open modal on clicking "Edit Profile" button
+  editProfileBtn.addEventListener('click', openEditModal);
+
+  // Also allow editing photo by clicking the small edit icon on photo
+  document.getElementById('edit-photo-btn').addEventListener('click', () => {
+    openEditModal();
+  });
+
+  // Cancel button closes modal without saving
+  cancelBtn.addEventListener('click', closeEditModal);
+
+  // Close modal if clicking outside the modal content
+  editModal.addEventListener('click', (e) => {
+    if (e.target === editModal) {
+      closeEditModal();
     }
-
-    // Avatar change logic
-    const editAvatarBtn = document.getElementById('editAvatarBtn');
-    const avatarInput = document.getElementById('avatarInput');
-    const avatar = document.getElementById('avatar');
-
-    editAvatarBtn.addEventListener('click', () => {
-      avatarInput.click();
-    });
-
-    avatarInput.addEventListener('change', () => {
-      const file = avatarInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          avatar.style.backgroundImage = `url('${e.target.result}')`;
-          updatePuzzleImage(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    avatar.addEventListener('click', () => {
-      avatarInput.click();
-    });
-
-    // Back button alert
-    const backBtn = document.getElementById('backBtn');
-    backBtn.addEventListener('click', () => {
-      alert('Back button clicked! Implement navigation as needed.');
-    });
-
-    // Puzzle game logic
-    const puzzleGrid = document.getElementById('puzzleGrid');
-    const gridSize = 3; // 3x3
-    let pieces = [];
-    let selectedPieceIndex = null;
-    let originalOrder = [];
-
-    // Initialize puzzle pieces
-    function initPuzzle(imageUrl) {
-      pieces = [];
-      originalOrder = [];
-      puzzleGrid.innerHTML = '';
-
-      for (let i = 0; i < gridSize * gridSize; i++) {
-        const piece = document.createElement('div');
-        piece.classList.add('puzzle-piece');
-        piece.style.backgroundPosition = getBackgroundPosition(i);
-        piece.dataset.index = i; // correct position
-        piece.dataset.currentIndex = i; // current position (will shuffle)
-        piece.style.backgroundImage = `url('${imageUrl}')`;
-        piece.style.backgroundSize = `${gridSize * 100}% ${gridSize * 100}%`;
-        piece.addEventListener('click', () => onPieceClick(i));
-        pieces.push(piece);
-        originalOrder.push(i);
-      }
-
-      shufflePieces();
-      pieces.forEach(piece => puzzleGrid.appendChild(piece));
-    }
-
-    // Calculate background position for piece index
-    function getBackgroundPosition(index) {
-      const row = Math.floor(index / gridSize);
-      const col = index % gridSize;
-      return `${(col * 100) / (gridSize - 1)}% ${(row * 100) / (gridSize - 1)}%`;
-    }
-
-    // Shuffle pieces randomly
-    function shufflePieces() {
-      // Fisher-Yates shuffle on pieces array
-      for (let i = pieces.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        // Swap currentIndex data attribute
-        const tempIndex = pieces[i].dataset.currentIndex;
-        pieces[i].dataset.currentIndex = pieces[j].dataset.currentIndex;
-        pieces[j].dataset.currentIndex = tempIndex;
-        // Swap pieces in array
-        [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-      }
-    }
-
-    // Handle piece click to swap
-    function onPieceClick(clickedIndex) {
-      if (selectedPieceIndex === null) {
-        selectedPieceIndex = clickedIndex;
-        pieces[clickedIndex].classList.add('selected');
-      } else if (selectedPieceIndex === clickedIndex) {
-        // Deselect if same piece clicked
-        pieces[selectedPieceIndex].classList.remove('selected');
-        selectedPieceIndex = null;
-      } else {
-        // Swap pieces visually and update currentIndex
-        swapPieces(selectedPieceIndex, clickedIndex);
-        pieces[selectedPieceIndex].classList.remove('selected');
-        selectedPieceIndex = null;
-        checkPuzzleSolved();
-      }
-    }
-
-    // Swap two pieces in the grid and update dataset
-    function swapPieces(i, j) {
-      // Swap elements in DOM
-      const pieceA = pieces[i];
-      const pieceB = pieces[j];
-
-      // Swap positions in DOM
-      const siblingA = pieceA.nextSibling === pieceB ? pieceA : pieceA.nextSibling;
-      puzzleGrid.insertBefore(pieceB, pieceA);
-      puzzleGrid.insertBefore(pieceA, siblingA);
-
-      // Swap pieces in array
-      [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-
-      // Swap currentIndex data attribute
-      const tempIndex = pieces[i].dataset.currentIndex;
-      pieces[i].dataset.currentIndex = pieces[j].dataset.currentIndex;
-      pieces[j].dataset.currentIndex = tempIndex;
-    }
-
-    // Check if puzzle is solved
-    function checkPuzzleSolved() {
-      for (let i = 0; i < pieces.length; i++) {
-        if (parseInt(pieces[i].dataset.currentIndex) !== parseInt(pieces[i].dataset.index)) {
-          return false;
-        }
-      }
-      setTimeout(() => alert('🎉 Puzzle solved!'), 100);
-      return true;
-    }
-
-    // Update puzzle image when avatar changes
-    function updatePuzzleImage(newImageUrl) {
-      pieces.forEach(piece => {
-        piece.style.backgroundImage = `url('${newImageUrl}')`;
-      });
-    }
-
-    // Initialize puzzle with default avatar image on page load
-    window.addEventListener('load', () => {
-      const defaultImage = avatar.style.backgroundImage.slice(5, -2); // extract url from style
-      initPuzzle(defaultImage);
-    });
-  </script>
+  });
+</script>
 </body>
-
-
 </html>
