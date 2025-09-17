@@ -119,6 +119,7 @@ nav a:hover {
   gap: 20px;
   padding: 40px 20px;
   flex-wrap: wrap; /* allows wrapping on small screens */
+     background-color: #5fce5f84;
 }
 
 .hero-text {
@@ -141,7 +142,7 @@ nav a:hover {
   margin-top: 15px;
   padding: 10px 20px;
   font-size: 1rem;
-  background: #2cbb2c;
+  background:  #0d8918ed;
   border: none;
   border-radius: 6px;
   color: white;
@@ -149,7 +150,7 @@ nav a:hover {
 }
 
 .hero-text button:hover {
-  background: #249c24;
+  background: #0e130e;
 }
 
 .hero-image {
