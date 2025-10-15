@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Reporting</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; }
+        #map { height: 100%; width: 70%; }
+        #form-container {
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+            overflow-y: auto;
+        }
+        h2 { margin-top: 0; }
+        .form-field { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #218838; }
+        #marker-instruction { font-style: italic; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="form-container">
+        <h2>Report an Environmental Issue</h2>
+        <p id="marker-instruction">Click on the map to place a marker for your report.</p>
+        
+        <form id="report-form">
+            <div class="form-field">
+                <label for="report-type">Type of Issue:</label>
+                <select id="report-type" name="reportType" required>
+                    <option value="pollution">Pollution (Waste, Water, Air)</option>
+                    <option value="deforestation">Deforestation / Tree Cutting</option>
+                    <option value="wildlife_sighting">Biodiversity Sighting</option>
+                </select>
+            </div>
+            
+            <div class="form-field">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-field">
+                <label for="photo">Upload Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+            </div>
+
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <button type="submit">Submit Report</button>
+        </form>
+    </div>
+
+    <script>
+        // 1. Initialize the map and set its view
+        const map = L.map('map').setView([23.0225, 72.5714], 13); // Centered on Ahmedabad
+
+        // Add a tile layer from OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+        const latInput = document.getElementById('latitude');
+        const lonInput = document.getElementById('longitude');
+
+        // 2. Handle map clicks
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+
+            // If a marker already exists, move it. Otherwise, create a new one.
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+                document.getElementById('marker-instruction').textContent = "Drag the pin to adjust the location.";
+            }
+
+            // Update hidden form fields with coordinates
+            latInput.value = lat;
+            lonInput.value = lng;
+            
+            // Re-center popup on marker drag
+            marker.on('dragend', function(event) {
+                const position = marker.getLatLng();
+                latInput.value = position.lat;
+                lonInput.value = position.lng;
+            });
+        });
+
+        // 3. Handle form submission
+        document.getElementById('report-form').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Check if a location is selected
+            if (!latInput.value || !lonInput.value) {
+                alert('Please select a location on the map first!');
+                return;
+            }
+
+            const formData = new FormData(this);
+            
+            // --- THIS IS WHERE YOU SEND DATA TO YOUR BACKEND ---
+            // In a real app, you would use fetch() to a real server endpoint
+            console.log('Form data to be sent:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+            
+            alert('Thank you! Your report has been submitted. (This is a demo - check the console to see the data).');
+            
+            // Optional: Reset the form after submission
+            this.reset();
+            if(marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+        });
+
+    </script>
+</body>
+</html>
