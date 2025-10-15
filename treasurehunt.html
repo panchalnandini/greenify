@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eco Hunt - Treasure Hunt (Environment Theme)</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --accent: #22c55e;
+      --accent-2: #16a34a;
+      --warn: #ef4444;
+      --info: #3b82f6;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #0b1323, #0f172a);
+      color: var(--text);
+    }
+    a { color: var(--info); text-decoration: none; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: #0b1220; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 5;
+    }
+    .brand { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+    .brand .logo { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #22c55e, #16a34a); display: inline-flex; align-items: center; justify-content: center; color: #052e16; font-weight: 900; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+    .grid { display: grid; gap: 16px; }
+    @media (min-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    .card h3 { margin-top: 0; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .row-right { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+    .btn {
+      background: var(--accent); color: #052e16; border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700;
+      transition: all .15s ease; box-shadow: 0 4px 12px rgba(34,197,94,.3);
+    }
+    .btn:hover { background: var(--accent-2); transform: translateY(-1px); }
+    .btn.secondary { background: #0b1220; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    .btn.warn { background: var(--warn); color: #fff; }
+    .btn.info { background: var(--info); color: #fff; }
+    .btn.sm { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+      background: #0b1220; color: var(--text);
+    }
+    label { font-weight: 600; }
+    .section-title { margin: 16px 0 6px 0; font-size: 18px; }
+    .pill { display: inline-flex; padding: 4px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--muted); gap: 6px; align-items: center; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-pending { background: #f59e0b; }
+    .status-approved { background: #22c55e; }
+    .status-rejected { background: #ef4444; }
+    .clue { padding: 12px; border: 1px dashed var(--border); border-radius: 10px; margin-bottom: 10px; }
+    .media-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .media-grid img, .media-grid video { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
+    .hidden { display: none !important; }
+    .toast { position: fixed; bottom: 16px; right: 16px; background: #0b1220; border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+    .spacer { height: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">E</div>
+      <div>Eco Hunt</div>
+      <span class="pill"><span class="status-dot" id="conn-dot" style="background:#64748b"></span><span id="conn-text">Offline</span></span>
+    </div>
+    <div class="row" id="user-box">
+      <button class="btn secondary sm" id="btn-guest">Continue as guest</button>
+      <button class="btn sm" id="btn-google">Sign in with Google</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card" id="auth-card">
+        <h3>Welcome to Eco Hunt</h3>
+        <p class="muted">Create or join an environmental treasure hunt. Share clues online, answer with photos/videos, and compete with friends.</p>
+        <div class="row">
+          <button class="btn" id="btn-show-auth">Get Started</button>
+          <button class="btn secondary" id="btn-show-admin">Admin panel</button>
+        </div>
+      </div>
+
+      <div class="card" id="hunt-create-card">
+        <h3>Create Hunt</h3>
+        <div class="spacer"></div>
+        <label>Theme</label>
+        <input id="create-theme" placeholder="e.g., Save the Planet" value="Save the Planet" />
+        <div class="spacer"></div>
+        <label>Start time</label>
+        <input id="create-start" type="datetime-local" />
+        <div class="spacer"></div>
+        <div class="row">
+          <button class="btn" id="btn-create-hunt">Create Hunt</button>
+        </div>
+        <p class="muted">After creating, you’ll get a Hunt Code. Share it with your friends to join.</p>
+      </div>
+
+      <div class="card" id="hunt-join-card">
+        <h3>Join Hunt</h3>
+        <label>Enter Hunt Code</label>
+        <input id="join-code" placeholder="e.g., NATURE-1234" />
+        <div class="spacer"></div>
+        <label>Your display name</label>
+        <input id="join-name" placeholder="e.g., Alex" />
+        <div class="spacer"></div>
+        <div class="row">
+          <button class="btn" id="btn-join-hunt">Join</button>
+        </div>
+        <p class="muted">Hunt Code is shared by the creator. Case-insensitive.</p>
+      </div>
+
+      <div class="card hidden" id="team-card">
+        <h3>Team</h3>
+        <div class="row">
+          <div>
+            <div><b>Hunt:</b> <span id="team-hunt-id">-</span></div>
+            <div><b>Team Code:</b> <span id="team-code">-</span> <button class="btn secondary sm" id="btn-copy-team-code">Copy</button></div>
+            <div class="muted">Share team code with friends to join your team.</div>
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="row">
+          <input id="new-member-name" placeholder="Friend's name"/>
+          <button class="btn sm" id="btn-add-member">Add Member</button>
+        </div>
+        <div class="spacer"></div>
+        <div id="members-list" class="muted">No members yet.</div>
+        <div class="spacer"></div>
+        <div class="row">
+          <button class="btn info sm" id="btn-go-clues">Go to Clues</button>
+        </div>
+      </div>
+
+      <div class="card hidden" id="clues-card">
+        <h3>Clues</h3>
+        <div id="clues-list">No clues yet.</div>
+      </div>
+
+      <div class="card hidden" id="leaderboard-card">
+        <h3>Leaderboard</h3>
+        <div id="leaderboard-list">No teams yet.</div>
+      </div>
+
+      <div class="card hidden" id="admin-card">
+        <h3>Admin Panel</h3>
+        <div id="admin-hunt-info" class="muted">Join a hunt as creator to manage it.</div>
+        <div id="admin-hunt-controls" class="hidden">
+          <div class="row">
+            <div><b>Hunt:</b> <span id="admin-hunt-code">-</span></div>
+            <button class="btn secondary sm" id="btn-copy-admin-hunt-code">Copy Code</button>
+          </div>
+          <div class="spacer"></div>
+          <div class="grid grid-2">
+            <div>
+              <label>Theme</label>
+              <input id="admin-theme" />
+              <div class="spacer"></div>
+              <label>Start time</label>
+              <input id="admin-start" type="datetime-local" />
+              <div class="spacer"></div>
+              <div class="row">
+                <button class="btn sm" id="btn-admin-save">Save</button>
+              </div>
+            </div>
+            <div>
+              <div class="row row-right">
+                <button class="btn sm" id="btn-export-submissions">Export Submissions (JSON)</button>
+              </div>
+            </div>
+          </div>
+          <div class="spacer"></div>
+          <h4 class="section-title">Clues</h4>
+          <div class="grid grid-2">
+            <div class="card">
+              <label>Title</label>
+              <input id="clue-title" placeholder="e.g., Find a recycling bin" />
+              <div class="spacer"></div>
+              <label>Text</label>
+              <textarea id="clue-text" rows="3" placeholder="Write an eco-themed clue..."></textarea>
+              <div class="spacer"></div>
+              <label>Order (optional)</label>
+              <input id="clue-order" type="number" placeholder="e.g., 1" />
+              <div class="spacer"></div>
+              <div class="row">
+                <button class="btn sm" id="btn-add-clue">Add Clue</button>
+              </div>
+            </div>
+            <div>
+              <div id="admin-clues-list" class="muted">No clues yet.</div>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+          <h4 class="section-title">Moderation Queue</h4>
+          <div id="admin-queue" class="muted">No pending submissions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInAnonymously, updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, updateDoc, deleteDoc,
+      query, where, onSnapshot, orderBy, serverTimestamp, enableIndexedDbPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ---------------------- Config ----------------------
+    const firebaseConfig = {
+      // TODO: Replace with your Firebase project config
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      appId: "YOUR_APP_ID",
+      messagingSenderId: "YOUR_SENDER_ID",
+    };
+
+    // ---------------------- Init ----------------------
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    enableIndexedDbPersistence(db).catch(() => {});
+
+    // ---------------------- Utils ----------------------
+    const $ = sel => document.querySelector(sel);
+    const toast = (msg, timeout=2500) => {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), timeout);
+    };
+    const copy = async (text) => {
+      try { await navigator.clipboard.writeText(text); toast('Copied!'); }
+      catch { toast('Copy failed'); }
+    };
+    const genCode = (len=6) => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let out = '';
+      for (let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
+      return out;
+    };
+    const genHuntCode = () => {
+      const word = ["ECO","GREEN","EARTH","OCEAN","CLEAN","NATURE","PLANET","FOREST","WATER","SOLAR","WIND","CLIMATE","BIKE","RECYCLE","ZERO"][Math.floor(Math.random()*15)];
+      return `${word}-${genCode(4)}`;
+    };
+    const nowISO = () => new Date().toISOString();
+    const el = {
+      connDot: $('#conn-dot'),
+      connText: $('#conn-text'),
+      userBox: $('#user-box'),
+      authCard: $('#auth-card'),
+      huntCreateCard: $('#hunt-create-card'),
+      huntJoinCard: $('#hunt-join-card'),
+      teamCard: $('#team-card'),
+      cluesCard: $('#clues-card'),
+      leaderboardCard: $('#leaderboard-card'),
+      adminCard: $('#admin-card'),
+      // auth
+      btnGoogle: $('#btn-google'),
+      btnGuest: $('#btn-guest'),
+      // create
+      createTheme: $('#create-theme'),
+      createStart: $('#create-start'),
+      btnCreateHunt: $('#btn-create-hunt'),
+      // join
+      joinCode: $('#join-code'),
+      joinName: $('#join-name'),
+      btnJoinHunt: $('#btn-join-hunt'),
+      // team
+      teamHuntId: $('#team-hunt-id'),
+      teamCode: $('#team-code'),
+      btnCopyTeamCode: $('#btn-copy-team-code'),
+      newMemberName: $('#new-member-name'),
+      btnAddMember: $('#btn-add-member'),
+      membersList: $('#members-list'),
+      btnGoClues: $('#btn-go-clues'),
+      // clues
+      cluesList: $('#clues-list'),
+      // leaderboard
+      leaderboardList: $('#leaderboard-list'),
+      // admin
+      adminHuntInfo: $('#admin-hunt-info'),
+      adminHuntControls: $('#admin-hunt-controls'),
+      adminHuntCode: $('#admin-hunt-code'),
+      btnCopyAdminHuntCode: $('#btn-copy-admin-hunt-code'),
+      adminTheme: $('#admin-theme'),
+      adminStart: $('#admin-start'),
+      btnAdminSave: $('#btn-admin-save'),
+      btnExportSubmissions: $('#btn-export-submissions'),
+      clueTitle: $('#clue-title'),
+      clueText: $('#clue-text'),
+      clueOrder: $('#clue-order'),
+      btnAddClue: $('#btn-add-clue'),
+      adminCluesList: $('#admin-clues-list'),
+      adminQueue: $('#admin-queue'),
+      btnShowAuth: $('#btn-show-auth'),
+      btnShowAdmin: $('#btn-show-admin')
+    };
+
+    // Connectivity indicator
+    const updateConn = () => {
+      const online = navigator.onLine;
+      el.connDot.style.background = online ? '#22c55e' : '#ef4444';
+      el.connText.textContent = online ? 'Online' : 'Offline';
+    };
+    window.addEventListener('online', updateConn);
+    window.addEventListener('offline', updateConn);
+    updateConn();
+
+    // ---------------------- State ----------------------
+    let currentUser = null;
+    let currentHunt = null; // {id, code, theme, startAt, creatorUid}
+    let currentTeam = null; // {id, name, huntId, members[], creatorUid}
+    let unsubClues = null;
+    let unsubSubmissions = null;
+    let unsubTeams = null;
+    let unsubTeam = null;
+
+    // ---------------------- Auth ----------------------
+    el.btnGoogle.onclick = async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (e) { console.error(e); toast('Sign in failed'); }
+    };
+    el.btnGuest.onclick = async () => {
+      try {
+        await signInAnonymously(auth);
+        const name = prompt('Choose a display name:', 'Guest');
+        if (name) await updateProfile(auth.currentUser, { displayName: name });
+      } catch (e) { console.error(e); toast('Guest sign-in failed'); }
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        el.userBox.innerHTML = `
+          <span class="muted">Hi, ${user.displayName || 'Guest'}!</span>
+          <button class="btn secondary sm" id="btn-signout">Sign out</button>
+        `;
+        $('#btn-signout')?.addEventListener('click', () => auth.signOut());
+      } else {
+        el.userBox.innerHTML = `
+          <button class="btn secondary sm" id="btn-guest">Continue as guest</button>
+          <button class="btn sm" id="btn-google">Sign in with Google</button>
+        `;
+        $('#btn-guest').onclick = el.btnGuest.onclick;
+        $('#btn-google').onclick = el.btnGoogle.onclick;
+      }
+    });
+
+    // ---------------------- Hunt Create ----------------------
+    el.btnCreateHunt.onclick = async () => {
+      try {
+        if (!currentUser) return toast('Sign in first (Google or Guest).');
+        const theme = el.createTheme.value.trim() || 'Save the Planet';
+        const startAt = el.createStart.value ? new Date(el.createStart.value).toISOString() : null;
+        const code = genHuntCode().toUpperCase();
+        const huntRef = doc(collection(db, 'hunts'));
+        await setDoc(huntRef, {
+          code, theme, startAt, creatorUid: currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+        currentHunt = { id: huntRef.id, code, theme, startAt, creatorUid: currentUser.uid };
+        toast(`Hunt created: ${code}`);
+        showAdminPanel();
+      } catch (e) {
+        console.error(e); toast('Failed to create hunt');
+      }
+    };
+
+    // ---------------------- Hunt Join ----------------------
+    el.btnJoinHunt.onclick = async () => {
+      try {
+        if (!currentUser) return toast('Sign in first (Google or Guest).');
+        const code = (el.joinCode.value || '').trim().toUpperCase();
+        const name = (el.joinName.value || '').trim() || (currentUser.displayName || 'Player');
+        if (!code) return toast('Enter hunt code');
+
+        const huntsSnap = await getDocs(query(collection(db, 'hunts'), where('code', '==', code)));
+        if (huntsSnap.empty) return toast('Hunt not found');
+        const huntDoc = huntsSnap.docs[0];
+        currentHunt = { id: huntDoc.id, ...huntDoc.data() };
+
+        // join or create team
+        const teamCode = `${genCode(3)}-${genCode(3)}`.toUpperCase();
+        const teamRef = doc(collection(db, 'teams'));
+        await setDoc(teamRef, {
+          name: `${name}'s Team`,
+          huntId: currentHunt.id,
+          members: [{ uid: currentUser.uid, name: currentUser.displayName || name }],
+          creatorUid: currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+        currentTeam = { id: teamRef.id, name: `${name}'s Team`, huntId: currentHunt.id, members: [{ uid: currentUser.uid, name: currentUser.displayName || name }], creatorUid: currentUser.uid };
+        // Set current team on user doc
+        await setDoc(doc(db, 'users', currentUser.uid), {
+          displayName: currentUser.displayName || name,
+          currentHuntId: currentHunt.id,
+          currentTeamId: teamRef.id
+        }, { merge: true });
+
+        toast(`Joined hunt ${code}`);
+        showTeamPanel();
+        subscribeClues();
+        subscribeTeam();
+        subscribeLeaderboard();
+      } catch (e) {
+        console.error(e); toast('Join failed');
+      }
+    };
+
+    el.btnCopyTeamCode.onclick = () => copy(currentTeam?.id || '');
+    el.btnGoClues.onclick = () => {
+      el.cluesCard.classList.remove('hidden');
+      el.leaderboardCard.classList.remove('hidden');
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
+
+    el.btnAddMember.onclick = async () => {
+      try {
+        if (!currentUser || !currentTeam) return;
+        const name = (el.newMemberName.value || '').trim();
+        if (!name) return toast('Enter a name');
+        const newMember = { uid: `guest-${genCode(6)}`, name };
+        currentTeam.members.push(newMember);
+        await updateDoc(doc(db, 'teams', currentTeam.id), { members: currentTeam.members });
+        el.newMemberName.value = '';
+        renderMembers();
+        toast('Member added (local). Ask them to join and approve manually later.');
+      } catch (e) { console.error(e); toast('Add member failed'); }
+    };
+
+    function renderMembers() {
+      if (!currentTeam) { el.membersList.textContent = 'No members yet.'; return; }
+      el.membersList.innerHTML = currentTeam.members.map(m => `<div class="pill">${m.name}</div>`).join(' ');
+    }
+
+    function showTeamPanel() {
+      if (!currentHunt || !currentTeam) return;
+      el.teamHuntId.textContent = currentHunt.code;
+      el.teamCode.textContent = currentTeam.id;
+      el.teamCard.classList.remove('hidden');
+      renderMembers();
+    }
+
+    // ---------------------- Clues and Submissions ----------------------
+    function subscribeClues() {
+      if (!currentHunt) return;
+      if (unsubClues) unsubClues();
+      unsubClues = onSnapshot(collection(db, 'hunts', currentHunt.id, 'clues'), (snap) => {
+        const clues = [];
+        snap.forEach(d => clues.push({ id: d.id, ...d.data() }));
+        clues.sort((a,b) => (a.order ?? 99999) - (b.order ?? 99999));
+        renderClues(clues);
+        if (currentUser?.uid && currentTeam?.id) subscribeSubmissions(clues.map(c => c.id));
+      });
+    }
+
+    function subscribeTeam() {
+      if (!currentTeam) return;
+      if (unsubTeam) unsubTeam();
+      unsubTeam = onSnapshot(doc(db, 'teams', currentTeam.id), (snap) => {
+        currentTeam = { id: snap.id, ...snap.data() };
+        renderMembers();
+      });
+    }
+
+    function subscribeLeaderboard() {
+      if (!currentHunt) return;
+      if (unsubTeams) unsubTeams();
+      unsubTeams = onSnapshot(collection(db, 'teams'), (snap) => {
+        const teams = [];
+        snap.forEach(d => teams.push({ id: d.id, ...d.data() }));
+        const thisHunt = teams.filter(t => t.huntId === currentHunt.id);
+        // compute progress from a cached map or derive from submissions
+        thisHunt.sort((a,b) => (b.progressCount||0) - (a.progressCount||0));
+        renderLeaderboard(thisHunt);
+      });
+    }
+
+    let lastSubmissionMap = {}; // clueId -> status
+    function subscribeSubmissions(clueIds) {
+      if (!currentTeam || !currentUser) return;
+      if (unsubSubmissions) unsubSubmissions();
+      const q = query(
+        collection(db, 'submissions'),
+        where('teamId', '==', currentTeam.id),
+        where('clueId', 'in', clueIds.slice(0, 10)) // Firestore 'in' max 10; handle >10 via batching if needed
+      );
+      unsubSubmissions = onSnapshot(q, (snap) => {
+        const statuses = {};
+        snap.forEach(d => {
+          const sub = { id: d.id, ...d.data() };
+          if (sub.status !== 'rejected') {
+            statuses[sub.clueId] = sub.status;
+          }
+        });
+        lastSubmissionMap = { ...lastSubmissionMap, ...statuses };
+        updateProgressCount(statuses);
+        renderCluesUIState();
+      });
+    }
+
+    async function updateProgressCount(statusMap) {
+      if (!currentTeam) return;
+      const count = Object.values(statusMap).filter(s => s === 'approved').length;
+      await updateDoc(doc(db, 'teams', currentTeam.id), { progressCount: count });
+    }
+
+    function renderClues(clues) {
+      if (!currentTeam) { el.cluesList.textContent = 'Join a team to see clues.'; return; }
+      if (!clues.length) { el.cluesList.textContent = 'No clues yet. Ask the creator to add some.'; return; }
+      el.cluesList.innerHTML = '';
+      clues.forEach(clue => {
+        const wrap = document.createElement('div');
+        wrap.className = 'clue';
+        const status = lastSubmissionMap[clue.id] || 'none';
+        const statusText = status === 'approved' ? 'Approved' : status === 'pending' ? 'Pending' : 'Not submitted';
+        const statusClass = status === 'approved' ? 'status-approved' : status === 'pending' ? 'status-pending' : '';
+        wrap.innerHTML = `
+          <div class="row" style="justify-content: space-between;">
+            <div>
+              <div style="font-weight:700">${clue.title || 'Clue'}</div>
+              <div class="muted">${clue.text || ''}</div>
+            </div>
+            <div class="pill"><span class="status-dot ${statusClass}"></span>${statusText}</div>
+          </div>
+          <div class="spacer"></div>
+          <div class="row">
+            <input type="file" id="file-${clue.id}" accept="image/*,video/*" capture="environment" ${status === 'pending' ? 'disabled' : ''} />
+            <button class="btn sm" data-submit="${clue.id}" ${status === 'pending' ? 'disabled' : ''}>Submit</button>
+          </div>
+          <div id="media-${clue.id}" class="media-grid"></div>
+          <div id="msg-${clue.id}" class="muted"></div>
+        `;
+        el.cluesList.appendChild(wrap);
+        // preload existing media if any
+        preloadSubmissionMedia(clue.id);
+      });
+      // bind buttons
+      el.cluesList.querySelectorAll('button[data-submit]').forEach(btn => {
+        btn.addEventListener('click', () => submitAnswer(btn.getAttribute('data-submit')));
+      });
+    }
+
+    async function preloadSubmissionMedia(clueId) {
+      if (!currentTeam) return;
+      const q = query(collection(db, 'submissions'), where('teamId', '==', currentTeam.id), where('clueId', '==', clueId), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      const cont = $('#media-' + clueId);
+      cont.innerHTML = '';
+      snap.forEach(d => {
+        const sub = { id: d.id, ...d.data() };
+        if (sub.mediaUrl) {
+          if (sub.mediaType?.startsWith('image')) {
+            const img = document.createElement('img');
+            img.src = sub.mediaUrl;
+            cont.appendChild(img);
+          } else if (sub.mediaType?.startsWith('video')) {
+            const v = document.createElement('video');
+            v.src = sub.mediaUrl; v.controls = true;
+            cont.appendChild(v);
+          }
+        }
+        const msg = $('#msg-' + clueId);
+        if (sub.status === 'rejected' && sub.reviewNote) {
+          msg.textContent = 'Rejected: ' + sub.reviewNote;
+        } else {
+          msg.textContent = '';
+        }
+      });
+    }
+
+    async function submitAnswer(clueId) {
+      try {
+        if (!currentTeam || !currentUser) return;
+        const inp = $('#file-' + clueId);
+        if (!inp.files || !inp.files[0]) return toast('Choose a photo or video');
+        const file = inp.files[0];
+        const allowed = ['image/', 'video/'];
+        if (!allowed.some(p => file.type.startsWith(p))) return toast('Only images/videos allowed');
+        if (file.size > 50 * 1024 * 1024) return toast('Max 50MB');
+
+        const path = `hunts/${currentHunt.id}/teams/${currentTeam.id}/clues/${clueId}/${Date.now()}-${file.name}`;
+        const ref = sRef(storage, path);
+        const task = uploadBytesResumable(ref, file, { contentType: file.type });
+        const btn = document.querySelector(`button[data-submit="${clueId}"]`);
+        btn.disabled = true;
+
+        task.on('state_changed', null, (err) => { console.error(err); toast('Upload failed'); btn.disabled = false; }, async () => {
+          const url = await getDownloadURL(task.snapshot.ref);
+          const subRef = await addDoc(collection(db, 'submissions'), {
+            clueId, teamId: currentTeam.id, userId: currentUser.uid,
+            mediaType: file.type, mediaUrl: url, mediaPath: path,
+            status: 'pending', reviewNote: '', createdAt: serverTimestamp()
+          });
+          lastSubmissionMap[clueId] = 'pending';
+          renderCluesUIState();
+          await preloadSubmissionMedia(clueId);
+          btn.disabled = false;
+          toast('Submitted for review');
+        });
+      } catch (e) {
+        console.error(e); toast('Submit failed');
+      }
+    }
+
+    function renderCluesUIState() {
+      // nothing dynamic beyond what renderClues does
+    }
+
+    function renderLeaderboard(teams) {
+      if (!teams.length) { el.leaderboardList.textContent = 'No teams yet.'; return; }
+      el.leaderboardList.innerHTML = teams.map(t => `
+        <div class="row" style="justify-content: space-between; border-bottom: 1px dashed var(--border); padding: 6px 0;">
+          <div><b>${t.name}</b></div>
+          <div class="pill">Approved: <b>${t.progressCount || 0}</b></div>
+        </div>
+      `).join('');
+    }
+
+    // ---------------------- Admin ----------------------
+    function showAdminPanel() {
+      if (!currentUser || !currentHunt) {
+        el.adminHuntControls.classList.add('hidden');
+        el.adminHuntInfo.classList.remove('hidden');
+        return;
+      }
+      if (currentUser.uid !== currentHunt.creatorUid) {
+        el.adminHuntControls.classList.add('hidden');
+        el.adminHuntInfo.textContent = 'You are not the creator of this hunt.';
+        el.adminHuntInfo.classList.remove('hidden');
+        return;
+      }
+      // fill info
+      el.adminHuntInfo.classList.add('hidden');
+      el.adminHuntControls.classList.remove('hidden');
+      el.adminHuntCode.textContent = currentHunt.code;
+      el.adminTheme.value = currentHunt.theme || '';
+      el.adminStart.value = currentHunt.startAt ? new Date(currentHunt.startAt).toISOString().slice(0,16) : '';
+
+      // subscribe clues
+      onSnapshot(collection(db, 'hunts', currentHunt.id, 'clues'), (snap) => {
+        const clues = [];
+        snap.forEach(d => clues.push({ id: d.id, ...d.data() }));
+        clues.sort((a,b) => (a.order ?? 99999) - (b.order ?? 99999));
+        el.adminCluesList.innerHTML = clues.map(c => `
+          <div class="row" style="justify-content: space-between; border-bottom: 1px dashed var(--border); padding: 6px 0;">
+            <div><b>#${c.order ?? ''}</b> ${c.title || ''}</div>
+            <div class="row">
+              <button class="btn secondary sm" data-edit="${c.id}">Edit</button>
+              <button class="btn warn sm" data-delete="${c.id}">Delete</button>
+            </div>
+          </div>
+        `).join('') || 'No clues yet.';
+        // bind
+        el.adminCluesList.querySelectorAll('[data-delete]').forEach(b => b.onclick = () => deleteClue(b.getAttribute('data-delete')));
+        el.adminCluesList.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editClue(b.getAttribute('data-edit')));
+      });
+
+      // subscribe moderation queue
+      onSnapshot(collection(db, 'submissions'), (snap) => {
+        const pending = [];
+        snap.forEach(d => pending.push({ id: d.id, ...d.data() }));
+        const mine = pending.filter(s => s.status === 'pending');
+        renderAdminQueue(mine);
+      });
+    }
+
+    el.btnCopyAdminHuntCode.onclick = () => copy(currentHunt?.code || '');
+    el.btnAdminSave.onclick = async () => {
+      try {
+        if (!currentHunt) return;
+        await updateDoc(doc(db, 'hunts', currentHunt.id), {
+          theme: el.adminTheme.value.trim(),
+          startAt: el.adminStart.value ? new Date(el.adminStart.value).toISOString() : null
+        });
+        currentHunt.theme = el.adminTheme.value.trim();
+        currentHunt.startAt = el.adminStart.value ? new Date(el.adminStart.value).toISOString() : null;
+        toast('Hunt saved');
+      } catch (e) { console.error(e); toast('Save failed'); }
+    };
+
+    el.btnAddClue.onclick = async () => {
+      try {
+        if (!currentHunt) return toast('Create/join a hunt first');
+        const title = el.clueTitle.value.trim();
+        const text = el.clueText.value.trim();
+        const order = el.clueOrder.value ? parseInt(el.clueOrder.value, 10) : null;
+        if (!title || !text) return toast('Title and text required');
+        await addDoc(collection(db, 'hunts', currentHunt.id, 'clues'), { title, text, order, createdAt: serverTimestamp() });
+        el.clueTitle.value = ''; el.clueText.value = ''; el.clueOrder.value = '';
+        toast('Clue added');
+      } catch (e) { console.error(e); toast('Add clue failed'); }
+    };
+
+    async function deleteClue(clueId) {
+      try {
+        if (!confirm('Delete this clue?')) return;
+        await deleteDoc(doc(db, 'hunts', currentHunt.id, 'clues', clueId));
+        toast('Clue deleted');
+      } catch (e) { console.error(e); toast('Delete failed'); }
+    }
+    async function editClue(clueId) {
+      const title = prompt('New title (leave blank to keep)');
+      const text = prompt('New text (leave blank to keep)');
+      const orderStr = prompt('New order (number, leave blank to keep)');
+      const payload = {};
+      if (title) payload.title = title;
+      if (text) payload.text = text;
+      if (orderStr) payload.order = parseInt(orderStr, 10);
+      try { await updateDoc(doc(db, 'hunts', currentHunt.id, 'clues', clueId), payload); toast('Updated'); }
+      catch (e) { console.error(e); toast('Update failed'); }
+    }
+
+    function renderAdminQueue(items) {
+      if (!items.length) { el.adminQueue.textContent = 'No pending submissions.'; return; }
+      el.adminQueue.innerHTML = '';
+      items.forEach(item => {
+        // Only show items for this hunt
+        if (!currentHunt) return;
+        // We can't filter by huntId in query due to structure; get teams/clues for this hunt to verify relation
+        // But we can do an exists check. We'll just show everything and filter if mismatch by team->hunt
+        getTeamHunt(item.teamId).then(huntId => {
+          if (huntId !== currentHunt.id) return;
+          const card = document.createElement('div');
+          card.className = 'clue';
+          card.innerHTML = `
+            <div class="row" style="justify-content: space-between;">
+              <div>
+                <div><b>Clue:</b> ${item.clueId}</div>
+                <div><b>Team:</b> ${item.teamId}</div>
+                <div class="muted">Submitted by: ${item.userId}</div>
+              </div>
+              <div>
+                <span class="pill"><span class="status-dot status-pending"></span>Pending</span>
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <div class="media-grid" id="admin-media-${item.id}">Loading media...</div>
+            <div class="spacer"></div>
+            <div class="row">
+              <input id="note-${item.id}" placeholder="Review note (optional)"/>
+              <button class="btn sm" data-approve="${item.id}">Approve</button>
+              <button class="btn warn sm" data-reject="${item.id}">Reject</button>
+            </div>
+          `;
+          el.adminQueue.appendChild(card);
+          // media
+          const cont = document.querySelector('#admin-media-' + item.id);
+          cont.innerHTML = '';
+          if (item.mediaType?.startsWith('image')) {
+            const img = document.createElement('img'); img.src = item.mediaUrl; cont.appendChild(img);
+          } else if (item.mediaType?.startsWith('video')) {
+            const v = document.createElement('video'); v.src = item.mediaUrl; v.controls = true; cont.appendChild(v);
+          }
+          // actions
+          card.querySelector(`[data-approve="${item.id}"]`).onclick = () => reviewSubmission(item, 'approved', document.querySelector('#note-' + item.id)?.value || '');
+          card.querySelector(`[data-reject="${item.id}"]`).onclick = () => reviewSubmission(item, 'rejected', document.querySelector('#note-' + item.id)?.value || '');
+        });
+      });
+    }
+
+    async function reviewSubmission(item, status, reviewNote) {
+      try {
+        await updateDoc(doc(db, 'submissions', item.id), { status, reviewNote, reviewedBy: currentUser.uid, reviewedAt: serverTimestamp() });
+        toast(status === 'approved' ? 'Approved' : 'Rejected');
+      } catch (e) { console.error(e); toast('Review failed'); }
+    }
+
+    async function getTeamHunt(teamId) {
+      try {
+        const snap = await getDoc(doc(db, 'teams', teamId));
+        return snap.exists() ? (snap.data().huntId || null) : null;
+      } catch { return null; }
+    }
+
+    el.btnExportSubmissions.onclick = async () => {
+      try {
+        if (!currentHunt) return;
+        // Export all submissions for this hunt by joining via team->hunt
+        const teamsSnap = await getDocs(query(collection(db, 'teams'), where('huntId', '==', currentHunt.id)));
+        const teamIds = teamsSnap.docs.map(d => d.id);
+        if (!teamIds.length) return toast('No teams to export');
+        // Firestore 'in' supports up to 10; batch if needed
+        const chunks = [];
+        for (let i=0; i<teamIds.length; i+=10) chunks.push(teamIds.slice(i, i+10));
+        const allSubs = [];
+        for (const chunk of chunks) {
+          const q = query(collection(db, 'submissions'), where('teamId', 'in', chunk));
+          const s = await getDocs(q);
+          s.forEach(d => allSubs.push({ id: d.id, ...d.data() }));
+        }
+        const blob = new Blob([JSON.stringify(allSubs, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `eco-hunt-${currentHunt.code}-submissions.json`; a.click();
+        URL.revokeObjectURL(url);
+      } catch (e) { console.error(e); toast('Export failed'); }
+    };
+
+    // Toggle admin panel visibility
+    el.btnShowAdmin.onclick = () => {
+      el.adminCard.classList.remove('hidden');
+      showAdminPanel();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
+    el.btnShowAuth.onclick = () => {
+      el.authCard.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Auto-fill default start time
+    el.createStart.value = new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0,16);
+    el.adminStart.value = new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0,16);
+  </script>
+</body>
+</html>
